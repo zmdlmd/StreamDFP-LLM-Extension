@@ -43,6 +43,7 @@ pyloader/save_model/
 pyloader/time_*.txt
 
 # LLM generated artifacts
+llm/framework_v1/
 llm/framework_v1/cache_*.jsonl
 llm/framework_v1/window_text_*.jsonl
 llm/framework_v1/reference_*.json
@@ -61,3 +62,68 @@ llm/contracts/feature_contract_*.json
 
 # Personal / one-off local files
 AIMS5790_ Project Progress Check Form (Midterm).pdf
+
+# Optional local experiment notes and bulky derived docs
+BRANCHES.md
+docs/backblaze_stage1_7models_20140901_20141109.md
+docs/hi7_llm_cli_runbook_20140901_20141109.md
+docs/llm_flow_summary.md
+docs/hms_*
+docs/framework_v1_quality_*/
+docs/model_quality/
+docs/model_quality*/
+docs/model_quality*.csv
+docs/model_quality*.json
+docs/pilot_extract_quality_*.csv
+docs/pilot_extract_quality_*.md
+docs/policy_grid_*.csv
+docs/policy_grid_*.md
+docs/st3000_*results.csv
+docs/st3000_*results.md
+docs/st3000dm001_*.csv
+docs/st3000dm001_*.md
+docs/st31500541as_raw_probe*.jsonl
+
+docs/prearff_grid_*.csv
+docs/prearff_grid_*.md
+!docs/prearff_grid_2models_v1.csv
+!docs/prearff_grid_2models_v1.md
+!docs/prearff_grid_3models_m2_v1.csv
+!docs/prearff_grid_3models_m2_v1.md
+!docs/prearff_grid_st315_v1.csv
+!docs/prearff_grid_st315_v1.md
+!docs/prearff_grid_batch7_zs_v1.csv
+!docs/prearff_grid_batch7_zs_v1.md
+!docs/prearff_grid_batch7_zs_best_v1.csv
+!docs/prearff_grid_batch7_zs_best_v1.md
+!docs/prearff_grid_mc1_v1.csv
+!docs/prearff_grid_mc1_v1.md
+!docs/prearff_grid_2models_pilot20k_qwen35_v1.csv
+!docs/prearff_grid_2models_pilot20k_qwen35_v1.md
+!docs/prearff_grid_batch7_zs_pilot20k_qwen35_v1.csv
+!docs/prearff_grid_batch7_zs_pilot20k_qwen35_v1.md
+!docs/prearff_grid_2models_pilot20k_qwen35_st315_sg050_v1.csv
+!docs/prearff_grid_2models_pilot20k_qwen35_st315_sg050_v1.md
+!docs/prearff_grid_2models_pilot20k_qwen35_9b_st315_v1.csv
+!docs/prearff_grid_2models_pilot20k_qwen35_9b_st315_v1.md
+
+docs/llm_robust_eval_report*.csv
+docs/llm_robust_eval_report*.md
+!docs/llm_robust_eval_report_v3.csv
+!docs/llm_robust_eval_report_v3.md
+!docs/llm_robust_eval_report_v3_fs.csv
+!docs/llm_robust_eval_report_v3_fs.md
+!docs/llm_robust_eval_report_v3_fs_vs_zs.csv
+!docs/llm_robust_eval_report_v3_fs_vs_zs.md
+!docs/llm_robust_eval_report_v4_batch7_zs.csv
+!docs/llm_robust_eval_report_v4_batch7_zs.md
+!docs/llm_robust_eval_report_v4_merged_all12.csv
+!docs/llm_robust_eval_report_v4_merged_all12.md
+
+docs/llm_vs_nollm_metrics_all12_summary*.csv
+docs/llm_vs_nollm_metrics_all12_summary*.md
+!docs/llm_vs_nollm_metrics_all12_summary.csv
+!docs/llm_vs_nollm_metrics_all12_summary.md
+
+llm/auto_shutdown_when_done.sh
+scripts/controller_hooks/README.md

@@ -1,0 +1,8 @@
+model_key,status,action,dim_key,q_gate,sev_sum_gate,require_rule_match,recall,delta_recall_vs_nollm,acc,delta_acc_vs_nollm,pass_acc_guard,pass_recall,result_csv
+hds5c3030ala630,FALLBACK,nollm,full70,0.0,0.0,0,65.0,-30.0,99.882421249,9.770146730999995,True,False,/root/autodl-tmp/StreamDFP/hi7_example/phase3b7_hds5c3030ala630_full70_q00_s00_r0_b7zs_D10_H05000_i10.csv
+hgsthms5c4040ale640,PASS,llm_enabled,full70,0.0,0.0,0,75.892857142,0.6547619029999936,99.444676824,0.0483409419999958,True,True,/root/autodl-tmp/StreamDFP/hi7_example/phase3b7_hgsthms5c4040ale640_full70_q00_s00_r0_b7zs_D10_H05000_i10.csv
+hitachihds5c4040ale630,PASS,llm_enabled,compact9,0.0,0.0,0,0.0,0.0,99.921340354,0.0,True,True,/root/autodl-tmp/StreamDFP/hi7_example/phase3b7_hitachihds5c4040ale630_compact9_q00_s00_r0_b7zs_D10_H05000_i10.csv
+st31500341as,PASS,llm_enabled,compact9,0.0,0.8,0,70.238095239,1.6666666659999834,99.438121346,0.0847457619999971,True,True,/root/autodl-tmp/StreamDFP/hi7_example/phase3b7_st31500341as_compact9_q00_s08_r0_b7zs_D10_H05000_i10.csv
+st4000dm000,FALLBACK,nollm,compact14,0.0,0.0,0,54.100508187,-3.80434782599999,99.913700437,0.0341868860000005,True,False,/root/autodl-tmp/StreamDFP/hi7_example/phase3b7_st4000dm000_compact14_q00_s00_r0_b7zs_D10_H05000_i10.csv
+wdcwd10eads,FALLBACK,nollm,compact9,0.0,0.0,0,0.0,-90.0,99.78902954,-0.1898734140000044,True,False,/root/autodl-tmp/StreamDFP/hi7_example/phase3b7_wdcwd10eads_compact9_q00_s00_r0_b7zs_D10_H05000_i10.csv
+wdcwd30efrx,PASS,llm_enabled,compact14,0.0,0.0,0,30.0,30.0,99.900299075,0.0423330379999953,True,True,/root/autodl-tmp/StreamDFP/hi7_example/phase3b7_wdcwd30efrx_compact14_q00_s00_r0_b7zs_D10_H05000_i10.csv

@@ -1,0 +1,12 @@
+enabled: false
+extract_profile: zs
+cache_variant: full70
+q_gate: 0.0
+sev_sum_gate: 0.0
+require_rule_match: false
+min_q_score: 0.0
+min_rule_match: false
+min_mapped_event_ratio: 0.0
+keep_dims: all
+llm_scale_alpha: 1.0
+fallback: nollm

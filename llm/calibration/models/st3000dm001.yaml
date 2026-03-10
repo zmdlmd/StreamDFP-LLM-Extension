@@ -1,0 +1,17 @@
+enabled: true
+extract_profile: zs
+cache_variant: compact9
+q_gate: 0.55
+sev_sum_gate: 0.8
+require_rule_match: true
+min_q_score: 0.55
+min_rule_match: true
+min_mapped_event_ratio: 0.0
+keep_dims: event_top3_plus_meta
+llm_scale_alpha: 1.0
+fallback: nollm
+
+# Model-specific runtime setting found by st3000 micro-grid search.
+# run.py currently ignores these fields; they are for pipeline/report runners.
+simulate_downsample_ratio: 12
+simulate_threshold_h: 0.5000

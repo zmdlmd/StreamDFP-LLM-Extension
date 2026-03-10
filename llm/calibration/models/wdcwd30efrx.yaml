@@ -1,0 +1,12 @@
+enabled: true
+extract_profile: zs
+cache_variant: compact14
+q_gate: 0.0
+sev_sum_gate: 0.0
+require_rule_match: false
+min_q_score: 0.0
+min_rule_match: false
+min_mapped_event_ratio: 0.0
+keep_dims: event_top8_plus_meta
+llm_scale_alpha: 1.0
+fallback: nollm
