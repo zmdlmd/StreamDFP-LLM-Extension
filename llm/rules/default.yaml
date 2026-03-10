@@ -1,0 +1,194 @@
+defaults:
+  raw:
+    direction: high_bad
+    group: unknown
+    min_abs_delta: 1.0
+    min_pct_delta: 0.10
+    weight: 0.70
+    mode: level
+    min_points: 3
+    cap: 1.0
+    cooldown_days: 0
+  normalized:
+    direction: low_bad
+    group: unknown
+    min_abs_delta: 1.0
+    min_pct_delta: 0.02
+    weight: 0.70
+    mode: level
+    min_points: 3
+    cap: 1.0
+    cooldown_days: 0
+
+scoring:
+  top_k_per_group: 3
+  low_threshold: 0.30
+  margin_threshold: 0.08
+  abnormal_multiplier: 1.00
+  watch_multiplier: 0.45
+  watch_ratio_threshold: 0.20
+  watch_severity_threshold: 0.15
+  recency_horizon_days: 14
+  workload_support_threshold: 0.10
+  workload_min_support: 1
+  workload_min_feature_signals: 1
+
+summary:
+  top_k: 8
+  include_rule_conclusion: false
+
+features:
+  smart_5_raw:
+    label: SMART 5 Reallocated Sector Count(raw)
+    direction: high_bad
+    group: media
+    min_abs_delta: 1.0
+    min_pct_delta: 0.20
+    weight: 1.30
+    mode: level
+    min_points: 4
+    cap: 1.0
+    cooldown_days: 0
+  smart_197_raw:
+    label: SMART 197 Current Pending Sector(raw)
+    direction: high_bad
+    group: media
+    min_abs_delta: 1.0
+    min_pct_delta: 0.20
+    weight: 1.20
+    mode: level
+    min_points: 4
+    cap: 1.0
+    cooldown_days: 0
+  smart_198_raw:
+    label: SMART 198 Offline Uncorrectable(raw)
+    direction: high_bad
+    group: media
+    min_abs_delta: 1.0
+    min_pct_delta: 0.20
+    weight: 1.20
+    mode: level
+    min_points: 4
+    cap: 1.0
+    cooldown_days: 0
+  smart_199_raw:
+    label: SMART 199 UDMA CRC Error Count(raw)
+    direction: high_bad
+    group: interface
+    min_abs_delta: 1.0
+    min_pct_delta: 0.20
+    weight: 1.10
+    mode: level
+    min_points: 4
+    cap: 1.0
+    cooldown_days: 0
+  smart_188_raw:
+    label: SMART 188 Command Timeout(raw)
+    direction: high_bad
+    group: interface
+    min_abs_delta: 1.0
+    min_pct_delta: 0.20
+    weight: 1.10
+    mode: level
+    min_points: 4
+    cap: 1.0
+    cooldown_days: 0
+  smart_194_raw:
+    label: SMART 194 Temperature(raw)
+    direction: high_bad
+    group: temperature
+    min_abs_delta: 2.0
+    min_pct_delta: 0.08
+    weight: 1.00
+    mode: level
+    min_points: 4
+    cap: 1.0
+    cooldown_days: 1
+  smart_192_raw:
+    label: SMART 192 Power-off Retract Count(raw)
+    direction: high_bad
+    group: power
+    min_abs_delta: 1.0
+    min_pct_delta: 0.15
+    weight: 1.00
+    mode: level
+    min_points: 4
+    cap: 1.0
+    cooldown_days: 0
+  smart_193_raw:
+    label: SMART 193 Load/Unload Cycle Count(raw)
+    direction: high_bad
+    group: power
+    min_abs_delta: 1.0
+    min_pct_delta: 0.15
+    weight: 1.00
+    mode: level
+    min_points: 4
+    cap: 1.0
+    cooldown_days: 0
+  smart_9_raw:
+    label: SMART 9 Power-on Hours(raw)
+    direction: high_warn
+    group: workload
+    min_abs_delta: 6.0
+    min_pct_delta: 0.30
+    weight: 0.55
+    mode: delta
+    min_points: 6
+    cap: 0.9
+    cooldown_days: 1
+  smart_5_normalized:
+    label: SMART 5 Normalized Health
+    direction: low_bad
+    group: media
+    min_abs_delta: 1.0
+    min_pct_delta: 0.02
+    weight: 1.20
+    mode: level
+    min_points: 4
+    cap: 1.0
+    cooldown_days: 0
+  smart_197_normalized:
+    label: SMART 197 Normalized Health
+    direction: low_bad
+    group: media
+    min_abs_delta: 1.0
+    min_pct_delta: 0.02
+    weight: 1.20
+    mode: level
+    min_points: 4
+    cap: 1.0
+    cooldown_days: 0
+  smart_198_normalized:
+    label: SMART 198 Normalized Health
+    direction: low_bad
+    group: media
+    min_abs_delta: 1.0
+    min_pct_delta: 0.02
+    weight: 1.10
+    mode: level
+    min_points: 4
+    cap: 1.0
+    cooldown_days: 0
+  smart_199_normalized:
+    label: SMART 199 Normalized Health
+    direction: low_bad
+    group: interface
+    min_abs_delta: 1.0
+    min_pct_delta: 0.02
+    weight: 1.00
+    mode: level
+    min_points: 4
+    cap: 1.0
+    cooldown_days: 0
+  smart_194_normalized:
+    label: SMART 194 Normalized Health
+    direction: low_bad
+    group: temperature
+    min_abs_delta: 1.0
+    min_pct_delta: 0.02
+    weight: 1.00
+    mode: level
+    min_points: 4
+    cap: 1.0
+    cooldown_days: 0

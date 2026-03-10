@@ -1,0 +1,23 @@
+meta:
+  generated_at_utc: '2026-02-11T01:36:13Z'
+  source_data_root: /root/autodl-tmp/StreamDFP/data/data_2014/2014
+  model: ST3160316AS
+  model_key: st3160316as
+  rows: 19109
+  medium: hdd
+  vendor: seagate
+  min_feature_presence_ratio: 0.2
+  parent_layers:
+  - base
+  - medium/hdd
+  - vendor/seagate
+  present_features_count: 24
+  missing_vs_parent_count: 0
+fewshot:
+  required_causes:
+  - media
+  - interface
+  - temperature
+  - power
+  - unknown
+features: {}

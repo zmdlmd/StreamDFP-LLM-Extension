@@ -134,6 +134,10 @@ public abstract class AbstractPredict extends AbstractOptionHandler {
 
     // key: serial number; values: instances of the disk
     protected HashMap<String, List<Instance>> keepDelayInstances;
+    // Source day for each delayed instance, used for trace/debug only.
+    protected IdentityHashMap<Instance, String> instanceSourceDay = new IdentityHashMap<>();
+    // The day currently being loaded by Simulate.loadData().
+    protected String currentDataDay = "";
     public int cindex;
     protected Random samplingRandom;
     protected int randomSeed = 1;
@@ -152,14 +156,20 @@ public abstract class AbstractPredict extends AbstractOptionHandler {
 
     public void cleanKeepDelayInstances() {
         keepDelayInstances.clear();
+        instanceSourceDay.clear();
     }
 
     protected void keep(Instance inst, int queueSize) {
+        keep(inst, queueSize, this.currentDataDay);
+    }
+
+    protected void keep(Instance inst, int queueSize, String sourceDay) {
         String sn = inst.getSerialNumber();
         List<Instance> insts = keepDelayInstances.get(sn);
         if (insts == null) insts = new LinkedList<Instance>();
         insts.add(inst);
         keepDelayInstances.put(sn, insts);
+        instanceSourceDay.put(inst, sourceDay == null ? "" : sourceDay);
         assert (insts.size() <= queueSize);
     }
 
@@ -268,7 +278,7 @@ public abstract class AbstractPredict extends AbstractOptionHandler {
             assert(inst.classValue() >= 0 && inst.classValue() <= 1);
             if (blDelay) {
                 inst.keepPredictedVotes(votes);
-                keep(inst, validationWindow);
+                keep(inst, validationWindow, this.currentDataDay);
             } else {
                 globalEvaluator.addResult((Example<Instance>) new InstanceExample(inst), votes);
                 localEvaluator.addResult((Example<Instance>) new InstanceExample(inst), votes);

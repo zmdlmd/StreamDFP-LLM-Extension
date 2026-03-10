@@ -1,0 +1,220 @@
+version: 1
+
+default:
+  enabled: true
+  extract_profile: zs
+  cache_variant: full70
+  min_q_score: 0.0
+  min_rule_match: false
+  min_mapped_event_ratio: 0.0
+  q_gate: 0.0
+  sev_sum_gate: 0.0
+  require_rule_match: false
+  keep_dims: all
+  llm_scale_alpha: 1.0
+  fallback: nollm
+
+models:
+  st3000dm001:
+    enabled: true
+    extract_profile: zs
+    cache_variant: compact9
+    q_gate: 0.55
+    sev_sum_gate: 0.8
+    require_rule_match: true
+    min_q_score: 0.55
+    min_rule_match: true
+    min_mapped_event_ratio: 0.0
+    keep_dims: event_top3_plus_meta
+    llm_scale_alpha: 1.0
+    fallback: nollm
+  hgsthms5c4040ble640:
+    enabled: false
+    extract_profile: zs
+    cache_variant: compact14
+    q_gate: 0.0
+    sev_sum_gate: 0.0
+    require_rule_match: false
+    fallback: nollm
+  hms5c4040ble640:
+    enabled: false
+    extract_profile: zs
+    cache_variant: compact14
+    q_gate: 0.0
+    sev_sum_gate: 0.0
+    require_rule_match: false
+    min_q_score: 0.0
+    min_rule_match: false
+    min_mapped_event_ratio: 0.0
+    keep_dims: event_top8_plus_meta
+    llm_scale_alpha: 1.0
+    fallback: nollm
+  hi7:
+    enabled: true
+    extract_profile: zs
+    cache_variant: compact14
+    q_gate: 0.0
+    sev_sum_gate: 0.8
+    require_rule_match: false
+    min_q_score: 0.0
+    min_rule_match: false
+    min_mapped_event_ratio: 0.0
+    keep_dims: event_top8_plus_meta
+    llm_scale_alpha: 1.0
+    fallback: nollm
+  hitachihds722020ala330:
+    enabled: true
+    extract_profile: zs
+    cache_variant: compact14
+    q_gate: 0.0
+    sev_sum_gate: 0.8
+    require_rule_match: false
+    min_q_score: 0.0
+    min_rule_match: false
+    min_mapped_event_ratio: 0.0
+    keep_dims: event_top8_plus_meta
+    llm_scale_alpha: 1.0
+    fallback: nollm
+  hitachihds723030ala640:
+    enabled: true
+    extract_profile: zs
+    cache_variant: full70
+    q_gate: 0.0
+    sev_sum_gate: 0.0
+    require_rule_match: false
+    min_q_score: 0.0
+    min_rule_match: false
+    min_mapped_event_ratio: 0.0
+    keep_dims: all
+    llm_scale_alpha: 1.0
+    fallback: nollm
+  hds723030ala640:
+    enabled: true
+    extract_profile: zs
+    cache_variant: full70
+    q_gate: 0.0
+    sev_sum_gate: 0.0
+    require_rule_match: false
+    min_q_score: 0.0
+    min_rule_match: false
+    min_mapped_event_ratio: 0.0
+    keep_dims: all
+    llm_scale_alpha: 1.0
+    fallback: nollm
+  st31500541as:
+    enabled: true
+    extract_profile: zs
+    cache_variant: full70
+    q_gate: 0.0
+    sev_sum_gate: 0.0
+    require_rule_match: false
+    min_q_score: 0.0
+    min_rule_match: false
+    min_mapped_event_ratio: 0.0
+    keep_dims: all
+    llm_scale_alpha: 1.0
+    fallback: nollm
+  hgsthms5c4040ale640:
+    enabled: true
+    extract_profile: zs
+    cache_variant: full70
+    q_gate: 0.0
+    sev_sum_gate: 0.0
+    require_rule_match: false
+    min_q_score: 0.0
+    min_rule_match: false
+    min_mapped_event_ratio: 0.0
+    keep_dims: all
+    llm_scale_alpha: 1.0
+    fallback: nollm
+  hitachihds5c4040ale630:
+    enabled: true
+    extract_profile: zs
+    cache_variant: compact9
+    q_gate: 0.0
+    sev_sum_gate: 0.0
+    require_rule_match: false
+    min_q_score: 0.0
+    min_rule_match: false
+    min_mapped_event_ratio: 0.0
+    keep_dims: event_top3_plus_meta
+    llm_scale_alpha: 1.0
+    fallback: nollm
+  st31500341as:
+    enabled: true
+    extract_profile: zs
+    cache_variant: compact9
+    q_gate: 0.0
+    sev_sum_gate: 0.8
+    require_rule_match: false
+    min_q_score: 0.0
+    min_rule_match: false
+    min_mapped_event_ratio: 0.0
+    keep_dims: event_top3_plus_meta
+    llm_scale_alpha: 1.0
+    fallback: nollm
+  wdcwd30efrx:
+    enabled: true
+    extract_profile: zs
+    cache_variant: compact14
+    q_gate: 0.0
+    sev_sum_gate: 0.0
+    require_rule_match: false
+    min_q_score: 0.0
+    min_rule_match: false
+    min_mapped_event_ratio: 0.0
+    keep_dims: event_top8_plus_meta
+    llm_scale_alpha: 1.0
+    fallback: nollm
+  wdcwd10eads:
+    enabled: false
+    extract_profile: zs
+    cache_variant: compact9
+    q_gate: 0.0
+    sev_sum_gate: 0.0
+    require_rule_match: false
+    min_q_score: 0.0
+    min_rule_match: false
+    min_mapped_event_ratio: 0.0
+    keep_dims: event_top3_plus_meta
+    llm_scale_alpha: 1.0
+    fallback: nollm
+  st4000dm000:
+    enabled: false
+    extract_profile: zs
+    cache_variant: compact14
+    q_gate: 0.0
+    sev_sum_gate: 0.0
+    require_rule_match: false
+    min_q_score: 0.0
+    min_rule_match: false
+    min_mapped_event_ratio: 0.0
+    keep_dims: event_top8_plus_meta
+    llm_scale_alpha: 1.0
+    fallback: nollm
+  hds5c3030ala630:
+    enabled: false
+    extract_profile: zs
+    cache_variant: full70
+    q_gate: 0.0
+    sev_sum_gate: 0.0
+    require_rule_match: false
+    min_q_score: 0.0
+    min_rule_match: false
+    min_mapped_event_ratio: 0.0
+    keep_dims: all
+    llm_scale_alpha: 1.0
+    fallback: nollm
+  hitachihds5c3030ala630:
+    enabled: false
+    extract_profile: zs
+    cache_variant: full70
+    q_gate: 0.0
+    sev_sum_gate: 0.0
+    require_rule_match: false
+    min_q_score: 0.0
+    min_rule_match: false
+    min_mapped_event_ratio: 0.0
+    keep_dims: all
+    llm_scale_alpha: 1.0
+    fallback: nollm

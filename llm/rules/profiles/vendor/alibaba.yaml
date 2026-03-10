@@ -1,0 +1,8 @@
+scoring:
+  low_threshold: 0.22
+  margin_threshold: 0.05
+  watch_ratio_threshold: 0.15
+  watch_severity_threshold: 0.12
+  workload_support_threshold: 0.08
+  workload_min_support: 0
+  workload_min_feature_signals: 1

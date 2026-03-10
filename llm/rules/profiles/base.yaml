@@ -1,0 +1,38 @@
+defaults:
+  raw:
+    direction: high_bad
+    group: unknown
+    min_abs_delta: 1.0
+    min_pct_delta: 0.10
+    weight: 0.70
+    mode: level
+    min_points: 3
+    cap: 1.0
+    cooldown_days: 0
+  normalized:
+    direction: low_bad
+    group: unknown
+    min_abs_delta: 1.0
+    min_pct_delta: 0.02
+    weight: 0.70
+    mode: level
+    min_points: 3
+    cap: 1.0
+    cooldown_days: 0
+
+scoring:
+  top_k_per_group: 3
+  low_threshold: 0.30
+  margin_threshold: 0.08
+  abnormal_multiplier: 1.00
+  watch_multiplier: 0.45
+  watch_ratio_threshold: 0.20
+  watch_severity_threshold: 0.15
+  recency_horizon_days: 14
+  workload_support_threshold: 0.10
+  workload_min_support: 1
+  workload_min_feature_signals: 1
+
+summary:
+  top_k: 8
+  include_rule_conclusion: false

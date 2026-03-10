@@ -1,0 +1,2 @@
+-r requirements-public.txt
+vllm==0.17.0

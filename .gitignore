@@ -1,5 +1,63 @@
-.idea
+# Editor and OS noise
+.idea/
+.vscode/
 *.iml
 *~
 *.bak
-__pycache__
+.DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ipynb_checkpoints/
+
+# Java / Maven build outputs
+*.class
+moa/target/
+simulate/target/
+
+# Local datasets and backups
+data/
+backups/
+share_demo/
+
+# Runtime logs and generated reports
+logs/
+hi7_example/
+mc1_mlp/
+save_model/
+
+# Pyloader generated outputs
+pyloader/hi7_train*/
+pyloader/hi7_test*/
+pyloader/mc1_train/
+pyloader/mc1_test/
+pyloader/instances/
+pyloader/phase3_train*/
+pyloader/phase3_test*/
+pyloader/phase3b7_train*/
+pyloader/phase3b7_test*/
+pyloader/save_model/
+pyloader/time_*.txt
+
+# LLM generated artifacts
+llm/framework_v1/cache_*.jsonl
+llm/framework_v1/window_text_*.jsonl
+llm/framework_v1/reference_*.json
+llm/framework_v1/reference_*_quality.json
+llm/framework_v1/_tmp_*.jsonl
+llm/framework_v1/phase3_variants/
+llm/framework_v1/phase3_variants_batch7/
+llm/framework_v1_mc1/
+llm/tmp_data_*/
+llm_cache_*.jsonl
+llm/window_text_*.jsonl
+llm/reference_examples_*.json
+llm/reference_quality_*.json
+llm/*eval_report*.json
+llm/contracts/feature_contract_*.json
+
+# Personal / one-off local files
+AIMS5790_ Project Progress Check Form (Midterm).pdf

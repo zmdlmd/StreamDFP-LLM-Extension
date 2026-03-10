@@ -1,0 +1,122 @@
+defaults:
+  raw:
+    direction: high_bad
+    group: unknown
+    min_abs_delta: 1.0
+    min_pct_delta: 0.10
+    weight: 0.70
+    mode: level
+    min_points: 3
+    cap: 1.0
+    cooldown_days: 0
+  normalized:
+    direction: low_bad
+    group: unknown
+    min_abs_delta: 1.0
+    min_pct_delta: 0.02
+    weight: 0.70
+    mode: level
+    min_points: 3
+    cap: 1.0
+    cooldown_days: 0
+
+features:
+  r_5:
+    label: SMART 5 Reallocated Sector Count(raw)
+    group: media
+    weight: 1.30
+  n_5:
+    label: SMART 5 Normalized Health
+    group: media
+    weight: 1.20
+
+  r_187:
+    label: SMART 187 Reported Uncorrectable Errors(raw)
+    group: media
+    weight: 1.10
+  n_187:
+    label: SMART 187 Normalized Health
+    group: media
+    weight: 1.05
+
+  r_197:
+    label: SMART 197 Current Pending Sector(raw)
+    group: media
+    weight: 1.20
+  n_197:
+    label: SMART 197 Normalized Health
+    group: media
+    weight: 1.20
+
+  r_198:
+    label: SMART 198 Offline Uncorrectable(raw)
+    group: media
+    weight: 1.20
+  n_198:
+    label: SMART 198 Normalized Health
+    group: media
+    weight: 1.10
+
+  r_199:
+    label: SMART 199 UDMA CRC Error Count(raw)
+    group: interface
+    weight: 1.10
+  n_199:
+    label: SMART 199 Normalized Health
+    group: interface
+    weight: 1.00
+
+  r_188:
+    label: SMART 188 Command Timeout(raw)
+    group: interface
+    weight: 1.10
+  n_188:
+    label: SMART 188 Normalized Health
+    group: interface
+    weight: 1.00
+
+  r_194:
+    label: SMART 194 Temperature(raw)
+    group: temperature
+    min_abs_delta: 2.0
+    min_pct_delta: 0.08
+    weight: 1.00
+    cooldown_days: 1
+  n_194:
+    label: SMART 194 Normalized Health
+    group: temperature
+    weight: 1.00
+
+  r_192:
+    label: SMART 192 Power-off Retract Count(raw)
+    group: power
+    weight: 1.00
+  n_192:
+    label: SMART 192 Normalized Health
+    group: power
+    weight: 1.00
+
+  r_193:
+    label: SMART 193 Load/Unload Cycle Count(raw)
+    group: power
+    weight: 1.00
+  n_193:
+    label: SMART 193 Normalized Health
+    group: power
+    weight: 1.00
+
+  r_9:
+    label: SMART 9 Power-on Hours(raw)
+    group: workload
+    direction: high_warn
+    min_abs_delta: 6.0
+    min_pct_delta: 0.30
+    weight: 0.55
+    mode: delta
+    min_points: 6
+    cap: 0.9
+    cooldown_days: 1
+  n_9:
+    label: SMART 9 Normalized Health
+    group: workload
+    weight: 0.55

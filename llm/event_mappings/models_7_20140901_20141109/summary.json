@@ -1,0 +1,84 @@
+{
+  "generated_count": 7,
+  "skipped_count": 0,
+  "missing_model_keys": [],
+  "date_range": {
+    "start_date": "2014-09-01",
+    "end_date": "2014-11-09",
+    "date_format": "%Y-%m-%d",
+    "files": 70
+  },
+  "generated": [
+    {
+      "model": "HGST HMS5C4040BLE640",
+      "model_key": "hgst_hms5c4040ble640",
+      "rows": 194426,
+      "medium": "hdd",
+      "vendor": "hitachi",
+      "event_feature_count": 18,
+      "vector_dim": 70,
+      "path": "/root/autodl-tmp/StreamDFP/llm/event_mappings/models_7_20140901_20141109/event_mapping_hgst_hms5c4040ble640.yaml"
+    },
+    {
+      "model": "Hitachi HDS5C3030ALA630",
+      "model_key": "hitachi_hds5c3030ala630",
+      "rows": 316845,
+      "medium": "hdd",
+      "vendor": "hitachi",
+      "event_feature_count": 18,
+      "vector_dim": 70,
+      "path": "/root/autodl-tmp/StreamDFP/llm/event_mappings/models_7_20140901_20141109/event_mapping_hitachi_hds5c3030ala630.yaml"
+    },
+    {
+      "model": "Hitachi HDS723030ALA640",
+      "model_key": "hitachi_hds723030ala640",
+      "rows": 70430,
+      "medium": "hdd",
+      "vendor": "hitachi",
+      "event_feature_count": 18,
+      "vector_dim": 70,
+      "path": "/root/autodl-tmp/StreamDFP/llm/event_mappings/models_7_20140901_20141109/event_mapping_hitachi_hds723030ala640.yaml"
+    },
+    {
+      "model": "ST3000DM001",
+      "model_key": "st3000dm001",
+      "rows": 138759,
+      "medium": "hdd",
+      "vendor": "seagate",
+      "event_feature_count": 18,
+      "vector_dim": 70,
+      "path": "/root/autodl-tmp/StreamDFP/llm/event_mappings/models_7_20140901_20141109/event_mapping_st3000dm001.yaml"
+    },
+    {
+      "model": "ST31500541AS",
+      "model_key": "st31500541as",
+      "rows": 114162,
+      "medium": "hdd",
+      "vendor": "seagate",
+      "event_feature_count": 18,
+      "vector_dim": 70,
+      "path": "/root/autodl-tmp/StreamDFP/llm/event_mappings/models_7_20140901_20141109/event_mapping_st31500541as.yaml"
+    },
+    {
+      "model": "ST4000DM000",
+      "model_key": "st4000dm000",
+      "rows": 686366,
+      "medium": "hdd",
+      "vendor": "seagate",
+      "event_feature_count": 18,
+      "vector_dim": 70,
+      "path": "/root/autodl-tmp/StreamDFP/llm/event_mappings/models_7_20140901_20141109/event_mapping_st4000dm000.yaml"
+    },
+    {
+      "model": "ST4000DX000",
+      "model_key": "st4000dx000",
+      "rows": 12351,
+      "medium": "hdd",
+      "vendor": "seagate",
+      "event_feature_count": 18,
+      "vector_dim": 70,
+      "path": "/root/autodl-tmp/StreamDFP/llm/event_mappings/models_7_20140901_20141109/event_mapping_st4000dx000.yaml"
+    }
+  ],
+  "skipped": []
+}

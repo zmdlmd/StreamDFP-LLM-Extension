@@ -1,5 +1,6 @@
 import sys
 import math
+import time
 import pandas as pd
 import numpy as np
 ls_measure = [
@@ -36,14 +37,31 @@ dict_ = {
     "Recall for class 1 (percent)": "Recall_c1"
 }
 date = ""
+expected_len = 41  # 1 date + 20 global + 20 local
+progress_every_lines = 20000
+
+
+def normalize_row(row, target_len):
+    if len(row) < target_len:
+        return row + [np.nan] * (target_len - len(row))
+    if len(row) > target_len:
+        return row[:target_len]
+    return row
+
+
+start_ts = time.time()
 with open(sys.argv[1], "r") as f:
-    res = [[]]
+    res = []
     res_row = []
-    for line in f.readlines():
+    for line_no, line in enumerate(f, start=1):
+        if line_no == 1 or line_no % progress_every_lines == 0:
+            elapsed = max(time.time() - start_ts, 1e-6)
+            rate = line_no / elapsed
+            print(f"[parse.py] lines={line_no} rate={rate:.1f} lines/s", file=sys.stderr, flush=True)
         if line[0:3] == "201":
             date = line[0:10]
-            if len(res_row) == 41:
-                res.append(res_row)
+            if len(res_row) > 0:
+                res.append(normalize_row(res_row, expected_len))
                 res_row = []
             res_row.append(date)
         elif "Global Measurements" in line:
@@ -94,7 +112,10 @@ with open(sys.argv[1], "r") as f:
             continue
         else:
             res_row.append(line.strip().split(" ")[-1])
-res.append(res_row)
+if len(res_row) > 0:
+    res.append(normalize_row(res_row, expected_len))
+print(f"[parse.py] parsed_rows={len(res)} elapsed={time.time()-start_ts:.1f}s", file=sys.stderr, flush=True)
+
 columns_name = ['date']
 for item in ls_measure:
     columns_name.append("g_%s" % dict_[item])
@@ -104,20 +125,22 @@ for item in ls_measure:
 df = pd.DataFrame(res, columns=columns_name)
 df.to_csv(sys.argv[1][:-4] + ".csv", index=False)
 df = df.dropna(how="all", axis=0)
-df = df[df['l_Recall_c1'] != "NaN"]
-df['l_Days'] = df['l_Days'].astype(np.float32)
-df['l_FP'] = df['l_FP'].astype(np.float32)
-df['l_FAR'] = df['l_FAR'].astype(np.float32)
-df['l_F1_score_c1'] = df['l_F1_score_c1'].astype(np.float32)
-df['l_Precision_c1'] = df['l_Precision_c1'].astype(np.float32)
-df['l_Recall_c1'] = df['l_Recall_c1'].astype(np.float32)
-days_mean = df['l_Days'].mean()
-fp_mean = df['l_FP'].mean()
-far_mean = df['l_FAR'].mean()
-p_mean = df['l_Precision_c1'].mean()
-r_mean = df['l_Recall_c1'].mean()
-f1_mean = 2.0 * p_mean * r_mean / (p_mean + r_mean)
+for col in [
+        'l_Days', 'l_FP', 'l_FAR', 'l_F1_score_c1', 'l_Precision_c1',
+        'l_Recall_c1'
+]:
+    df[col] = pd.to_numeric(df[col], errors='coerce')
+
+df_metric = df[df['l_Recall_c1'].notna()]
 print("days\t\tFP\t\tFPR\t\tF1-score\tPrecision\tRecall")
-print("%lf\t%lf\t%lf\t%lf\t%lf\t%lf" % (days_mean, fp_mean, far_mean, f1_mean,
-                                        p_mean, r_mean))
-f1 = 2.0 * p_mean * r_mean / (p_mean + r_mean)
+if len(df_metric) == 0:
+    print("NaN\tNaN\tNaN\tNaN\tNaN\tNaN")
+else:
+    days_mean = df_metric['l_Days'].mean()
+    fp_mean = df_metric['l_FP'].mean()
+    far_mean = df_metric['l_FAR'].mean()
+    p_mean = df_metric['l_Precision_c1'].mean()
+    r_mean = df_metric['l_Recall_c1'].mean()
+    f1_mean = 2.0 * p_mean * r_mean / (p_mean + r_mean)
+    print("%lf\t%lf\t%lf\t%lf\t%lf\t%lf" % (days_mean, fp_mean, far_mean,
+                                            f1_mean, p_mean, r_mean))

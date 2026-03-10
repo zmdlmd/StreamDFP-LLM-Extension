@@ -1,0 +1,23 @@
+meta:
+  generated_at_utc: '2026-02-11T01:33:31Z'
+  source_data_root: /root/autodl-tmp/StreamDFP/data/data_2014/2014
+  model: WDC WD20EFRX
+  model_key: wdc_wd20efrx
+  rows: 3212
+  medium: hdd
+  vendor: wd
+  min_feature_presence_ratio: 0.2
+  parent_layers:
+  - base
+  - medium/hdd
+  - vendor/wd
+  present_features_count: 30
+  missing_vs_parent_count: 0
+fewshot:
+  required_causes:
+  - media
+  - interface
+  - temperature
+  - power
+  - unknown
+features: {}

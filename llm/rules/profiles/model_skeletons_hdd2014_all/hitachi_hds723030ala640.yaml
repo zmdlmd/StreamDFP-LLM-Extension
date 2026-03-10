@@ -1,0 +1,23 @@
+meta:
+  generated_at_utc: '2026-02-11T01:33:31Z'
+  source_data_root: /root/autodl-tmp/StreamDFP/data/data_2014/2014
+  model: Hitachi HDS723030ALA640
+  model_key: hitachi_hds723030ala640
+  rows: 369628
+  medium: hdd
+  vendor: hitachi
+  min_feature_presence_ratio: 0.2
+  parent_layers:
+  - base
+  - medium/hdd
+  - vendor/hitachi
+  present_features_count: 34
+  missing_vs_parent_count: 0
+fewshot:
+  required_causes:
+  - media
+  - interface
+  - temperature
+  - power
+  - unknown
+features: {}

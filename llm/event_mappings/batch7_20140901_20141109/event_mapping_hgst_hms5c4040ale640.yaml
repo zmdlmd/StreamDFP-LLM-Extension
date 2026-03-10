@@ -1,0 +1,44 @@
+meta_dim: 16
+event_types:
+- monotonic_increase
+- spike
+- drop
+event_features:
+- SMART_5
+- SMART_197
+- SMART_198
+- SMART_199
+- SMART_196
+- SMART_192
+- SMART_193
+- SMART_194
+- SMART_12
+- SMART_10
+- SMART_3
+- SMART_4
+- SMART_9
+- SMART_7
+- SMART_8
+- SMART_1
+- SMART_2
+- SMART_188
+meta:
+  generated_at_utc: '2026-02-28T05:09:56Z'
+  source_data_root: /root/autodl-tmp/StreamDFP/data/data_2014/2014
+  model: HGST HMS5C4040ALE640
+  model_key: hgst_hms5c4040ale640
+  rows: 363077
+  vector_dim: 70
+  rule_profile_id: hdd.hitachi.hgst_hms5c4040ale640
+  rule_medium: hdd
+  rule_vendor: hitachi
+  rule_layers:
+  - name: base
+    path: /root/autodl-tmp/StreamDFP/llm/rules/profiles/base.yaml
+  - name: medium:hdd
+    path: /root/autodl-tmp/StreamDFP/llm/rules/profiles/medium/hdd.yaml
+  - name: vendor:hitachi
+    path: /root/autodl-tmp/StreamDFP/llm/rules/profiles/vendor/hitachi.yaml
+  present_event_features: 17
+  scored_candidates: 18
+  min_feature_presence_ratio: 0.02

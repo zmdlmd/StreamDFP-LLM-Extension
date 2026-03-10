@@ -1,0 +1,34 @@
+scoring:
+  low_threshold: 0.28
+  margin_threshold: 0.08
+
+fewshot:
+  required_causes:
+    - media
+    - interface
+    - temperature
+    - power
+    - unknown
+
+features:
+  smart_12_raw:
+    group: power
+    weight: 0.90
+  smart_12_normalized:
+    group: power
+    weight: 0.90
+
+  smart_196_raw:
+    group: media
+    weight: 1.05
+    min_abs_delta: 1.0
+    min_pct_delta: 0.12
+  smart_196_normalized:
+    group: media
+    weight: 1.00
+
+  smart_193_raw:
+    group: power
+    min_abs_delta: 2.0
+    min_pct_delta: 0.12
+    weight: 0.95

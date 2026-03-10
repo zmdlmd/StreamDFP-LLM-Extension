@@ -1,11 +1,13 @@
-#!bin/bash
+#!/bin/bash
 # dump pickle
 # 2: load, 3: save
-START_DATE="2014-09-01"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+START_DATE="2025-02-03"
 DISK_MODEL="Hitachi HDS722020ALA330"
-DATA_PATH="~/trace/smart/all/"
-TRAIN_PATH="./hi7_train_p30n7v30_fix_20_reg/"
-TEST_PATH="./hi7_test_p30n7v30_fix_20_reg/"
+DATA_PATH="${DATA_PATH:-$ROOT/data/data_2025/}"
+TRAIN_PATH="./hi7_train/"
+TEST_PATH="./hi7_test/"
 ITER_DAYS=10
 PATH_FEATUERS="features_erg/hi7_all.txt"
 OPTIONS="1,3,4"
@@ -15,7 +17,7 @@ POSITIVE_WINDOW=30
 NEGATIVE_WINDOW=7
 VALIDATION_WINDOW=30
 
-REPORT_NAME="hi7_p30n7v30_fix_20_reg"
+REPORT_NAME="hi7"
 SAVE_DIR="save_model/"
 PATH_LOAD="${SAVE_DIR}${LOAD_NAME}.pickle"
 PATH_SAVE="${SAVE_DIR}${REPORT_NAME}.pickle"

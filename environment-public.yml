@@ -1,0 +1,14 @@
+name: streamdfp-public
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12
+  - openjdk=8
+  - maven
+  - pip
+  - numpy=2.2.6
+  - pandas=3.0.0
+  - pyyaml=6.0.2
+  - pip:
+      - modelscope==1.34.0
+      - vllm==0.17.0

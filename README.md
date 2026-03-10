@@ -1,205 +1,126 @@
 # StreamDFP
 
-StreamDFP is a general stream mining framework for disk failure prediction with concept-drift adaptation. It includes feature extraction, labeling of samples, as well as training of a prediction model. 
+This repository is based on the open-source StreamDFP project and extends it with an LLM-enhanced workflow for root-cause extraction, rule fusion, and model-level policy evaluation in disk failure prediction.
 
-StreamDFP is designed to support a variety of learning algorithms, based on three key techniques: online labeling, concept-drift-aware training, and general prediction.
+The current codebase keeps both the upstream Python + Java prediction pipeline and the extension work added on top of it. It is organized for research reproduction rather than as a minimal library package. Source code, experiment scripts, and result notes are kept together; large datasets, logs, generated caches, and local demo bundles are ignored by default so the repository can be uploaded to GitHub without dragging in runtime artifacts.
 
-We implement the prototype of StreamDFP in two parts. The first part is implemented in Python for preprocessing. We realize feature extraction, buffering, labeling, and first-phase downsampling. The second part is written in Java. We read the processed data from local file system for second-phase downsampling and training. We realize decision-tree-based algorithms and change detectors based on [Massive Online Analysis (MOA)](https://moa.cms.waikato.ac.nz/).
+If you publish this repository separately on GitHub, prefer a name such as `StreamDFP-LLM-Extension` instead of the bare `StreamDFP`, so the upstream relationship stays clear.
 
-In StreamDFP-2.0.0, we incorporate online transfer learning into StreamDFP for the prediction of minority disk models.
+## Upstream Attribution
 
-In StreamDFP-2.1.0, we integrate the Multilayer Perceptron (MLP) with the backpropagation into StreamDFP and make StreamDFP to support the evaluation on public SSD datasets at Alibaba.
+This project builds on the open-source StreamDFP framework:
 
-In StreamDFP-2.2.0, we integrate the Recurrent Neural Network (RNN) with the backpropagation through time (BPTT) into StreamDFP.
+- Upstream repository: `https://github.com/shujiehan/StreamDFP`
 
-## Prerequisite
+The work in this repository focuses on extending StreamDFP with an LLM-enhanced pipeline for semantic root-cause extraction, rule blending, fallback control, and model-level policy evaluation.
 
-- Python3: Please install [numpy](https://numpy.org/) and [pandas](https://pandas.pydata.org/).
-- Java: jdk-1.8.0
+## Highlights
 
-## Dataset
+- Upstream StreamDFP pipeline for HDD/SSD failure prediction with preprocessing in Python and training/simulation in Java.
+- StreamDFP-based LLM-enhanced framework (`framework_v1`) for Phase1 window summarization, Phase2 root-cause extraction, and Phase3 policy grid evaluation.
+- Extension modules for model-level policy registry, rule blending, fallback control, and multi-disk experiment summaries.
 
-We use the following 11 disk models in public dataset [Backblaze](https://www.backblaze.com/b2/hard-drive-test-data.html):
+## Repository Layout
 
-- Seagate ST3000DM001
-- Seagate ST4000DM000
-- Seagate ST12000NM0007
-- Hitachi HDS722020ALA330
-- Seagate ST8000DM002
-- Seagate ST8000NM0055
-- HGST HMS5C4040BLE640
-- Seagate ST31500541AS
-- Seagate ST4000DX000
-- Hitachi HDS5C3030ALA630
-- Hitachi HDS723030ALA640
-
-In addition, We use the following 3 SSD models in [public datasets at Alibaba](https://github.com/alibaba-edu/dcbrain/tree/master/ssd_smart_logs):
-- MA1
-- MB1
-- MC1
-
-You can also use other disk models for testing.
-
-## Usage
-
-### Preprocessing in Python
-
-Please first go to `pyloader/` :
-
-```
-python run.py
--s <start_date> [--start_date <start_date>]
--a <label_days> [--label_days <label_days>]
--p <path_dataset> [--path <path_dataset>]
--r <train_data_path> [--train_path <train_data_path>]
--e <test_data_path> [--test_path <test_data_path>]
--c <path_features> [--path_features <path_features>]
--o <option> [--option <option>] (1: enable regression (classification by default))
+```text
+StreamDFP/
+├── pyloader/          # Python preprocessing, feature extraction, labeling, sample generation
+├── simulate/          # Java simulation and prediction entry points
+├── moa/               # MOA dependency source tree used by the Java pipeline
+├── llm/               # LLM prompts, extraction logic, event mappings, contracts, tests
+├── scripts/           # Phase2/Phase3 orchestration, watchers, probes, reproducibility helpers
+├── docs/              # Experiment notes, summaries, comparison tables, metric reports
+├── parse.py           # Parse simulation outputs into metric tables
+└── run_*.sh           # Legacy example launchers for baseline experiments
 ```
 
-For more details, please run `python run.py -h` or refer to an example script `run_hi7_loader.sh`.
+Detailed directory notes are in [docs/REPOSITORY_LAYOUT.md](docs/REPOSITORY_LAYOUT.md).
+Documentation entry points are indexed in [docs/README.md](docs/README.md).
 
-### Training and prediction in Java
+## Main Workflows
 
-Please go back to `StreamDFP/`:
+### 1. Classic StreamDFP Pipeline
 
-```
-java -cp simulate/target/simulate-2019.01.0-SNAPSHOT.jar:moa/target/moa-2019.01.0-SNAPSHOT.jar simulate.Simulate
--s <start_date> 
--p <train_data_path>
--t <test_data_path>
--g [enable regression task]
--a <classifier>
--L <label_days>
--D <down_sample_ratio>
-```
+1. Generate train/test samples with [pyloader/run.py](pyloader/run.py) or the `pyloader/run_*_loader.sh` helpers.
+2. Train and simulate with the Java entrypoint in [simulate/](simulate/) using `simulate.Simulate`.
+3. Parse metrics with [parse.py](parse.py).
 
-For more details, please refer to an example script `run_hi7.sh`.
+Relevant files:
 
-### Example
+- [pyloader/run.py](pyloader/run.py)
+- [run_hi7.sh](run_hi7.sh)
+- [run_mc1_mlp.sh](run_mc1_mlp.sh)
+- [parse.py](parse.py)
 
-Using *Hitachi HDS722020ALA330* as an example:
+### 2. LLM-Enhanced Framework (`framework_v1`)
 
-Assume the dataset storing under `~/trace/smart/all/`
+1. Convert sliding windows into textual summaries with [llm/window_to_text.py](llm/window_to_text.py).
+2. Run offline LLM extraction with [llm/llm_offline_extract.py](llm/llm_offline_extract.py).
+3. Build cache variants and evaluate them through the Phase3 grid scripts.
+4. Merge per-model results into model-level policy decisions (`llm_enabled` vs `fallback`).
 
-#### Classification:
+Relevant files:
 
-1. open `pyloader/`;
+- [scripts/run_cross_model_llm_framework_v1.sh](scripts/run_cross_model_llm_framework_v1.sh)
+- [scripts/run_phase2_pilot20k_all12_qwen35_then_shutdown.sh](scripts/run_phase2_pilot20k_all12_qwen35_then_shutdown.sh)
+- [scripts/run_framework_v1_phase3_grid.sh](scripts/run_framework_v1_phase3_grid.sh)
+- [scripts/run_framework_v1_phase3_grid_batch7.sh](scripts/run_framework_v1_phase3_grid_batch7.sh)
+- [llm/scripts/build_cache_variant.py](llm/scripts/build_cache_variant.py)
 
-2. run the script `run_hi7_loader.sh` to process 10-day data;
+## Environment
 
-3. go back to `StreamDFP/`;
+Minimum runtime dependencies:
 
-4. run the script `run_hi7.sh` to training prediction model of ARF and predict disk failures;
+- Python 3
+- `numpy`, `pandas`
+- Java JDK 8
 
-5. parse the results by running `python parse.py hi7_example/example.txt`
+Optional LLM runtime:
 
-6. output the following results:
+- `vllm` for GPU-backed Phase2 extraction
+- Qwen-family model weights downloaded locally from HuggingFace or ModelScope
 
-|   days    |    FP     |   FPR    | F1-score  | Precision |  Recall   |
-| :-------: | :-------: | :------: | :-------: | :-------: | :-------: |
-| 11.710000 | 22.200001 | 0.473107 | 26.220090 | 16.235855 | 68.095238 |
+Public repo environment files:
 
-#### Regression
+- [requirements-public.txt](requirements-public.txt)
+- [requirements-llm-public.txt](requirements-llm-public.txt)
+- [environment-public.yml](environment-public.yml)
+- [configs/public_repro.env.example](configs/public_repro.env.example)
 
-1. open `pyloader/`;
+The public reproducibility walkthrough is in [docs/PUBLIC_REPRODUCIBILITY.md](docs/PUBLIC_REPRODUCIBILITY.md).
 
-2. run the script `run_hi7_reg_loader.sh` to process 10-day data;
+## Data and Models
 
-3. go back to `StreamDFP/`;
+This repository does not require committing raw datasets or downloaded model weights.
 
-4. run the script `run_hi7_reg.sh` to training prediction model of FIMT-DD and predict disk failures;
+- Public HDD data typically comes from Backblaze SMART records.
+- Public SSD experiments can use Alibaba SSD SMART datasets.
+- Local datasets under `data/` are ignored by `.gitignore`.
+- Local model directories outside the repo are recommended for Qwen checkpoints.
 
-5. parse the results by running `python parse_reg.py hi7_example_reg/example.txt`
+## Recommended Reading Order
 
-6. output the following results:
+If you are new to this repository, start here:
 
-| days_mean | days_std | days_max | days_min  |
-| :-------: | :------: | :------: | :-------: |
-| 0.302072  | 5.017107 | 9.206787 | -7.110260 |
+1. [docs/README.md](docs/README.md)
+2. [docs/cross_model_llm_framework_v1_final.md](docs/cross_model_llm_framework_v1_final.md)
+3. [docs/llm_recent_experiments_master_summary_20260305.md](docs/llm_recent_experiments_master_summary_20260305.md)
+4. [docs/llm_recent_experiments_qwen35_pilot20k_summary_20260310.md](docs/llm_recent_experiments_qwen35_pilot20k_summary_20260310.md)
 
-##  Usage of Online Transfer Learning
+## GitHub Upload Notes
 
-We apply transfer learning into disk failure prediction. Specifically, we first
-a prediction model (denoted by M_S) on the samples from the source disk model.
-When the samples of target disk model arrive, we start to another prediction
-model (denoted by M_T) and also update M_S. In the prediction phase, we combine
-the prediction results of both M_S and M_T.
+This repository is now prepared for GitHub-style uploading with source code and experiment docs kept visible, while the following classes of files are ignored:
 
-### Datasets
-| Source disk models | Target disk models |
-| :----------------: | :----------------: |
-| Seagate ST4000DM000 | Seagate ST31500541AS |
-| Seagate ST4000DM000 | Seagate ST4000DX000  |
-| Hitachi HDS722020ALA330 | Hitachi HDS5C3030ALA630 |
-| Hitachi HDS722020ALA330 | Hitachi HDS723030ALA640 |
+- raw datasets and local backups
+- logs, generated caches, and temporary JSONL files
+- training/test output folders under `pyloader/`
+- local demo bundles and compressed share packages
+- Java build outputs and notebook checkpoints
 
-### Example
-
-Take *Hitachi HDS722020ALA330* (hi7) as the source disk model and *Hitachi HDS723030ALA640* (hi640) as the target disk model.
-
-1. open `pyloader/`;
-
-2. run the script `run_hi7_loader_pre.sh` to process 400-day data for the source disk model (hi7).
-
-2. run the script `run_hi640_transfer_loader.sh` to process 400-day data for the target disk model (hi640);
-
-3. go back to `StreamDFP/`;
-
-4. run the script `run_hi640_transfer.sh` to training prediction model of ARF and predict disk failures for the target disk model;
-
-5. parse the results by running `python parse.py hi640_transfer/example.txt`
-
-6. output the following results:
-
-|   days    |    FP     |   FPR    | F1-score  | Precision |  Recall   |
-| :-------: | :-------: | :------: | :-------: | :-------: | :-------: |
-| 10.487608 | 6.658536  | 0.678112 | 39.982908 | 30.785494 | 57.017281 |
-
-##  Usage of Evaluating on SSD Datasets and Running the MLP
-
-We integrate the MLP into StreamDFP and make StreamDFP to support the evaluation on SSD datasets.
-As MC1 has around 200K SSDs, it needs to run on a server with at least 40GB available memory.
-
-Take *MC1* as an example:
-
-1. open `pyloader/`;
-
-2. run the script `run_mc1_loader.sh` to process 10-day data;
-
-3. go back to `StreamDFP/`;
-
-4. run the script `run_mc1_mlp.sh`
-
-5. parse the results by running `python parse.py mc1_mlp/example.txt`
-
-6. output the following results:
-
-|   days    |    FP     |   FPR    | F1-score  | Precision |  Recall   |
-| :-------: | :-------: | :------: | :-------: | :-------: | :-------: |
-| 15.727778 | 652.400024 | 0.503962 | 50.636388 | 34.165554 | 97.770432 |
-
-##  Usage of Running RNN
-
-We integrate RNN with BPTT via the stochastic gradient descent into StreamDFP.
-
-1. open `pyloader/`;
-
-2. run the script `run_hi7_loader.sh` to process 10-day data;
-
-3. go back to `StreamDFP/`;
-
-4. run the script `run_hi7_rnn.sh` to training prediction model of RNN and predict disk failures;
-
-5. parse the results by running `python parse.py hi7_rnn/example.txt`
-
-6. output the following results:
-
-|   days    |    FP     |   FPR    | F1-score  | Precision |  Recall   |
-| :-------: | :-------: | :------: | :-------: | :-------: | :-------: |
-| 17.900002 | 0.000000  | 0.000000 | 98.550730 | 100.000000 | 97.142860 |
+Before pushing, check `git status` and only stage the code/docs you really want to publish.
 
 ## Contact
 
-Please email to Shujie Han (shujiehan@pku.edu.cn) if you have any questions.
+Original project contact from the upstream README:
 
+- Shujie Han (`shujiehan@pku.edu.cn`)

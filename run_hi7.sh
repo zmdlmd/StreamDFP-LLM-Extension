@@ -1,7 +1,7 @@
-#!bin/bash
+#!/bin/bash
 START_DATE="2014-09-30"
-TRAIN_PATH="./pyloader/hi7_train_p30n7v30_fix_20/"
-TEST_PATH="./pyloader/hi7_test_p30n7v30_fix_20/"
+TRAIN_PATH="./pyloader/hi7_train/"
+TEST_PATH="./pyloader/hi7_test/"
 ITER_DAYS=10
 NUM_JOBS=-1
 ENSEMBLE_SIZE=30

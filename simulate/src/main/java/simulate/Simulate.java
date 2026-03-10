@@ -6,6 +6,7 @@ import com.yahoo.labs.samoa.instances.InstancesHeader;
 import moa.classifiers.AbstractClassifier;
 import com.yahoo.labs.samoa.instances.Instance;
 import moa.classifiers.transfer.HomOTL;
+import moa.core.Utils;
 import moa.core.ObjectRepository;
 import moa.evaluation.BasicClassificationPerformanceEvaluator;
 import moa.evaluation.BasicRegressionPerformanceEvaluator;
@@ -13,6 +14,10 @@ import moa.evaluation.LearningPerformanceEvaluator;
 import moa.options.ClassOption;
 import moa.tasks.TaskMonitor;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -46,6 +51,8 @@ public class Simulate extends AbstractPredict{
     public double transferDownSampleRatio;
 
     public double threshold;
+    public String delayTracePath;
+    public BufferedWriter delayTraceWriter;
 
     private SimpleDateFormat dateFormat;
 
@@ -105,6 +112,12 @@ public class Simulate extends AbstractPredict{
 
     public FloatOption thresholdOption = new FloatOption("thresholdForPrediction", 'H',
             "Threshold for determining positive and negative class", 0.5, 0, 1);
+    public StringOption delayTracePathOption = new StringOption(
+            "delayTracePath",
+            'Q',
+            "Optional CSV path to dump per-instance delayed-evaluation trace.",
+            ""
+    );
 
 
     public Simulate () {
@@ -152,6 +165,8 @@ public class Simulate extends AbstractPredict{
 
         this.downSampleRatio = downSampleRatioOption.getValue();
         this.keepDelayInstances = new HashMap<>();
+        this.delayTracePath = delayTracePathOption.getValue();
+        this.delayTraceWriter = null;
         this.trainingData = load(trainPath + fileName, cindex);
 
         InstancesHeader ih = new InstancesHeader(this.trainingData);
@@ -159,6 +174,7 @@ public class Simulate extends AbstractPredict{
 
         this.samplingRandom = new Random(this.randomSeed);
 
+        initDelayTraceWriter();
         updateModel(this.trainingData, this.scheme, this.downSampleRatio);
 
         this.blTransfer = this.transferOption.isSet();
@@ -212,6 +228,7 @@ public class Simulate extends AbstractPredict{
     public void loadData() {
         curDate = new Date(curDate.getTime() + 1000*24*60*60);
         this.fileName = this.dateFormat.format(curDate) + ".arff";
+        this.currentDataDay = this.dateFormat.format(curDate);
         testData = load(testPath + fileName, cindex);
         trainingData = load(trainPath + fileName, cindex);
     }
@@ -224,12 +241,15 @@ public class Simulate extends AbstractPredict{
             if (dataOption.equals(TEST)) {
                 transferCurDate = new Date(transferCurDate.getTime() + 1000*24*60*60);
                 this.targetFileName = this.dateFormat.format(transferCurDate) + ".arff";
+                this.currentDataDay = this.dateFormat.format(transferCurDate);
                 targetTestData = load(targetTestPath + targetFileName, cindex);
             } else if (dataOption.equals(TRAIN)) {
+                this.currentDataDay = this.dateFormat.format(transferCurDate);
                 targetTrainingData = load(targetTrainPath + targetFileName, cindex);
             } else if (dataOption.equals(TEST_TRAIN)) {
                 transferCurDate = new Date(transferCurDate.getTime() + 1000*24*60*60);
                 this.targetFileName = this.dateFormat.format(transferCurDate) + ".arff";
+                this.currentDataDay = this.dateFormat.format(transferCurDate);
                 targetTestData = load(targetTestPath + targetFileName, cindex);
                 targetTrainingData = load(targetTrainPath + targetFileName, cindex);
             }
@@ -237,9 +257,102 @@ public class Simulate extends AbstractPredict{
 
     }
 
+    protected void initDelayTraceWriter() throws IOException {
+        if (this.delayTracePath == null || this.delayTracePath.trim().isEmpty()) {
+            this.delayTraceWriter = null;
+            return;
+        }
+        File outFile = new File(this.delayTracePath);
+        File parent = outFile.getParentFile();
+        if (parent != null && !parent.exists()) {
+            parent.mkdirs();
+        }
+        this.delayTraceWriter = new BufferedWriter(new FileWriter(outFile));
+        this.delayTraceWriter.write("eval_day,source_day,serial_number,true_class,pred_class,vote_0,vote_1,queue_size,threshold\n");
+        this.delayTraceWriter.flush();
+    }
+
+    protected void closeDelayTraceWriter() {
+        if (this.delayTraceWriter == null) {
+            return;
+        }
+        try {
+            this.delayTraceWriter.flush();
+            this.delayTraceWriter.close();
+        } catch (Exception ignored) {
+        }
+        this.delayTraceWriter = null;
+    }
+
+    protected String resolveEvalDayForTrace() {
+        Date evalDate = new Date(curDate.getTime() - 1000L * 24L * 60L * 60L);
+        return this.dateFormat.format(evalDate);
+    }
+
+    protected Instance pickDelayChosenInstance(List<Instance> instances) {
+        boolean blFailed = false;
+        int idxLastFailed = 0;
+        int listSize = instances.size();
+        for (int i = 0; i < listSize; i++) {
+            Instance inst = instances.get(i);
+            double[] votes = inst.getPredictedVotes();
+            double trueClass = inst.classValue();
+            if (trueClass == 1) {
+                blFailed = true;
+                idxLastFailed = i;
+            }
+            if (blFailed && idxLastFailed < i) {
+                return instances.get(idxLastFailed);
+            }
+            int predictedClass;
+            if (threshold == 0.5) {
+                predictedClass = Utils.maxIndex(votes);
+            } else {
+                predictedClass = Utils.maxIndex(votes, threshold);
+            }
+            if (predictedClass == (int) trueClass) {
+                return inst;
+            }
+        }
+        return instances.get(listSize - 1);
+    }
+
+    protected void appendDelayTrace(String evalDay, Instance chosen, int queueSize) {
+        if (this.delayTraceWriter == null || chosen == null) {
+            return;
+        }
+        try {
+            double[] votes = chosen.getPredictedVotes();
+            int predClass;
+            if (threshold == 0.5) {
+                predClass = Utils.maxIndex(votes);
+            } else {
+                predClass = Utils.maxIndex(votes, threshold);
+            }
+            double vote0 = (votes != null && votes.length > 0) ? votes[0] : 0.0;
+            double vote1 = (votes != null && votes.length > 1) ? votes[1] : 0.0;
+            String sourceDay = this.instanceSourceDay.getOrDefault(chosen, "");
+            String serial = chosen.getSerialNumber() == null ? "" : chosen.getSerialNumber();
+            this.delayTraceWriter.write(
+                    evalDay + "," +
+                    sourceDay + "," +
+                    serial + "," +
+                    (int) chosen.classValue() + "," +
+                    predClass + "," +
+                    vote0 + "," +
+                    vote1 + "," +
+                    queueSize + "," +
+                    threshold + "\n"
+            );
+            this.delayTraceWriter.flush();
+        } catch (Exception ignored) {
+        }
+    }
+
     public InspectionData delayEvaluate(AbstractClassifier scheme) {
         InspectionData result = new InspectionData();
         boolean report = false;
+        String evalDayTrace = resolveEvalDayForTrace();
         Iterator it = keepDelayInstances.entrySet().iterator();
         List<String> popSN = new ArrayList<>();
         int index = 0;
@@ -248,6 +361,10 @@ public class Simulate extends AbstractPredict{
             if (index == (keepDelayInstances.keySet().size() - 1)) report = true;
             List<Instance> instances = (List<Instance>) pair.getValue();
             assert (instances.size() <= this.validationWindow);
+            Instance chosenForTrace = null;
+            if (this.delayTraceWriter != null && !blRegression && instances.size() > 0) {
+                chosenForTrace = pickDelayChosenInstance(instances);
+            }
             if (blRegression) {
                 ((BasicRegressionPerformanceEvaluator)globalEvaluator).addResultDelay(instances);
                 ((BasicRegressionPerformanceEvaluator)localEvaluator).addResultDelay(instances);
@@ -255,10 +372,15 @@ public class Simulate extends AbstractPredict{
                 ((BasicClassificationPerformanceEvaluator)globalEvaluator).addResultDelay(instances);
                 ((BasicClassificationPerformanceEvaluator)localEvaluator).addResultDelay(instances);
             }
+            if (chosenForTrace != null) {
+                appendDelayTrace(evalDayTrace, chosenForTrace, instances.size());
+            }
             if (report) {
                 result = evaluateDelay(scheme, globalEvaluator, localEvaluator, index, this.blModelMeasurement);
             }
+            Instance removed = instances.get(0);
             ((LinkedList)instances).removeFirst();
+            this.instanceSourceDay.remove(removed);
             if (instances.size() == 0) {
                 popSN.add((String) pair.getKey());
             }
@@ -375,6 +497,7 @@ public class Simulate extends AbstractPredict{
                 sim.run(sim.TARGET_DOMAIN, sim.TEST_TRAIN);
                 System.out.println(result.toString());
                 if (i == sim.transferIterations - 1) {
+                    sim.closeDelayTraceWriter();
                     // let OS to do GC
                     System.exit(0);
                 }
@@ -396,6 +519,7 @@ public class Simulate extends AbstractPredict{
                 sim.run();
                 System.out.println(result.toString());
                 if (i == sim.iterations - 1) {
+                    sim.closeDelayTraceWriter();
                     // let OS to do GC
                     System.exit(0);
                 }

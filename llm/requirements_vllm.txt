@@ -1,0 +1,2 @@
+# Optional acceleration backend for llm_offline_extract.py
+vllm

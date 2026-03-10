@@ -1,0 +1,188 @@
+features:
+  smart_1_raw:
+    label: SMART 1 Read Error Rate(raw)
+    group: unknown
+    weight: 0.45
+  smart_1_normalized:
+    label: SMART 1 Normalized Health
+    group: unknown
+    weight: 0.45
+
+  smart_2_raw:
+    label: SMART 2 Throughput Performance(raw)
+    group: unknown
+    weight: 0.45
+  smart_2_normalized:
+    label: SMART 2 Normalized Health
+    group: unknown
+    weight: 0.45
+
+  smart_3_raw:
+    label: SMART 3 Spin-up Time(raw)
+    group: power
+    weight: 0.70
+  smart_3_normalized:
+    label: SMART 3 Normalized Health
+    group: power
+    weight: 0.70
+
+  smart_4_raw:
+    label: SMART 4 Start/Stop Count(raw)
+    group: power
+    weight: 0.70
+  smart_4_normalized:
+    label: SMART 4 Normalized Health
+    group: power
+    weight: 0.70
+
+  smart_5_raw:
+    label: SMART 5 Reallocated Sector Count(raw)
+    group: media
+    weight: 1.30
+    min_abs_delta: 1.0
+    min_pct_delta: 0.20
+  smart_5_normalized:
+    label: SMART 5 Normalized Health
+    group: media
+    weight: 1.20
+
+  smart_7_raw:
+    label: SMART 7 Seek Error Rate(raw)
+    group: unknown
+    weight: 0.50
+  smart_7_normalized:
+    label: SMART 7 Normalized Health
+    group: unknown
+    weight: 0.50
+
+  smart_8_raw:
+    label: SMART 8 Seek Time Performance(raw)
+    group: unknown
+    weight: 0.50
+  smart_8_normalized:
+    label: SMART 8 Normalized Health
+    group: unknown
+    weight: 0.50
+
+  smart_9_raw:
+    label: SMART 9 Power-on Hours(raw)
+    direction: high_warn
+    group: workload
+    min_abs_delta: 6.0
+    min_pct_delta: 0.30
+    weight: 0.55
+    mode: delta
+    min_points: 6
+    cap: 0.90
+    cooldown_days: 1
+  smart_9_normalized:
+    label: SMART 9 Normalized Health
+    group: workload
+    weight: 0.55
+
+  smart_10_raw:
+    label: SMART 10 Spin Retry Count(raw)
+    group: power
+    weight: 0.80
+  smart_10_normalized:
+    label: SMART 10 Normalized Health
+    group: power
+    weight: 0.80
+
+  smart_12_raw:
+    label: SMART 12 Power Cycle Count(raw)
+    group: power
+    weight: 0.85
+  smart_12_normalized:
+    label: SMART 12 Normalized Health
+    group: power
+    weight: 0.85
+
+  smart_188_raw:
+    label: SMART 188 Command Timeout(raw)
+    group: interface
+    weight: 1.10
+    min_abs_delta: 1.0
+    min_pct_delta: 0.20
+  smart_188_normalized:
+    label: SMART 188 Normalized Health
+    group: interface
+    weight: 1.00
+
+  smart_192_raw:
+    label: SMART 192 Power-off Retract Count(raw)
+    group: power
+    weight: 1.00
+    min_abs_delta: 1.0
+    min_pct_delta: 0.15
+  smart_192_normalized:
+    label: SMART 192 Normalized Health
+    group: power
+    weight: 1.00
+
+  smart_193_raw:
+    label: SMART 193 Load/Unload Cycle Count(raw)
+    group: power
+    weight: 1.00
+    min_abs_delta: 1.0
+    min_pct_delta: 0.15
+  smart_193_normalized:
+    label: SMART 193 Normalized Health
+    group: power
+    weight: 1.00
+
+  smart_194_raw:
+    label: SMART 194 Temperature(raw)
+    group: temperature
+    weight: 1.00
+    min_abs_delta: 2.0
+    min_pct_delta: 0.08
+    cooldown_days: 1
+  smart_194_normalized:
+    label: SMART 194 Normalized Health
+    group: temperature
+    weight: 1.00
+
+  smart_196_raw:
+    label: SMART 196 Reallocation Event Count(raw)
+    group: media
+    weight: 1.05
+    min_abs_delta: 1.0
+    min_pct_delta: 0.15
+  smart_196_normalized:
+    label: SMART 196 Normalized Health
+    group: media
+    weight: 0.95
+
+  smart_197_raw:
+    label: SMART 197 Current Pending Sector(raw)
+    group: media
+    weight: 1.20
+    min_abs_delta: 1.0
+    min_pct_delta: 0.20
+  smart_197_normalized:
+    label: SMART 197 Normalized Health
+    group: media
+    weight: 1.20
+
+  smart_198_raw:
+    label: SMART 198 Offline Uncorrectable(raw)
+    group: media
+    weight: 1.20
+    min_abs_delta: 1.0
+    min_pct_delta: 0.20
+  smart_198_normalized:
+    label: SMART 198 Normalized Health
+    group: media
+    weight: 1.10
+
+  smart_199_raw:
+    label: SMART 199 UDMA CRC Error Count(raw)
+    group: interface
+    weight: 1.10
+    min_abs_delta: 1.0
+    min_pct_delta: 0.20
+  smart_199_normalized:
+    label: SMART 199 Normalized Health
+    group: interface
+    weight: 1.00

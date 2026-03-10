@@ -1,0 +1,6 @@
+scoring:
+  low_threshold: 0.30
+  margin_threshold: 0.08
+  workload_support_threshold: 0.10
+  workload_min_support: 1
+  workload_min_feature_signals: 1
