@@ -1,0 +1,410 @@
+{
+  "version": 2,
+  "title": "StreamDFP Workbench",
+  "workflows": [
+    {
+      "id": "classic.preprocess.hi7",
+      "display_name": "Classic / HI7 Preprocess",
+      "category": "Classic Pipeline",
+      "canonical_entry": "workflows/classic/hi7-preprocess.sh",
+      "legacy_entry": "pyloader/run_hi7_loader.sh",
+      "cwd": ".",
+      "command": ["bash", "workflows/classic/hi7-preprocess.sh"],
+      "description": "Generate HI7 train/test ARFF data for the classic HDD classification baseline.",
+      "notes": [
+        "Runs the upstream loader from pyloader/ with repository-root path resolution.",
+        "Use this before HI7 classic training."
+      ],
+      "tags": ["classic", "hi7", "preprocess", "hdd"]
+    },
+    {
+      "id": "classic.run.hi7",
+      "display_name": "Classic / HI7 Train And Simulate",
+      "category": "Classic Pipeline",
+      "canonical_entry": "workflows/classic/hi7-train.sh",
+      "legacy_entry": "run_hi7.sh",
+      "cwd": ".",
+      "command": ["bash", "workflows/classic/hi7-train.sh"],
+      "description": "Run the classic Adaptive Random Forest baseline on preprocessed HI7 data.",
+      "notes": [
+        "Requires HI7 preprocessing outputs.",
+        "Requires simulate/ and moa/ jars to be built."
+      ],
+      "tags": ["classic", "hi7", "train", "simulate"]
+    },
+    {
+      "id": "classic.preprocess.hi7-regression",
+      "display_name": "Classic / HI7 Regression Preprocess",
+      "category": "Classic Pipeline",
+      "canonical_entry": "workflows/classic/hi7-regression-preprocess.sh",
+      "legacy_entry": "pyloader/run_hi7_reg_loader.sh",
+      "cwd": ".",
+      "command": ["bash", "workflows/classic/hi7-regression-preprocess.sh"],
+      "description": "Generate HI7 regression train/test data used by the regression baseline.",
+      "notes": [
+        "Runs inside pyloader/ because the upstream loader uses relative paths."
+      ],
+      "tags": ["classic", "hi7", "regression", "preprocess"]
+    },
+    {
+      "id": "classic.run.hi7-regression",
+      "display_name": "Classic / HI7 Regression Train",
+      "category": "Classic Pipeline",
+      "canonical_entry": "workflows/classic/hi7-regression-train.sh",
+      "legacy_entry": "run_hi7_reg.sh",
+      "cwd": ".",
+      "command": ["bash", "workflows/classic/hi7-regression-train.sh"],
+      "description": "Run the HI7 regression experiment on preprocessed regression data.",
+      "notes": [
+        "Requires pyloader/run_hi7_reg_loader.sh outputs to exist."
+      ],
+      "tags": ["classic", "hi7", "regression", "train"]
+    },
+    {
+      "id": "classic.run.hi640-transfer",
+      "display_name": "Classic / HI640 Transfer Learning",
+      "category": "Classic Pipeline",
+      "canonical_entry": "workflows/classic/hi640-transfer-run.sh",
+      "legacy_entry": "run_hi640_transfer.sh",
+      "cwd": ".",
+      "command": ["bash", "workflows/classic/hi640-transfer-run.sh"],
+      "description": "Run the classic transfer-learning experiment for HI640 using the upstream pipeline.",
+      "notes": [
+        "Requires transfer-learning preprocessing outputs under pyloader/."
+      ],
+      "tags": ["classic", "transfer", "hi640"]
+    },
+    {
+      "id": "classic.run.mc1-mlp",
+      "display_name": "Classic / MC1 MLP",
+      "category": "Classic Pipeline",
+      "canonical_entry": "workflows/classic/mc1-mlp-run.sh",
+      "legacy_entry": "run_mc1_mlp.sh",
+      "cwd": ".",
+      "command": ["bash", "workflows/classic/mc1-mlp-run.sh"],
+      "description": "Run the SSD-side MC1 MLP baseline.",
+      "notes": [
+        "Requires MC1 preprocessing outputs and enough memory for Java."
+      ],
+      "tags": ["classic", "mc1", "mlp", "ssd"]
+    },
+    {
+      "id": "llm.framework.phase0",
+      "display_name": "LLM / Framework V1 / Phase 0 Prepare",
+      "category": "LLM Framework",
+      "canonical_entry": "workflows/llm/framework-phase0.sh",
+      "legacy_entry": "scripts/run_cross_model_llm_framework_v1.sh (PHASE=0)",
+      "cwd": ".",
+      "command": ["bash", "workflows/llm/framework-phase0.sh"],
+      "description": "Prepare framework_v1 inputs and contracts for the main cross-model LLM workflow.",
+      "notes": [
+        "Automatically sources configs/public_repro.env if it exists.",
+        "Mainly CPU and filesystem work."
+      ],
+      "tags": ["llm", "framework_v1", "phase0"],
+      "env": [
+        {
+          "name": "RUN_TAG",
+          "label": "Run Tag",
+          "default": "pilot20k",
+          "placeholder": "pilot20k",
+          "help": "Optional output tag used by framework_v1."
+        }
+      ]
+    },
+    {
+      "id": "llm.framework.phase1",
+      "display_name": "LLM / Framework V1 / Phase 1 Window Text",
+      "category": "LLM Framework",
+      "canonical_entry": "workflows/llm/framework-phase1.sh",
+      "legacy_entry": "scripts/run_cross_model_llm_framework_v1.sh (PHASE=1)",
+      "cwd": ".",
+      "command": ["bash", "workflows/llm/framework-phase1.sh"],
+      "description": "Generate Phase1 textual summaries used as the main LLM input.",
+      "notes": [
+        "Outputs go to llm/framework_v1/ and are ignored by Git."
+      ],
+      "tags": ["llm", "framework_v1", "phase1", "summary_text"],
+      "env": [
+        {
+          "name": "RUN_TAG",
+          "label": "Run Tag",
+          "default": "pilot20k",
+          "placeholder": "pilot20k",
+          "help": "Optional output tag used by framework_v1."
+        }
+      ]
+    },
+    {
+      "id": "llm.framework.phase2",
+      "display_name": "LLM / Framework V1 / Phase 2 Extract",
+      "category": "LLM Framework",
+      "canonical_entry": "workflows/llm/framework-phase2.sh",
+      "legacy_entry": "scripts/run_cross_model_llm_framework_v1.sh (PHASE=2)",
+      "cwd": ".",
+      "command": ["bash", "workflows/llm/framework-phase2.sh"],
+      "description": "Run the main Phase2 offline LLM extraction flow for framework_v1.",
+      "notes": [
+        "Requires a CUDA-capable GPU and a local compatible model checkpoint."
+      ],
+      "warning": "GPU required. This can be a long-running extraction job.",
+      "tags": ["llm", "framework_v1", "phase2", "gpu"],
+      "env": [
+        {
+          "name": "RUN_TAG",
+          "label": "Run Tag",
+          "default": "pilot20k",
+          "placeholder": "pilot20k",
+          "help": "Optional output tag used by framework_v1."
+        }
+      ]
+    },
+    {
+      "id": "llm.pilot20k.phase2-all12",
+      "display_name": "LLM / Pilot20k / Phase 2 All12",
+      "category": "LLM Framework",
+      "canonical_entry": "workflows/llm/pilot20k-phase2-all12.sh",
+      "legacy_entry": "scripts/run_phase2_pilot20k_all12_qwen35_then_shutdown.sh",
+      "cwd": ".",
+      "command": ["bash", "workflows/llm/pilot20k-phase2-all12.sh"],
+      "description": "Run the pilot20k Phase2 extraction across all 12 HDD models with auto-shutdown disabled by default.",
+      "notes": [
+        "The normalized wrapper forces AUTO_SHUTDOWN=0 unless you override it explicitly.",
+        "Use TARGET_KEYS to restrict to a subset of models."
+      ],
+      "warning": "GPU required. Long-running job. Auto shutdown is off by default in the wrapper.",
+      "tags": ["llm", "pilot20k", "phase2", "all12", "gpu"],
+      "env": [
+        {
+          "name": "RUN_TAG",
+          "label": "Run Tag",
+          "default": "pilot20k_qwen35",
+          "placeholder": "pilot20k_qwen35",
+          "help": "Phase2 output tag."
+        },
+        {
+          "name": "TARGET_KEYS",
+          "label": "Target Models",
+          "default": "",
+          "placeholder": "st31500541as,st3000dm001",
+          "help": "Optional comma-separated model keys. Leave empty for all12."
+        },
+        {
+          "name": "MODEL_PATH",
+          "label": "Model Path",
+          "default": "",
+          "placeholder": "../models/Qwen/Qwen3.5-4B",
+          "help": "Optional local model override."
+        }
+      ]
+    },
+    {
+      "id": "llm.pilot20k.phase3-all12",
+      "display_name": "LLM / Pilot20k / Phase 3 All12",
+      "category": "LLM Framework",
+      "canonical_entry": "workflows/llm/pilot20k-phase3-all12.sh",
+      "legacy_entry": "scripts/run_phase3_all_pilot20k_qwen35.sh",
+      "cwd": ".",
+      "command": ["bash", "workflows/llm/pilot20k-phase3-all12.sh"],
+      "description": "Run the pilot20k Phase3 grid evaluation across all 12 HDD models.",
+      "notes": [
+        "CPU-heavy evaluation step after Phase2 extraction is complete."
+      ],
+      "tags": ["llm", "pilot20k", "phase3", "all12", "cpu"],
+      "env": [
+        {
+          "name": "PHASE3_RUN_TAG",
+          "label": "Phase3 Run Tag",
+          "default": "pilot20k_qwen35",
+          "placeholder": "pilot20k_qwen35",
+          "help": "Phase3 input tag. Usually matches Phase2 run tag."
+        },
+        {
+          "name": "PHASE3_TAG_SUFFIX",
+          "label": "Tag Suffix",
+          "default": "qwen35p20k",
+          "placeholder": "qwen35p20k",
+          "help": "Suffix used in Phase3 result filenames."
+        },
+        {
+          "name": "MAX_WINDOWS",
+          "label": "Max Windows",
+          "default": "20000",
+          "placeholder": "20000",
+          "help": "Upper bound for each model's input windows."
+        }
+      ]
+    },
+    {
+      "id": "llm.batch7.phase2-zs",
+      "display_name": "LLM / Batch7 / Phase 2 ZS",
+      "category": "LLM Framework",
+      "canonical_entry": "workflows/llm/batch7-phase2-zs.sh",
+      "legacy_entry": "scripts/run_batch7_phase2_zs.sh",
+      "cwd": ".",
+      "command": ["bash", "workflows/llm/batch7-phase2-zs.sh"],
+      "description": "Run the batch7 HDD Phase2 zero-shot extraction flow.",
+      "notes": [
+        "Good when you want the expansion set only instead of the full all12 wrapper."
+      ],
+      "warning": "GPU required.",
+      "tags": ["llm", "batch7", "phase2", "zs", "gpu"],
+      "env": [
+        {
+          "name": "MODEL_PATH",
+          "label": "Model Path",
+          "default": "",
+          "placeholder": "../models/Qwen/Qwen3.5-4B",
+          "help": "Optional local model override."
+        },
+        {
+          "name": "BATCH_SIZE",
+          "label": "Batch Size",
+          "default": "64",
+          "placeholder": "64",
+          "help": "Phase2 batch size."
+        },
+        {
+          "name": "MAX_WINDOWS",
+          "label": "Max Windows",
+          "default": "20000",
+          "placeholder": "20000",
+          "help": "Upper bound for each model's input windows."
+        }
+      ]
+    },
+    {
+      "id": "llm.mc1.phase2",
+      "display_name": "LLM / MC1 / Phase 2",
+      "category": "SSD / MC1",
+      "canonical_entry": "workflows/llm/mc1-phase2.sh",
+      "legacy_entry": "scripts/run_framework_v1_phase2_mc1.sh",
+      "cwd": ".",
+      "command": ["bash", "workflows/llm/mc1-phase2.sh"],
+      "description": "Run the MC1 pilot20k Phase2 extraction flow.",
+      "notes": [
+        "Useful for SSD-side LLM validation."
+      ],
+      "warning": "GPU required.",
+      "tags": ["llm", "mc1", "phase2", "ssd", "gpu"],
+      "env": [
+        {
+          "name": "RUN_TAG",
+          "label": "Run Tag",
+          "default": "pilot20k",
+          "placeholder": "pilot20k",
+          "help": "Output tag used for MC1 cache files."
+        },
+        {
+          "name": "MODEL_PATH",
+          "label": "Model Path",
+          "default": "",
+          "placeholder": "../models/Qwen/Qwen3.5-4B",
+          "help": "Optional local model override."
+        }
+      ]
+    },
+    {
+      "id": "llm.mc1.phase3-grid",
+      "display_name": "LLM / MC1 / Phase 3 Grid",
+      "category": "SSD / MC1",
+      "canonical_entry": "workflows/llm/mc1-phase3-grid.sh",
+      "legacy_entry": "scripts/run_framework_v1_phase3_grid_mc1.sh",
+      "cwd": ".",
+      "command": ["bash", "workflows/llm/mc1-phase3-grid.sh"],
+      "description": "Run the MC1 Phase3 grid evaluation over cache variants.",
+      "notes": [
+        "Runs CPU and Java simulation after MC1 Phase2 outputs are ready."
+      ],
+      "tags": ["llm", "mc1", "phase3", "ssd", "cpu"],
+      "env": [
+        {
+          "name": "RUN_TAG",
+          "label": "Run Tag",
+          "default": "pilot20k",
+          "placeholder": "pilot20k",
+          "help": "Input tag used for MC1 Phase2 outputs."
+        },
+        {
+          "name": "PHASE3_COMBO_LIMIT",
+          "label": "Combo Limit",
+          "default": "12",
+          "placeholder": "12",
+          "help": "How many new Phase3 combos to run in this invocation. Use 0 for all."
+        },
+        {
+          "name": "PHASE3_EXTRACT_MODE",
+          "label": "Extract Mode",
+          "default": "zs",
+          "placeholder": "zs",
+          "help": "Usually zs or fs."
+        }
+      ]
+    },
+    {
+      "id": "monitor.pilot20k.phase2",
+      "display_name": "Monitor / Pilot20k Phase 2",
+      "category": "Monitoring",
+      "canonical_entry": "workflows/monitoring/pilot20k-phase2-monitor.sh",
+      "legacy_entry": "scripts/monitor_phase2_all12_qwen35.sh",
+      "cwd": ".",
+      "command": ["bash", "workflows/monitoring/pilot20k-phase2-monitor.sh"],
+      "description": "Tail all12 Phase2 progress by cache rows, active model, and GPU state.",
+      "notes": [
+        "Read-only monitor. Does not launch extraction by itself."
+      ],
+      "tags": ["monitor", "pilot20k", "phase2", "gpu"],
+      "env": [
+        {
+          "name": "RUN_TAG",
+          "label": "Run Tag",
+          "default": "pilot20k_qwen35",
+          "placeholder": "pilot20k_qwen35",
+          "help": "Used to locate the newest summary file."
+        },
+        {
+          "name": "SUMMARY_TSV",
+          "label": "Summary TSV",
+          "default": "",
+          "placeholder": "logs/framework_v1/phase2_all12_xxx.tsv",
+          "help": "Optional explicit summary file path."
+        },
+        {
+          "name": "INTERVAL_SEC",
+          "label": "Interval Seconds",
+          "default": "300",
+          "placeholder": "300",
+          "help": "Sampling interval."
+        }
+      ]
+    },
+    {
+      "id": "maintenance.public-first-release-check",
+      "display_name": "Maintenance / Public First Release Check",
+      "category": "Maintenance",
+      "canonical_entry": "workflows/maintenance/public-release-check.sh",
+      "legacy_entry": "scripts/check_public_first_release.sh",
+      "cwd": ".",
+      "command": ["bash", "workflows/maintenance/public-release-check.sh"],
+      "description": "Validate the recommended public-release scope and ignored runtime artifacts.",
+      "notes": [
+        "Useful before staging or pushing the repository."
+      ],
+      "tags": ["maintenance", "git", "public-release"]
+    },
+    {
+      "id": "maintenance.workbench-registry-check",
+      "display_name": "Maintenance / Workbench Registry Check",
+      "category": "Maintenance",
+      "canonical_entry": "workflows/maintenance/workbench-registry-check.sh",
+      "legacy_entry": "python ui/server.py --check",
+      "cwd": ".",
+      "command": ["bash", "workflows/maintenance/workbench-registry-check.sh"],
+      "description": "Validate that the local workbench registry loads cleanly.",
+      "notes": [
+        "Use after changing ui/workflows.json or adding new aliases."
+      ],
+      "tags": ["maintenance", "workbench", "registry"]
+    }
+  ]
+}

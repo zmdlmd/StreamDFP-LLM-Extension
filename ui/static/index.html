@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>StreamDFP Workbench</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Local Workbench</p>
+          <h1>StreamDFP Workflow Console</h1>
+          <p class="subtitle">
+            Use normalized workflow names and categories instead of hunting through legacy script filenames.
+          </p>
+        </div>
+        <div class="topbar-card">
+          <div class="topbar-kv">
+            <span>Entry</span>
+            <code>./run_workbench.sh</code>
+          </div>
+          <div class="topbar-kv">
+            <span>Scope</span>
+            <span>Curated launchers only</span>
+          </div>
+        </div>
+      </header>
+
+      <main class="layout">
+        <section class="left-panel panel">
+          <div class="panel-head">
+            <h2>Workflows</h2>
+            <span id="workflowCount" class="pill">0</span>
+          </div>
+          <label class="field">
+            <span>Search</span>
+            <input id="searchInput" type="text" placeholder="Search display name, tags, or legacy script" />
+          </label>
+          <div id="categoryFilters" class="filter-row"></div>
+          <div id="workflowList" class="workflow-list"></div>
+        </section>
+
+        <section class="center-panel panel">
+          <div class="panel-head">
+            <h2>Details</h2>
+            <span id="selectedCategory" class="pill muted">Select one</span>
+          </div>
+          <div id="emptyState" class="empty-state">
+            <p>Select a workflow on the left to view its purpose, canonical entrypoint, legacy script path, and launch options.</p>
+          </div>
+          <div id="detailView" class="detail-view hidden">
+            <div class="detail-title-row">
+              <div>
+                <p id="detailEyebrow" class="eyebrow"></p>
+                <h3 id="detailTitle"></h3>
+              </div>
+              <span id="detailTags" class="tag-row"></span>
+            </div>
+            <p id="detailDescription" class="detail-description"></p>
+            <div id="detailWarning" class="callout warning hidden"></div>
+            <div class="info-grid">
+              <div class="info-card">
+                <span class="label">Canonical Entry</span>
+                <code id="detailCanonical"></code>
+              </div>
+              <div class="info-card">
+                <span class="label">Legacy Entry</span>
+                <code id="detailLegacy"></code>
+              </div>
+              <div class="info-card">
+                <span class="label">Run Directory</span>
+                <code id="detailCwd"></code>
+              </div>
+            </div>
+            <div class="panel-subsection">
+              <h4>Launch Options</h4>
+              <form id="envForm" class="env-form"></form>
+              <button id="runButton" class="primary-button" type="button">Run Workflow</button>
+            </div>
+            <div class="panel-subsection">
+              <h4>Command Preview</h4>
+              <pre id="commandPreview" class="code-block"></pre>
+            </div>
+            <div class="panel-subsection">
+              <h4>Notes</h4>
+              <ul id="detailNotes" class="note-list"></ul>
+            </div>
+          </div>
+        </section>
+
+        <section class="right-panel panel">
+          <div class="panel-head">
+            <h2>Jobs</h2>
+            <button id="refreshJobsButton" class="ghost-button" type="button">Refresh</button>
+          </div>
+          <div id="jobList" class="job-list"></div>
+          <div class="panel-subsection">
+            <div class="panel-head compact">
+              <h4>Selected Job Log</h4>
+              <button id="stopJobButton" class="ghost-button hidden" type="button">Stop Job</button>
+            </div>
+            <pre id="jobLog" class="code-block tall"></pre>
+          </div>
+        </section>
+      </main>
+    </div>
+    <script src="/static/app.js"></script>
+  </body>
+</html>

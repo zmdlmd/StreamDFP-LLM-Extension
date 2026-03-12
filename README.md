@@ -28,14 +28,38 @@ StreamDFP/
 ├── simulate/          # Java simulation and prediction entry points
 ├── moa/               # MOA dependency source tree used by the Java pipeline
 ├── llm/               # LLM prompts, extraction logic, event mappings, contracts, tests
+├── ui/                # Local Web UI, workflow registry, and static workbench assets
+├── workflows/         # Canonical wrapper entrypoints with normalized names
 ├── scripts/           # Phase2/Phase3 orchestration, watchers, probes, reproducibility helpers
 ├── docs/              # Experiment notes, summaries, comparison tables, metric reports
 ├── parse.py           # Parse simulation outputs into metric tables
+├── run_workbench.sh   # Stable launcher for the local workbench UI
 └── run_*.sh           # Legacy example launchers for baseline experiments
 ```
 
 Detailed directory notes are in [docs/REPOSITORY_LAYOUT.md](docs/REPOSITORY_LAYOUT.md).
 Documentation entry points are indexed in [docs/README.md](docs/README.md).
+
+## Unified Workbench UI
+
+The repository now includes a lightweight local Web UI that wraps the most important workflows behind normalized names and categories.
+
+Start it from the repository root:
+
+```bash
+./run_workbench.sh
+```
+
+Default URL:
+
+```text
+http://127.0.0.1:8765
+```
+
+The goal is to make the repository easier to operate without breaking existing script paths. The UI uses a curated workflow registry backed by canonical `workflows/...` wrappers and keeps the original script names as compatibility metadata.
+
+More details are in [docs/WORKBENCH_UI.md](docs/WORKBENCH_UI.md).
+The normalized CLI alias layer is documented in [docs/WORKFLOW_ALIASES.md](docs/WORKFLOW_ALIASES.md).
 
 ## Main Workflows
 

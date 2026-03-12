@@ -10,6 +10,8 @@ This directory mixes framework notes, experiment summaries, policy tables, and o
 - [GITHUB_METADATA.md](GITHUB_METADATA.md): GitHub `About`, topics, and release text aligned with upstream attribution
 - [PUBLIC_REPRODUCIBILITY.md](PUBLIC_REPRODUCIBILITY.md): environment setup and end-to-end reproduction steps
 - [PUBLIC_FIRST_RELEASE_SCOPE.md](PUBLIC_FIRST_RELEASE_SCOPE.md): recommended `docs/` and `llm/` scope for the first public release
+- [WORKBENCH_UI.md](WORKBENCH_UI.md): local Web UI entrypoint, workflow registry model, and naming strategy
+- [WORKFLOW_ALIASES.md](WORKFLOW_ALIASES.md): normalized `workflows/` CLI aliases and the naming convention they follow
 - [cross_model_llm_framework_v1_final.md](cross_model_llm_framework_v1_final.md): main write-up for the LLM-enhanced `framework_v1`
 - [cross_model_execution_checklist_v1_final.md](cross_model_execution_checklist_v1_final.md): execution checklist for the cross-model pipeline
 - [cross_model_policy_registry_v1.md](cross_model_policy_registry_v1.md): frozen 5-model policy after the first FS/ZS comparison

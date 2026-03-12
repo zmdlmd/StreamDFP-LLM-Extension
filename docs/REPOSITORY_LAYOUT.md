@@ -10,6 +10,8 @@ This note explains which parts of the repository are source code, which parts ar
 | `simulate/` | Java simulation logic and prediction runtime | Keep source; ignore `target/` build output |
 | `moa/` | MOA dependency source tree used by Java pipeline | Keep source; ignore `target/` |
 | `llm/` | LLM extraction code, prompts, event mappings, contracts, utilities, tests | Keep source/config; ignore generated caches and temporary data |
+| `ui/` | Local workbench UI server, workflow registry, and static frontend assets | Keep |
+| `workflows/` | Canonical wrapper entrypoints with normalized names for CLI/UI use | Keep |
 | `scripts/` | Batch launchers, watchers, probes, pipeline orchestration scripts | Keep |
 | `docs/` | Experiment documentation, summaries, comparison tables, audit notes | Keep |
 | `data/` | Local datasets for HDD/SSD experiments | Ignore |
@@ -26,6 +28,8 @@ This note explains which parts of the repository are source code, which parts ar
 | `parse.py` | Parse raw simulation output into metric tables |
 | `run_hi7.sh` | Example launcher for classic HDD baseline |
 | `run_mc1_mlp.sh` | Example launcher for SSD/MLP baseline |
+| `run_workbench.sh` | Stable launcher for the local workbench UI |
+| `workflows/README.md` | Naming model and wrapper policy for canonical workflow aliases |
 | `run_cross_model_llm_recall_controller.sh` | Historical orchestration entry for LLM-related experiments |
 
 ## LLM Workflow Files
