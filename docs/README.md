@@ -1,6 +1,6 @@
 # Docs Index
 
-This directory mixes framework notes, experiment summaries, policy tables, and supporting result tables. The index below intentionally lists the main public storyline first instead of every intermediate note.
+This directory holds the public-facing experiment narrative, policy summaries, result tables, and a small amount of retained diagnosis material.
 
 ## Start Here
 
@@ -14,7 +14,7 @@ This directory mixes framework notes, experiment summaries, policy tables, and s
 - [cross_model_policy_registry_v1_all12.md](cross_model_policy_registry_v1_all12.md): merged model-level policy table covering 12 HDD models plus MC1 pilot
 - [cross_model_llm_framework_v1_batch7_zs_final.md](cross_model_llm_framework_v1_batch7_zs_final.md): final write-up for the batch7 ZS expansion
 
-## Recent Experiment Summaries
+## Summaries
 
 - [llm_recent_experiments_master_summary_20260305.md](llm_recent_experiments_master_summary_20260305.md): baseline lock and merged model-level conclusions before the Qwen3.5 refresh
 - [llm_recent_experiments_qwen35_pilot20k_summary_20260310.md](llm_recent_experiments_qwen35_pilot20k_summary_20260310.md): Qwen3.5-4B `pilot20k` results across 12 HDD models
@@ -39,8 +39,6 @@ This directory mixes framework notes, experiment summaries, policy tables, and s
 
 ## Directory Conventions
 
-- `framework_v1_quality_*`: quality analysis outputs for specific model groups
-- `model_quality*`: cache quality summaries across tuning rounds
 - `*.md`: narrative summaries and decisions
 - `*.csv`: metric tables for plotting or spreadsheet review
 - `*.json|*.jsonl`: raw probes, audit snapshots, or intermediate reports
