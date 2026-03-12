@@ -67,6 +67,17 @@ def infer_model_key_from_path(path: str, prefix: str) -> str:
     return model_key
 
 
+def infer_cache_model_key(path: str) -> str:
+    name = os.path.basename(path).lower()
+    if name.startswith("cache_"):
+        return infer_model_key_from_path(path, "cache_")
+    return infer_model_key_from_path(path, "llm_cache_")
+
+
+def normalize_model_key_token(value: str) -> str:
+    return re.sub(r"[^a-z0-9]+", "", str(value or "").strip().lower())
+
+
 def parse_rule_top_cause(summary: str) -> str:
     if not summary:
         return "unknown"
@@ -137,6 +148,9 @@ def load_window_top_map(
             progress_every=(progress_every_rows if show_progress else 0),
             progress_label=f"window_text:{os.path.basename(path)}",
         ):
+            row_model_key = normalize_model_key_token(row.get("rule_model_key"))
+            if row_model_key:
+                model_key = row_model_key
             disk_id = str(row.get("disk_id", ""))
             day = str(row.get("window_end_time", ""))
             if not disk_id or not day:
@@ -181,7 +195,7 @@ def build_quality_for_cache(
     show_progress: bool = False,
     progress_every_rows: int = 0,
 ) -> Dict:
-    model_key = infer_model_key_from_path(cache_path, "llm_cache_")
+    model_key = infer_cache_model_key(cache_path)
 
     total = 0
     unknown = 0
@@ -312,7 +326,7 @@ def write_summary_csv(path: str, rows: List[Dict]):
 
 def main():
     parser = argparse.ArgumentParser(description="Build per-model LLM quality diagnostics from cache/window_text artifacts.")
-    parser.add_argument("--cache_paths", nargs="+", required=True, help="One or more llm_cache*.jsonl paths")
+    parser.add_argument("--cache_paths", nargs="+", required=True, help="One or more cache*.jsonl or llm_cache*.jsonl paths")
     parser.add_argument("--window_text_paths", nargs="*", default=[], help="Optional window_text*.jsonl paths")
     parser.add_argument("--log_paths", nargs="*", default=[], help="Optional extractor log paths")
     parser.add_argument("--out_dir", default="docs", help="Directory for per-model json outputs")
@@ -330,7 +344,7 @@ def main():
 
     rows: List[Dict] = []
     for cache_path in args.cache_paths:
-        model_key = infer_model_key_from_path(cache_path, "llm_cache_")
+        model_key = infer_cache_model_key(cache_path)
         top_map = top_maps.get(model_key)
         window_total = int(window_totals.get(model_key, 0))
         quality = build_quality_for_cache(
