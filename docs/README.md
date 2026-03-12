@@ -1,6 +1,6 @@
 # Docs Index
 
-This directory mixes framework notes, experiment summaries, policy tables, and one-off debugging records. If you only need the main storyline, use the following reading order.
+This directory mixes framework notes, experiment summaries, policy tables, and supporting result tables. The index below intentionally lists the main public storyline first instead of every intermediate note.
 
 ## Start Here
 

@@ -70,6 +70,4 @@
 
 ## 9. v1 收敛补充（2026-03-05）
 - Policy lock 单一事实源：`docs/cross_model_policy_registry_v1_all12.md`。
-- FS 最小 spot-check（2盘型）：`docs/fs_spotcheck_2models_v1_20260305.md`。
-- FALLBACK 一次性冻结复核：`docs/fallback_freeze_review_v1_20260305.md`。
 - 执行手册（GPU/CPU/断点续跑）：`docs/cross_model_execution_checklist_v1_final.md`。

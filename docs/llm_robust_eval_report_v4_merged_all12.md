@@ -31,5 +31,3 @@
 - `mc1_pilot20k` 是 SSD 数据集试点（20k 样本），口径与 HDD 报告不同，不直接用于跨介质绝对比较。
 - 该行主要用于跟踪“同数据同口径”下 LLM 增益方向。
 - MC1 phase3 网格已补齐完成（`compact9` 12/12 + `compact14` 12/12），汇总见 `docs/prearff_grid_mc1_v1.csv` 与 `docs/prearff_grid_mc1_v1.md`。
-- FS spot-check（2 models）见 `docs/fs_spotcheck_2models_v1_20260305.md`。
-- FALLBACK 冻结复核见 `docs/fallback_freeze_review_v1_20260305.md`。
