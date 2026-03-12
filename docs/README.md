@@ -11,7 +11,6 @@ This directory mixes framework notes, experiment summaries, policy tables, and s
 - [WORKFLOW_ALIASES.md](WORKFLOW_ALIASES.md): normalized `workflows/` CLI aliases and the naming convention they follow
 - [cross_model_llm_framework_v1_final.md](cross_model_llm_framework_v1_final.md): main write-up for the LLM-enhanced `framework_v1`
 - [cross_model_execution_checklist_v1_final.md](cross_model_execution_checklist_v1_final.md): execution checklist for the cross-model pipeline
-- [cross_model_policy_registry_v1.md](cross_model_policy_registry_v1.md): frozen 5-model policy after the first FS/ZS comparison
 - [cross_model_policy_registry_v1_all12.md](cross_model_policy_registry_v1_all12.md): merged model-level policy table covering 12 HDD models plus MC1 pilot
 - [cross_model_llm_framework_v1_batch7_zs_final.md](cross_model_llm_framework_v1_batch7_zs_final.md): final write-up for the batch7 ZS expansion
 

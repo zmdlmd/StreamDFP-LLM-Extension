@@ -30,5 +30,5 @@ If metrics are invalid (NaN / no positives):
 ## Reporting outputs
 
 - Baseline lock: `docs/framework_v1_baseline_lock.csv`
-- Trial report: `docs/llm_robust_eval_report_v3.csv`, `docs/llm_robust_eval_report_v3.md`
-- Policy registry: `docs/cross_model_policy_registry_v1.md`
+- Trial report: `docs/llm_robust_eval_report_v4_merged_all12.csv`, `docs/llm_robust_eval_report_v4_merged_all12.md`
+- Policy registry: `docs/cross_model_policy_registry_v1_all12.md`

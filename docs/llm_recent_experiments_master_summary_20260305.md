@@ -58,9 +58,8 @@
 
 ## 7. 当前可复现产物（主入口）
 - 总报告（跨盘型）：`docs/llm_robust_eval_report_v4_merged_all12.csv` / `docs/llm_robust_eval_report_v4_merged_all12.md`
-- MC1 phase3 网格：`docs/prearff_grid_mc1_v1.csv` / `docs/prearff_grid_mc1_v1.md`
-- FS/ZS 对比：`docs/llm_robust_eval_report_v3_fs_vs_zs.csv` / `docs/llm_robust_eval_report_v3_fs_vs_zs.md`
-- Batch7 ZS 细表：`docs/prearff_grid_batch7_zs_v1.csv` / `docs/prearff_grid_batch7_zs_best_v1.csv`
+- 策略注册表：`docs/cross_model_policy_registry_v1_all12.md`
+- 盘型级指标汇总：`docs/llm_vs_nollm_metrics_all12_summary.csv` / `docs/llm_vs_nollm_metrics_all12_summary.md`
 
 ## 8. 下一步建议（按优先级）
 1. 维持“盘型级策略 + fallback”上线原则：PASS 盘型启用，FALLBACK 盘型继续 no-LLM。
@@ -71,3 +70,4 @@
 ## 9. v1 收敛补充（2026-03-05）
 - Policy lock 单一事实源：`docs/cross_model_policy_registry_v1_all12.md`。
 - 执行手册（GPU/CPU/断点续跑）：`docs/cross_model_execution_checklist_v1_final.md`。
+- 早期 5-model / batch7 / MC1 中间网格细表未作为公开仓库长期保留物。

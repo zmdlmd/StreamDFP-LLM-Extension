@@ -18,6 +18,6 @@
 | wdcwd30efrx | PASS | llm_enabled | compact14,q=0.00,sev=0.0,rule=0 | 30.0000 | 0.0000 | +30.0000 | 99.9003 | 99.8580 | +0.0423 |
 
 ## Artifacts
-- Grid full results: `docs/prearff_grid_batch7_zs_v1.csv`
-- Grid best-per-model: `docs/prearff_grid_batch7_zs_best_v1.csv`
-- Robust eval report: `docs/llm_robust_eval_report_v4_batch7_zs.csv` / `docs/llm_robust_eval_report_v4_batch7_zs.md`
+- Public merged report: `docs/llm_robust_eval_report_v4_merged_all12.csv` / `docs/llm_robust_eval_report_v4_merged_all12.md`
+- Public merged registry: `docs/cross_model_policy_registry_v1_all12.md`
+- Historical batch7 intermediate tables are intentionally not retained in the public repo.

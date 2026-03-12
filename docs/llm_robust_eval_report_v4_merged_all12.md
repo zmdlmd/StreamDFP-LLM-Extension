@@ -1,8 +1,6 @@
 # LLM Robust Eval Report v4 (All Models + MC1 Pilot, ZS)
 
-- Source A (legacy 5-model ZS): `docs/llm_robust_eval_report_v3.csv`
-- Source B (new batch7 ZS): `docs/llm_robust_eval_report_v4_batch7_zs.csv`
-- Source C (MC1 phase3 retry): `docs/prearff_grid_mc1_v1.csv`
+- Scope: merged public summary for the legacy 5-model stage, the batch7 ZS expansion, and the MC1 pilot retry
 - Acceptance: `Recall(LLM)>=Recall(noLLM)` and `ACC(LLM)>=ACC(noLLM)-1.0pp`
 - Summary: PASS `9`, FALLBACK `4`, N/A `0` (total `13`)
 
@@ -30,4 +28,4 @@
 - `best_recall_params` records the best-recall phase3 config used for that model.
 - `mc1_pilot20k` 是 SSD 数据集试点（20k 样本），口径与 HDD 报告不同，不直接用于跨介质绝对比较。
 - 该行主要用于跟踪“同数据同口径”下 LLM 增益方向。
-- MC1 phase3 网格已补齐完成（`compact9` 12/12 + `compact14` 12/12），汇总见 `docs/prearff_grid_mc1_v1.csv` 与 `docs/prearff_grid_mc1_v1.md`。
+- 历史阶段的中间网格细表未作为公开仓库长期保留物；本表是保留给公开仓库的合并结果摘要。
