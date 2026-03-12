@@ -11,6 +11,7 @@ DATA_ROOT_HDD="${DATA_ROOT_HDD:-$ROOT/data/data_2014/2014}"
 FEATURES_HDD="${FEATURES_HDD:-$ROOT/pyloader/features_erg/hi7_all.txt}"
 DISK_MODEL="${DISK_MODEL:?DISK_MODEL is required}"
 MODEL_KEY="${MODEL_KEY:-}"
+REUSE_PHASE1="${REUSE_PHASE1:-0}"
 
 FEATURES_PATH="${FEATURES_PATH:-}"
 FEATURE_CONTRACT_MODE="${FEATURE_CONTRACT_MODE:-auto}"   # auto|off|force
@@ -66,6 +67,14 @@ if [[ -z "$EVENT_MAPPING_CONFIG" ]]; then
 fi
 
 mkdir -p "$OUT_DIR" "$LOG_DIR" "$QUALITY_DIR" "$FEATURE_CONTRACT_DIR" "$FEATURE_CONTRACT_SUMMARY_DIR"
+
+export LD_LIBRARY_PATH="/root/miniconda3/lib/python3.12/site-packages/torch/lib:/root/miniconda3/lib/python3.12/site-packages/nvidia/cu13/lib:/root/miniconda3/lib/python3.12/site-packages/nvidia/cuda_runtime/lib:/root/miniconda3/lib/python3.12/site-packages/nvidia/cuda_nvrtc/lib:${LD_LIBRARY_PATH:-}"
+if ! [[ "${OMP_NUM_THREADS:-}" =~ ^[1-9][0-9]*$ ]]; then
+  export OMP_NUM_THREADS=8
+fi
+export CUDA_VISIBLE_DEVICES="${CUDA_VISIBLE_DEVICES:-0}"
+export PYTORCH_CUDA_ALLOC_CONF="${PYTORCH_CUDA_ALLOC_CONF:-expandable_segments:True}"
+export VLLM_WORKER_MULTIPROC_METHOD="${VLLM_WORKER_MULTIPROC_METHOD:-spawn}"
 
 resolve_features_path() {
   if [[ -n "$FEATURES_PATH" ]]; then
@@ -125,37 +134,44 @@ QUALITY_SUMMARY_CSV="$QUALITY_DIR/extract_quality_${MODEL_KEY}_${RUN_TAG}.csv"
 QUALITY_OUT_DIR="$QUALITY_DIR/${MODEL_KEY}_${RUN_TAG}"
 
 if [[ "$OVERWRITE_OUTPUTS" == "1" ]]; then
-  rm -f "$WINDOW_TEXT_OUT" "$REFERENCE_OUT" "$REFERENCE_QUALITY_OUT" "$OUT_CACHE" "$LOG_PATH" "$QUALITY_SUMMARY_CSV"
+  if [[ "$REUSE_PHASE1" != "1" ]]; then
+    rm -f "$WINDOW_TEXT_OUT" "$REFERENCE_OUT" "$REFERENCE_QUALITY_OUT"
+  fi
+  rm -f "$OUT_CACHE" "$LOG_PATH" "$QUALITY_SUMMARY_CSV"
   rm -rf "$QUALITY_OUT_DIR"
 fi
 
 echo "[phase2-single] build window_text/reference model_key=$MODEL_KEY run_tag=$RUN_TAG"
-window_cmd=(python "$ROOT/llm/window_to_text.py" \
-  --data_root "$DATA_ROOT_HDD" \
-  --features_path "$FEATURES_PATH" \
-  --date_format "$DATE_FMT_HDD" \
-  --disk_model "$DISK_MODEL" \
-  --rule_profile auto \
-  --rule_profile_dir "$ROOT/llm/rules/profiles" \
-  --rule_medium auto \
-  --summary_schema structured_v2 \
-  --summary_anomaly_top_k "$SUMMARY_ANOMALY_TOP_K" \
-  --out "$WINDOW_TEXT_OUT" \
-  --reference_out "$REFERENCE_OUT" \
-  --reference_quality_report_out "$REFERENCE_QUALITY_OUT" \
-  --reference_start_date "$REF_START" \
-  --reference_end_date "$REF_END" \
-  --output_start_date "$OUT_START" \
-  --output_end_date "$OUT_END" \
-  --reference_min_non_unknown 3)
+if [[ "$REUSE_PHASE1" == "1" && -s "$WINDOW_TEXT_OUT" && -s "$REFERENCE_OUT" ]]; then
+  echo "[phase2-single] reuse existing phase1 outputs"
+else
+  window_cmd=(python "$ROOT/llm/window_to_text.py" \
+    --data_root "$DATA_ROOT_HDD" \
+    --features_path "$FEATURES_PATH" \
+    --date_format "$DATE_FMT_HDD" \
+    --disk_model "$DISK_MODEL" \
+    --rule_profile auto \
+    --rule_profile_dir "$ROOT/llm/rules/profiles" \
+    --rule_medium auto \
+    --summary_schema structured_v2 \
+    --summary_anomaly_top_k "$SUMMARY_ANOMALY_TOP_K" \
+    --out "$WINDOW_TEXT_OUT" \
+    --reference_out "$REFERENCE_OUT" \
+    --reference_quality_report_out "$REFERENCE_QUALITY_OUT" \
+    --reference_start_date "$REF_START" \
+    --reference_end_date "$REF_END" \
+    --output_start_date "$OUT_START" \
+    --output_end_date "$OUT_END" \
+    --reference_min_non_unknown 3)
 
-if [[ -n "$MAX_WINDOWS" && "$MAX_WINDOWS" != "0" ]]; then
-  window_cmd+=(--max_windows "$MAX_WINDOWS" --sample_mode "$SAMPLE_MODE" --sample_seed "$SAMPLE_SEED")
+  if [[ -n "$MAX_WINDOWS" && "$MAX_WINDOWS" != "0" ]]; then
+    window_cmd+=(--max_windows "$MAX_WINDOWS" --sample_mode "$SAMPLE_MODE" --sample_seed "$SAMPLE_SEED")
+  fi
+  if [[ -n "$REFERENCE_POOL_WINDOWS" && "$REFERENCE_POOL_WINDOWS" != "0" ]]; then
+    window_cmd+=(--reference_pool_windows "$REFERENCE_POOL_WINDOWS")
+  fi
+  "${window_cmd[@]}"
 fi
-if [[ -n "$REFERENCE_POOL_WINDOWS" && "$REFERENCE_POOL_WINDOWS" != "0" ]]; then
-  window_cmd+=(--reference_pool_windows "$REFERENCE_POOL_WINDOWS")
-fi
-"${window_cmd[@]}"
 
 echo "[phase2-single] extract root-cause cache model_key=$MODEL_KEY run_tag=$RUN_TAG"
 extract_cmd=(stdbuf -oL -eL python "$ROOT/llm/llm_offline_extract.py" \
