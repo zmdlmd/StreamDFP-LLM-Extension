@@ -179,6 +179,29 @@ Key generated outputs:
 
 These files are intentionally ignored by Git because they are meant to be regenerated.
 
+### Path C: new-model `pilot20k` calibration branch
+
+Use this branch when a disk model is not yet part of the retained policy registry.
+
+Recommended order:
+
+1. Provide the raw `DISK_MODEL` name as it appears in the HDD CSV data.
+2. Let the onboarding workflow derive the normalized `model_key`, build the feature contract, generate the event mapping, and run the classic no-LLM baseline automatically.
+3. Use the same workflow to generate `pilot20k` Phase1 inputs, then run Phase2 extraction and Phase3 grid search for that model.
+4. Compare the best LLM result against the no-LLM baseline with the same acceptance guards used by the retained registry.
+5. Only after passing the guard, review the generated policy suggestion and promote it into the retained policy registry if desired.
+
+In other words, the public workflow treats `pilot20k` as the admission-test branch for a new disk model, not as an optional afterthought.
+
+There is now a dedicated wrapper for this path:
+
+```bash
+DISK_MODEL="Seagate ST4000DX000" \
+bash workflows/llm/new-model-onboarding-calibration.sh
+```
+
+This wrapper derives the normalized `model_key`, builds the feature contract, generates an event mapping, runs a no-LLM baseline, performs Phase2 extraction, runs Phase3 calibration, and writes a suggested policy file under `llm/calibration/generated/`.
+
 ## 8. Minimal Smoke Checks
 
 Python smoke test:

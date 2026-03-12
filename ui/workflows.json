@@ -236,6 +236,114 @@
       ]
     },
     {
+      "id": "llm.pilot20k.single-model-calibration",
+      "display_name": "LLM / Pilot20k / Single-Model Calibration",
+      "category": "LLM Framework",
+      "canonical_entry": "workflows/llm/pilot20k-single-model-calibration.sh",
+      "legacy_entry": "scripts/run_phase2_pilot20k_all12_qwen35_then_shutdown.sh + scripts/run_framework_v1_phase3_grid*.sh",
+      "cwd": ".",
+      "command": ["bash", "workflows/llm/pilot20k-single-model-calibration.sh"],
+      "description": "Run the single-model pilot20k calibration branch: restricted Phase2 extraction followed by single-model Phase3 grid evaluation.",
+      "notes": [
+        "Intended for models that are already registered in the public pilot20k scripts.",
+        "This is the closest UI entrypoint to the new-model admission-test branch documented in README.",
+        "It does not auto-register the resulting policy; it only produces the calibration outputs."
+      ],
+      "warning": "Requires a registered model key. GPU is needed for Phase2; Phase3 is CPU-heavy.",
+      "tags": ["llm", "pilot20k", "calibration", "single-model", "gpu", "cpu"],
+      "env": [
+        {
+          "name": "MODEL_KEY",
+          "label": "Model Key",
+          "default": "",
+          "placeholder": "st31500541as",
+          "help": "Required registered model key. Example: st31500541as."
+        },
+        {
+          "name": "RUN_TAG",
+          "label": "Run Tag",
+          "default": "pilot20k_qwen35_calib",
+          "placeholder": "pilot20k_qwen35_calib",
+          "help": "Shared Phase2 output tag for this calibration run."
+        },
+        {
+          "name": "PHASE3_TAG_SUFFIX",
+          "label": "Tag Suffix",
+          "default": "qwen35calib",
+          "placeholder": "qwen35calib",
+          "help": "Suffix appended to Phase3 output filenames."
+        },
+        {
+          "name": "MODEL_PATH",
+          "label": "Model Path",
+          "default": "",
+          "placeholder": "../models/Qwen/Qwen3.5-4B",
+          "help": "Optional local model override used by Phase2."
+        },
+        {
+          "name": "MAX_WINDOWS",
+          "label": "Max Windows",
+          "default": "20000",
+          "placeholder": "20000",
+          "help": "Upper bound for the pilot input windows."
+        }
+      ]
+    },
+    {
+      "id": "llm.new-model.onboarding",
+      "display_name": "LLM / New Model / Onboarding Calibration",
+      "category": "LLM Framework",
+      "canonical_entry": "workflows/llm/new-model-onboarding-calibration.sh",
+      "legacy_entry": "scripts/run_framework_v1_onboard_single_model.sh",
+      "cwd": ".",
+      "command": ["bash", "workflows/llm/new-model-onboarding-calibration.sh"],
+      "description": "Run the new-model onboarding branch from a raw DISK_MODEL name: build contract, generate event mapping, run no-LLM baseline, then execute pilot20k Phase2 and Phase3 calibration.",
+      "notes": [
+        "This workflow is designed for previously unseen HDD disk models.",
+        "You only need to provide DISK_MODEL; model_key, contract path, event mapping path, baseline path, and policy suggestion are derived automatically.",
+        "The workflow writes a suggested calibration YAML under llm/calibration/generated/ and a sidecar JSON with the best row."
+      ],
+      "warning": "GPU required for Phase2 and Java artifacts must already be built for baseline and Phase3.",
+      "tags": ["llm", "onboarding", "new-model", "pilot20k", "gpu", "cpu"],
+      "env": [
+        {
+          "name": "DISK_MODEL",
+          "label": "Disk Model",
+          "default": "",
+          "placeholder": "Seagate ST4000DX000",
+          "help": "Required raw disk model name as it appears in the HDD CSV data."
+        },
+        {
+          "name": "RUN_TAG",
+          "label": "Run Tag",
+          "default": "",
+          "placeholder": "pilot20k_onboard_st4000dx000",
+          "help": "Optional calibration tag. Leave empty to derive it from DISK_MODEL."
+        },
+        {
+          "name": "MODEL_PATH",
+          "label": "Model Path",
+          "default": "",
+          "placeholder": "../models/Qwen/Qwen3.5-4B",
+          "help": "Optional local model override used by Phase2 extraction."
+        },
+        {
+          "name": "MAX_WINDOWS",
+          "label": "Max Windows",
+          "default": "20000",
+          "placeholder": "20000",
+          "help": "Upper bound for the pilot calibration windows."
+        },
+        {
+          "name": "PHASE3_TAG_SUFFIX",
+          "label": "Tag Suffix",
+          "default": "onboard",
+          "placeholder": "onboard",
+          "help": "Suffix appended to Phase3 output filenames."
+        }
+      ]
+    },
+    {
       "id": "llm.batch7.phase2-zs",
       "display_name": "LLM / Batch7 / Phase 2 ZS",
       "category": "LLM Framework",

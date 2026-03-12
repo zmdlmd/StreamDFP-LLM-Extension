@@ -33,6 +33,9 @@ PHASE3_PROMPT_PROFILE="${PHASE3_PROMPT_PROFILE:-structured_v2}"  # legacy|struct
 PHASE3_MODELS="${PHASE3_MODELS:-m1}" # m1|m2|all|csv(list)
 PHASE3_TAG_SUFFIX="${PHASE3_TAG_SUFFIX:-}"  # optional output suffix to avoid fs/zs overwrite
 PHASE3_RUN_TAG="${PHASE3_RUN_TAG:-pilot20k}" # pilot20k|full|custom tag used in phase2 artifacts
+PHASE3_CUSTOM_MODEL_KEY="${PHASE3_CUSTOM_MODEL_KEY:-}"
+PHASE3_CUSTOM_DISK_MODEL="${PHASE3_CUSTOM_DISK_MODEL:-}"
+PHASE3_CUSTOM_BASELINE_CSV="${PHASE3_CUSTOM_BASELINE_CSV:-}"
 
 SIM_CP="simulate/target/simulate-2019.01.0-SNAPSHOT.jar:moa/target/moa-2019.01.0-SNAPSHOT.jar"
 
@@ -53,6 +56,15 @@ if [[ ! -f "$BASELINE_ST315" ]]; then
   BASELINE_ST315="$ROOT/hi7_example/example_st31500541as_nollm_20140901_20141109_compare_map70_aligned_i10.csv"
 fi
 BASELINE_CSV["st31500541as"]="$BASELINE_ST315"
+
+if [[ -n "$PHASE3_CUSTOM_MODEL_KEY" || -n "$PHASE3_CUSTOM_DISK_MODEL" || -n "$PHASE3_CUSTOM_BASELINE_CSV" ]]; then
+  if [[ -z "$PHASE3_CUSTOM_MODEL_KEY" || -z "$PHASE3_CUSTOM_DISK_MODEL" || -z "$PHASE3_CUSTOM_BASELINE_CSV" ]]; then
+    echo "[phase3] custom single-model mode requires PHASE3_CUSTOM_MODEL_KEY, PHASE3_CUSTOM_DISK_MODEL, and PHASE3_CUSTOM_BASELINE_CSV" >&2
+    exit 2
+  fi
+  MODEL_NAME["$PHASE3_CUSTOM_MODEL_KEY"]="$PHASE3_CUSTOM_DISK_MODEL"
+  BASELINE_CSV["$PHASE3_CUSTOM_MODEL_KEY"]="$PHASE3_CUSTOM_BASELINE_CSV"
+fi
 
 M1_MODELS=("st3000dm001" "hms5c4040ble640")
 M2_MODELS=("hi7" "hds723030ala640" "st31500541as")

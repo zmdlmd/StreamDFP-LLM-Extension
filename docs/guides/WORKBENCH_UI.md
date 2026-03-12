@@ -42,6 +42,8 @@ The first version of the UI is intentionally curated. It does not expose every h
 - classic baseline entrypoints
 - main `framework_v1` phases
 - the pilot20k all12 Phase2/Phase3 launchers
+- the disk-model-driven onboarding branch for previously unseen HDD models
+- the single-model `pilot20k` calibration branch for registered disk models
 - normalized `workflows/...` wrappers for the most common tasks
 - a small set of safe diagnostics and maintenance checks
 

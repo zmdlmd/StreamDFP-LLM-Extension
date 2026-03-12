@@ -8,20 +8,38 @@ The codebase keeps both the upstream Python + Java prediction pipeline and the e
 
 - Classic StreamDFP pipeline for HDD/SSD failure prediction with Python preprocessing and Java simulation.
 - LLM-enhanced `framework_v1` pipeline for Phase1 window summarization, Phase2 root-cause extraction, and Phase3 policy evaluation.
+- New-model calibration branch for `pilot20k` admission testing before a disk model is added to the per-model LLM policy registry.
 - Local workbench UI plus normalized `workflows/` wrappers so common tasks do not depend on memorizing historical script names.
 
 ## Pipeline Overview
 
 ```mermaid
-flowchart LR
-    A[SMART CSV data] --> B[pyloader preprocessing]
-    B --> C[Java simulate and MOA]
-    C --> D[parse.py metrics]
+flowchart TB
+    A[SMART CSV data]
 
-    A --> E[Phase1 window_to_text.py]
-    E --> F[Phase2 llm_offline_extract.py]
-    F --> G[Phase3 cache grid and simulation]
-    G --> H[Per-model policy and merged reports]
+    subgraph U[Upstream StreamDFP baseline]
+        A --> B[pyloader/run.py<br/>preprocessing, labeling, sample generation]
+        B --> C[simulate.Simulate + MOA<br/>training and simulation]
+        C --> D[parse.py<br/>baseline metrics]
+    end
+
+    subgraph L[LLM extension on top of StreamDFP]
+        B --> E[Phase1: window_to_text.py<br/>window_text and references]
+        E --> F[Phase2: llm_offline_extract.py<br/>root-cause cache extraction]
+        F --> G[Phase3: build_cache_variant.py + grid scripts<br/>cache variants and policy search]
+        G --> H[run.py + simulate.Simulate<br/>re-evaluation with LLM signals]
+        H --> I[merged reports and per-model policy<br/>llm_enabled vs fallback]
+    end
+
+    subgraph N[New-model calibration branch]
+        B --> J[new model onboarding<br/>event mapping and feature contract]
+        D --> K[no-LLM baseline reference]
+        J --> L1[pilot20k Phase1 + Phase2 + Phase3]
+        K --> M[guard check<br/>compare against no-LLM]
+        L1 --> M
+        M --> N1[policy registration<br/>llm_enabled or fallback]
+        N1 --> I
+    end
 ```
 
 ## Upstream Attribution
@@ -48,6 +66,8 @@ If you only need the main entrypoints:
 | Browse normalized CLI wrappers | `workflows/` |
 | Classic preprocessing and simulation | `workflows/classic/` |
 | LLM Phase0/1/2/3 workflows | `workflows/llm/` |
+| New model onboarding | `workflows/llm/new-model-onboarding-calibration.sh` |
+| Single-model pilot20k calibration | `workflows/llm/pilot20k-single-model-calibration.sh` |
 | Public environment and rerun steps | [docs/guides/PUBLIC_REPRODUCIBILITY.md](docs/guides/PUBLIC_REPRODUCIBILITY.md) |
 | Experiment/document index | [docs/README.md](docs/README.md) |
 
@@ -92,7 +112,7 @@ The goal is to make the repository easier to operate without breaking existing s
 More details are in [docs/guides/WORKBENCH_UI.md](docs/guides/WORKBENCH_UI.md).
 The normalized CLI alias layer is documented in [docs/guides/WORKFLOW_ALIASES.md](docs/guides/WORKFLOW_ALIASES.md).
 
-## Two Main Paths
+## Runtime Paths and Onboarding
 
 ### Classic StreamDFP Pipeline
 
@@ -121,6 +141,20 @@ Relevant files:
 - [scripts/run_framework_v1_phase3_grid.sh](scripts/run_framework_v1_phase3_grid.sh)
 - [scripts/run_framework_v1_phase3_grid_batch7.sh](scripts/run_framework_v1_phase3_grid_batch7.sh)
 - [llm/scripts/build_cache_variant.py](llm/scripts/build_cache_variant.py)
+
+### New-Model Calibration Branch
+
+1. Provide the raw `DISK_MODEL` name from the HDD CSV data.
+2. Use the onboarding workflow to derive `model_key`, build the feature contract, generate the event mapping, and run the classic no-LLM baseline automatically.
+3. Let the same onboarding flow run a `pilot20k` Phase1 + Phase2 + Phase3 calibration cycle for that model.
+4. Compare the best LLM result against the no-LLM baseline with the policy guards, then review the suggested policy output and register the model as `llm_enabled` or `fallback`.
+
+This branch is the intended admission workflow for a previously unseen disk model. A new model should not skip directly to the default runtime policy without this calibration step.
+
+Relevant file:
+
+- [workflows/llm/new-model-onboarding-calibration.sh](workflows/llm/new-model-onboarding-calibration.sh)
+- [workflows/llm/pilot20k-single-model-calibration.sh](workflows/llm/pilot20k-single-model-calibration.sh)
 
 ## Core Documents
 

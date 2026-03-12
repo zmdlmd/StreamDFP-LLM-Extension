@@ -39,6 +39,8 @@ pyloader/phase3_train*/
 pyloader/phase3_test*/
 pyloader/phase3b7_train*/
 pyloader/phase3b7_test*/
+pyloader/onboard_train*/
+pyloader/onboard_test*/
 pyloader/save_model/
 pyloader/time_*.txt
 
@@ -59,6 +61,8 @@ llm/reference_examples_*.json
 llm/reference_quality_*.json
 llm/*eval_report*.json
 llm/contracts/feature_contract_*.json
+llm/event_mappings/onboarding/
+llm/calibration/generated/
 
 # Personal / one-off local files
 AIMS5790_ Project Progress Check Form (Midterm).pdf

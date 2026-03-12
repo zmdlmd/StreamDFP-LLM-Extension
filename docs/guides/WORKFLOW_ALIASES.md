@@ -35,7 +35,9 @@ Examples:
 
 - `workflows/classic/hi7-preprocess.sh`
 - `workflows/llm/framework-phase2.sh`
+- `workflows/llm/new-model-onboarding-calibration.sh`
 - `workflows/llm/pilot20k-phase2-all12.sh`
+- `workflows/llm/pilot20k-single-model-calibration.sh`
 - `workflows/monitoring/pilot20k-phase2-monitor.sh`
 
 ## Mapping Model
