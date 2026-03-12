@@ -379,20 +379,6 @@
       ]
     },
     {
-      "id": "maintenance.public-first-release-check",
-      "display_name": "Maintenance / Public First Release Check",
-      "category": "Maintenance",
-      "canonical_entry": "workflows/maintenance/public-release-check.sh",
-      "legacy_entry": "scripts/check_public_first_release.sh",
-      "cwd": ".",
-      "command": ["bash", "workflows/maintenance/public-release-check.sh"],
-      "description": "Validate the recommended public-release scope and ignored runtime artifacts.",
-      "notes": [
-        "Useful before staging or pushing the repository."
-      ],
-      "tags": ["maintenance", "git", "public-release"]
-    },
-    {
       "id": "maintenance.workbench-registry-check",
       "display_name": "Maintenance / Workbench Registry Check",
       "category": "Maintenance",

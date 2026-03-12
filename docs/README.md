@@ -6,10 +6,7 @@ This directory mixes framework notes, experiment summaries, policy tables, and o
 
 - [../README.md](../README.md): repository overview and main entry points
 - [REPOSITORY_LAYOUT.md](REPOSITORY_LAYOUT.md): what each top-level directory is for
-- [GITHUB_UPLOAD_CHECKLIST.md](GITHUB_UPLOAD_CHECKLIST.md): what to stage and what to keep local before pushing
-- [GITHUB_METADATA.md](GITHUB_METADATA.md): GitHub `About`, topics, and release text aligned with upstream attribution
 - [PUBLIC_REPRODUCIBILITY.md](PUBLIC_REPRODUCIBILITY.md): environment setup and end-to-end reproduction steps
-- [PUBLIC_FIRST_RELEASE_SCOPE.md](PUBLIC_FIRST_RELEASE_SCOPE.md): recommended `docs/` and `llm/` scope for the first public release
 - [WORKBENCH_UI.md](WORKBENCH_UI.md): local Web UI entrypoint, workflow registry model, and naming strategy
 - [WORKFLOW_ALIASES.md](WORKFLOW_ALIASES.md): normalized `workflows/` CLI aliases and the naming convention they follow
 - [cross_model_llm_framework_v1_final.md](cross_model_llm_framework_v1_final.md): main write-up for the LLM-enhanced `framework_v1`
@@ -49,6 +46,6 @@ This directory mixes framework notes, experiment summaries, policy tables, and o
 - `*.csv`: metric tables for plotting or spreadsheet review
 - `*.json|*.jsonl`: raw probes, audit snapshots, or intermediate reports
 
-## Upload Note
+## Versioning Note
 
-The repository root `.gitignore` is configured to keep runtime outputs out of Git, but the `docs/` directory is intentionally left trackable because it holds the experiment narrative and final summary tables.
+The repository root `.gitignore` keeps runtime outputs out of normal version control, while `docs/` stays tracked because it holds the experiment narrative and final summary tables.

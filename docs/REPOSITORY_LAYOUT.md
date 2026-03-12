@@ -1,10 +1,10 @@
 # Repository Layout
 
-This note explains which parts of the repository are source code, which parts are research records, and which parts are local runtime artifacts that should usually stay out of Git.
+This note explains which parts of the repository are source code, which parts are research records, and which parts are local runtime artifacts that should usually stay out of normal version control.
 
 ## Top-Level Directories
 
-| Path | Purpose | Upload Suggestion |
+| Path | Purpose | Versioning Note |
 | --- | --- | --- |
 | `pyloader/` | Python preprocessing, feature extraction, sample generation, dataset conversion | Keep source files; ignore generated train/test folders |
 | `simulate/` | Java simulation logic and prediction runtime | Keep source; ignore `target/` build output |
@@ -74,8 +74,8 @@ This note explains which parts of the repository are source code, which parts ar
 - train/test output folders
 - demo archives, zips, and backup snapshots
 
-## Recommended Upload Strategy
+## Versioning Notes
 
 1. Keep code, configs, and documentation in Git.
 2. Exclude local datasets, logs, and generated artifacts through `.gitignore`.
-3. If you need to share a full runnable example, put it in `share_demo/` locally or publish it as a release asset, not as normal repository history.
+3. If you need to share a full runnable example, prefer a release asset or a separate demo bundle instead of normal repository history.

@@ -27,7 +27,7 @@ The UI uses a workflow registry in `ui/workflows.json`.
 
 Each workflow has:
 
-- `id`: stable machine-readable identifier, e.g. `llm.pilot20k.phase2-all12-safe`
+- `id`: stable machine-readable identifier, e.g. `llm.pilot20k.phase2-all12`
 - `display_name`: normalized human-readable label shown in the UI
 - `category`: high-level grouping such as `Classic Pipeline` or `LLM Framework`
 - `canonical_entry`: normalized wrapper path under `workflows/`
@@ -43,7 +43,7 @@ The first version of the UI is intentionally curated. It does not expose every h
 - main `framework_v1` phases
 - the pilot20k all12 Phase2/Phase3 launchers
 - normalized `workflows/...` wrappers for the most common tasks
-- a small set of safe diagnostics and release checks
+- a small set of safe diagnostics and maintenance checks
 
 High-risk or highly specialized scripts can stay as legacy/manual tools until they are worth promoting into the registry.
 

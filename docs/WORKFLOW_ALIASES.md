@@ -19,7 +19,7 @@ The UI uses dot-separated identifiers:
 - `classic.preprocess.hi7`
 - `llm.framework.phase2`
 - `llm.pilot20k.phase3-all12`
-- `maintenance.public-first-release-check`
+- `maintenance.workbench-registry-check`
 
 These IDs are stable labels for people and tooling.
 

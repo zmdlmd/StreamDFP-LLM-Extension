@@ -2,9 +2,7 @@
 
 This repository is based on the open-source StreamDFP project and extends it with an LLM-enhanced workflow for root-cause extraction, rule fusion, and model-level policy evaluation in disk failure prediction.
 
-The current codebase keeps both the upstream Python + Java prediction pipeline and the extension work added on top of it. It is organized for research reproduction rather than as a minimal library package. Source code, experiment scripts, and result notes are kept together; large datasets, logs, generated caches, and local demo bundles are ignored by default so the repository can be uploaded to GitHub without dragging in runtime artifacts.
-
-If you publish this repository separately on GitHub, prefer a name such as `StreamDFP-LLM-Extension` instead of the bare `StreamDFP`, so the upstream relationship stays clear.
+The codebase keeps both the upstream Python + Java prediction pipeline and the extension work added on top of it. It is organized for research reproduction rather than as a minimal library package. Source code, experiment scripts, and result notes are kept together, while large datasets, logs, generated caches, and local demo bundles stay outside normal versioned source paths.
 
 ## Upstream Attribution
 
@@ -19,6 +17,14 @@ The work in this repository focuses on extending StreamDFP with an LLM-enhanced 
 - Upstream StreamDFP pipeline for HDD/SSD failure prediction with preprocessing in Python and training/simulation in Java.
 - StreamDFP-based LLM-enhanced framework (`framework_v1`) for Phase1 window summarization, Phase2 root-cause extraction, and Phase3 policy grid evaluation.
 - Extension modules for model-level policy registry, rule blending, fallback control, and multi-disk experiment summaries.
+
+## Quick Start
+
+If you only need the main entrypoints:
+
+1. Read [docs/PUBLIC_REPRODUCIBILITY.md](docs/PUBLIC_REPRODUCIBILITY.md) for environment setup.
+2. Start the local workbench with `./run_workbench.sh`.
+3. Use the workbench or the `workflows/` wrappers to launch curated classic and LLM flows.
 
 ## Repository Layout
 
@@ -130,18 +136,6 @@ If you are new to this repository, start here:
 2. [docs/cross_model_llm_framework_v1_final.md](docs/cross_model_llm_framework_v1_final.md)
 3. [docs/llm_recent_experiments_master_summary_20260305.md](docs/llm_recent_experiments_master_summary_20260305.md)
 4. [docs/llm_recent_experiments_qwen35_pilot20k_summary_20260310.md](docs/llm_recent_experiments_qwen35_pilot20k_summary_20260310.md)
-
-## GitHub Upload Notes
-
-This repository is now prepared for GitHub-style uploading with source code and experiment docs kept visible, while the following classes of files are ignored:
-
-- raw datasets and local backups
-- logs, generated caches, and temporary JSONL files
-- training/test output folders under `pyloader/`
-- local demo bundles and compressed share packages
-- Java build outputs and notebook checkpoints
-
-Before pushing, check `git status` and only stage the code/docs you really want to publish.
 
 ## Contact
 
