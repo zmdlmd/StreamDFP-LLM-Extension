@@ -1,7 +1,7 @@
 # Cross-model Execution Checklist v1 (Final)
 
 Lock date: 2026-03-05
-Default strategy: `ZS + per-model fallback` (policy source: `docs/cross_model_policy_registry_v1_all12.md`)
+Default strategy: `ZS + per-model fallback` (policy source: `docs/reports/cross_model_policy_registry_v1_all12.md`)
 
 ## 0) Preflight
 
@@ -77,5 +77,5 @@ Lock rule:
 
 Final evidence files:
 - `docs/llm_robust_eval_report_v4_merged_all12.csv`
-- `docs/llm_robust_eval_report_v4_merged_all12.md`
-- `docs/cross_model_policy_registry_v1_all12.md`
+- `docs/reports/llm_robust_eval_report_v4_merged_all12.md`
+- `docs/reports/cross_model_policy_registry_v1_all12.md`

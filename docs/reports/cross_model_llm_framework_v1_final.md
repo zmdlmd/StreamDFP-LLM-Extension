@@ -7,9 +7,9 @@
 - LLM backend: `Qwen3-4B-Instruct-2507 + vLLM`
 - Prompt profile: `structured_v2`
 - Public references:
-  - `docs/cross_model_policy_registry_v1_all12.md`
+  - `docs/reports/cross_model_policy_registry_v1_all12.md`
   - `docs/llm_robust_eval_report_v4_merged_all12.csv`
-  - `docs/llm_robust_eval_report_v4_merged_all12.md`
+  - `docs/reports/llm_robust_eval_report_v4_merged_all12.md`
 
 ## 2) Acceptance rule
 
@@ -31,7 +31,7 @@
 - Default extraction profile: `ZS`
 - Default runtime action: enable LLM only for PASS models
 - Forced fallback model: `hms5c4040ble640`
-- Registry source of truth: `docs/cross_model_policy_registry_v1_all12.md`
+- Registry source of truth: `docs/reports/cross_model_policy_registry_v1_all12.md`
 - HMS dense-window evidence: `docs/framework_v1_quality_hms5c4040ble640/hms_hd_nollm_baseline_summary.md`
 
 ## 5) Implementation notes
@@ -47,4 +47,4 @@
 - Pilot setting: `20000` windows/model, `structured_v2`, ZS only
 - Result: PASS `4/7`, FALLBACK `3/7`
 - Merged all-model report (12 models): `docs/llm_robust_eval_report_v4_merged_all12.csv`
-- Merged all-model policy registry: `docs/cross_model_policy_registry_v1_all12.md`
+- Merged all-model policy registry: `docs/reports/cross_model_policy_registry_v1_all12.md`

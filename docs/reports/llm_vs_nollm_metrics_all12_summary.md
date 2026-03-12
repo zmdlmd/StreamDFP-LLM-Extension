@@ -1,7 +1,6 @@
 # all12 指标对比（含 NA 原因）
 
 - 源文件: `docs/llm_vs_nollm_metrics_all12_summary.csv`
-- 增强文件: `docs/llm_vs_nollm_metrics_all12_summary_explain.csv`
 - 说明: NA 不是缺文件，而是指标在数学上无定义（例如 `TP+FP=0` 或 `TP=0`）。
 
 ## NA 盘型明细

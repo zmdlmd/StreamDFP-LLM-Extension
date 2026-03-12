@@ -2,8 +2,8 @@
 
 ## 对照口径
 
-- 旧模型：`Qwen3-4B-Instruct-2507`，结果来源于 [llm_recent_experiments_master_summary_20260305.md](/root/autodl-tmp/StreamDFP/docs/llm_recent_experiments_master_summary_20260305.md)
-- 新模型：`Qwen3.5-4B`，结果来源于 [llm_recent_experiments_qwen35_pilot20k_summary_20260310.md](/root/autodl-tmp/StreamDFP/docs/llm_recent_experiments_qwen35_pilot20k_summary_20260310.md)
+- 旧模型：`Qwen3-4B-Instruct-2507`，结果来源于 [llm_recent_experiments_master_summary_20260305.md](/root/autodl-tmp/StreamDFP/docs/reports/llm_recent_experiments_master_summary_20260305.md)
+- 新模型：`Qwen3.5-4B`，结果来源于 [llm_recent_experiments_qwen35_pilot20k_summary_20260310.md](/root/autodl-tmp/StreamDFP/docs/reports/llm_recent_experiments_qwen35_pilot20k_summary_20260310.md)
 - 范围：`12` 个 HDD 盘型，不含 `mc1_pilot20k`
 - 口径：按盘型级“最佳组合”结果对比，重点看 `action / Recall / ΔRecall / ACC`
 
@@ -37,4 +37,4 @@
 - `Qwen3.5-4B` 没有在 `12` 个 HDD 盘型上全面超过 `Qwen3-4B-Instruct-2507`
 - 新模型在多数盘型上与旧模型接近，但提升主要集中在 `ACC` 边际或个别盘型的小幅 `Recall` 增益
 - 真正阻止新模型直接替代旧模型的关键盘型是 `st31500541as`
-- 对 `st31500541as`，同子集 A/B 已确认更像模型或抽取链路退化，而不是子集波动，详见 [st31500541as_ab_same_subset_20260310.md](/root/autodl-tmp/StreamDFP/docs/st31500541as_ab_same_subset_20260310.md)
+- 对 `st31500541as`，同子集 A/B 已确认更像模型或抽取链路退化，而不是子集波动，详见 [st31500541as_ab_same_subset_20260310.md](/root/autodl-tmp/StreamDFP/docs/diagnostics/st31500541as_ab_same_subset_20260310.md)

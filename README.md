@@ -36,7 +36,7 @@ The work in this repository focuses on extending StreamDFP with an LLM-enhanced 
 
 If you only need the main entrypoints:
 
-1. Read [docs/PUBLIC_REPRODUCIBILITY.md](docs/PUBLIC_REPRODUCIBILITY.md) for environment setup.
+1. Read [docs/guides/PUBLIC_REPRODUCIBILITY.md](docs/guides/PUBLIC_REPRODUCIBILITY.md) for environment setup.
 2. Start the local workbench with `./run_workbench.sh`.
 3. Use the workbench or the `workflows/` wrappers to launch curated classic and LLM flows.
 
@@ -48,7 +48,7 @@ If you only need the main entrypoints:
 | Browse normalized CLI wrappers | `workflows/` |
 | Classic preprocessing and simulation | `workflows/classic/` |
 | LLM Phase0/1/2/3 workflows | `workflows/llm/` |
-| Public environment and rerun steps | [docs/PUBLIC_REPRODUCIBILITY.md](docs/PUBLIC_REPRODUCIBILITY.md) |
+| Public environment and rerun steps | [docs/guides/PUBLIC_REPRODUCIBILITY.md](docs/guides/PUBLIC_REPRODUCIBILITY.md) |
 | Experiment/document index | [docs/README.md](docs/README.md) |
 
 ## Repository Layout
@@ -68,7 +68,7 @@ StreamDFP/
 └── run_*.sh           # Legacy example launchers for baseline experiments
 ```
 
-Detailed directory notes are in [docs/REPOSITORY_LAYOUT.md](docs/REPOSITORY_LAYOUT.md).
+Detailed directory notes are in [docs/guides/REPOSITORY_LAYOUT.md](docs/guides/REPOSITORY_LAYOUT.md).
 Documentation entry points are indexed in [docs/README.md](docs/README.md).
 
 ## Workbench UI
@@ -89,8 +89,8 @@ http://127.0.0.1:8765
 
 The goal is to make the repository easier to operate without breaking existing script paths. The UI uses a curated workflow registry backed by canonical `workflows/...` wrappers and keeps the original script names as compatibility metadata.
 
-More details are in [docs/WORKBENCH_UI.md](docs/WORKBENCH_UI.md).
-The normalized CLI alias layer is documented in [docs/WORKFLOW_ALIASES.md](docs/WORKFLOW_ALIASES.md).
+More details are in [docs/guides/WORKBENCH_UI.md](docs/guides/WORKBENCH_UI.md).
+The normalized CLI alias layer is documented in [docs/guides/WORKFLOW_ALIASES.md](docs/guides/WORKFLOW_ALIASES.md).
 
 ## Two Main Paths
 
@@ -124,11 +124,11 @@ Relevant files:
 
 ## Core Documents
 
-- [docs/PUBLIC_REPRODUCIBILITY.md](docs/PUBLIC_REPRODUCIBILITY.md): environment setup and end-to-end reproduction steps
-- [docs/cross_model_llm_framework_v1_final.md](docs/cross_model_llm_framework_v1_final.md): main write-up for the LLM-enhanced pipeline
-- [docs/cross_model_policy_registry_v1_all12.md](docs/cross_model_policy_registry_v1_all12.md): merged all12 model-level policy table
-- [docs/llm_recent_experiments_qwen35_pilot20k_summary_20260310.md](docs/llm_recent_experiments_qwen35_pilot20k_summary_20260310.md): Qwen3.5 pilot20k result summary
-- [docs/qwen3_4b_vs_qwen35_4b_hdd_comparison_20260310.md](docs/qwen3_4b_vs_qwen35_4b_hdd_comparison_20260310.md): 4B vs 4B comparison note
+- [docs/guides/PUBLIC_REPRODUCIBILITY.md](docs/guides/PUBLIC_REPRODUCIBILITY.md): environment setup and end-to-end reproduction steps
+- [docs/reports/cross_model_llm_framework_v1_final.md](docs/reports/cross_model_llm_framework_v1_final.md): main write-up for the LLM-enhanced pipeline
+- [docs/reports/cross_model_policy_registry_v1_all12.md](docs/reports/cross_model_policy_registry_v1_all12.md): merged all12 model-level policy table
+- [docs/reports/llm_recent_experiments_qwen35_pilot20k_summary_20260310.md](docs/reports/llm_recent_experiments_qwen35_pilot20k_summary_20260310.md): Qwen3.5 pilot20k result summary
+- [docs/reports/qwen3_4b_vs_qwen35_4b_hdd_comparison_20260310.md](docs/reports/qwen3_4b_vs_qwen35_4b_hdd_comparison_20260310.md): 4B vs 4B comparison note
 
 ## Environment
 
@@ -150,7 +150,7 @@ Public repo environment files:
 - [environment-public.yml](environment-public.yml)
 - [configs/public_repro.env.example](configs/public_repro.env.example)
 
-The public reproducibility walkthrough is in [docs/PUBLIC_REPRODUCIBILITY.md](docs/PUBLIC_REPRODUCIBILITY.md).
+The public reproducibility walkthrough is in [docs/guides/PUBLIC_REPRODUCIBILITY.md](docs/guides/PUBLIC_REPRODUCIBILITY.md).
 
 ## Data and Models
 

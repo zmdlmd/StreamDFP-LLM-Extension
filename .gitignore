@@ -98,12 +98,12 @@ docs/prearff_grid_*.md
 docs/llm_robust_eval_report*.csv
 docs/llm_robust_eval_report*.md
 !docs/llm_robust_eval_report_v4_merged_all12.csv
-!docs/llm_robust_eval_report_v4_merged_all12.md
+!docs/reports/llm_robust_eval_report_v4_merged_all12.md
 
 docs/llm_vs_nollm_metrics_all12_summary*.csv
 docs/llm_vs_nollm_metrics_all12_summary*.md
 !docs/llm_vs_nollm_metrics_all12_summary.csv
-!docs/llm_vs_nollm_metrics_all12_summary.md
+!docs/reports/llm_vs_nollm_metrics_all12_summary.md
 
 llm/auto_shutdown_when_done.sh
 scripts/controller_hooks/README.md

@@ -73,7 +73,7 @@
 - 因为本轮仅使用 `pilot20k` 子集，不建议仅凭这轮结果直接覆盖 `2026-03-05` 的全局策略锁定。
 
 ## 6. 建议
-1. 继续保留 `docs/cross_model_policy_registry_v1_all12.md` 作为当前默认锁定策略，不用本轮 `pilot20k_qwen35` 直接覆盖。
+1. 继续保留 `docs/reports/cross_model_policy_registry_v1_all12.md` 作为当前默认锁定策略，不用本轮 `pilot20k_qwen35` 直接覆盖。
 2. 若后续准备推广 `Qwen3.5-4B` 为默认模型，优先补做两类复核：
    - `st31500541as`：确认当前负增益是否为子集波动还是模型退化
    - `hds723030ala640`：确认 `compact9` 虽然 Recall 持平，但 ACC 边际变差是否可接受
@@ -83,4 +83,4 @@
 - Phase2 汇总：`logs/framework_v1/phase2_all12_pilot20k_qwen35_20260308_101314.tsv`
 - Phase3 主批次：`docs/prearff_grid_2models_pilot20k_qwen35_v1.csv` / `docs/prearff_grid_2models_pilot20k_qwen35_v1.md`
 - Phase3 batch7：`docs/prearff_grid_batch7_zs_pilot20k_qwen35_v1.csv` / `docs/prearff_grid_batch7_zs_pilot20k_qwen35_v1.md`
-- 历史锁定参考：`docs/llm_recent_experiments_master_summary_20260305.md`
+- 历史锁定参考：`docs/reports/llm_recent_experiments_master_summary_20260305.md`

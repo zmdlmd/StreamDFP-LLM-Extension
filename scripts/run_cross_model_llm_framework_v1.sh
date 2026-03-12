@@ -322,7 +322,7 @@ run_phase4() {
 
 run_phase5() {
   echo "[framework_v1][phase5] registry + final docs refresh"
-  echo "See docs/cross_model_policy_registry_v1.md and docs/cross_model_llm_framework_v1_final.md"
+  echo "See docs/reports/cross_model_policy_registry_v1_all12.md and docs/reports/cross_model_llm_framework_v1_final.md"
 }
 
 case "$PHASE" in
