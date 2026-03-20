@@ -1,0 +1,4 @@
+model,cache_path,total,unknown_count,unknown_pct,non_unknown_count,non_unknown_pct,mapped_event_ratio_pct,rule_match_ratio_pct,avg_confidence,avg_risk_hint,avg_llm_q_score,temperature_count,media_count,workload_count,power_count,interface_count
+Qwen3.5-4B (tp2+eager),/root/autodl-tmp/StreamDFP/llm/framework_v1_mc1/cache_mc1_zs_structured_v2_pilot20k_stratified_v2_qwen35_tp2eager.jsonl,20000,18489,92.4450,1511,7.5550,77.4600,7.5500,0.224724,0.210495,0.247004,1218,231,47,13,2
+Qwen3.5-Plus,/root/autodl-tmp/StreamDFP/llm/framework_v1_mc1/cache_mc1_zs_structured_v2_pilot20k_stratified_v2_qwen35plus_api.jsonl,20000,18465,92.3250,1535,7.6750,90.1950,7.6750,0.372721,0.277886,0.297431,1238,234,47,14,2
+Qwen3-4B-Instruct-2507,/root/autodl-tmp/StreamDFP/llm/framework_v1_mc1/cache_mc1_zs_structured_v2_pilot20k_stratified_v2_qwen3instruct2507.jsonl,20000,18311,91.5550,1689,8.4450,90.7750,8.4450,0.854688,0.713300,0.450343,1315,270,87,15,2

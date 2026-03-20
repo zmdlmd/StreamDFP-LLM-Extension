@@ -1,0 +1,2 @@
+model_key,total_rows,unknown_ratio,rule_match_ratio,mapped_event_ratio,event_density,q_score_q10,q_score_q50,q_score_q90,parse_repair_rate,parse_default_rate,cache_coverage,window_total,cache_path
+mc1,20000,0.92325,0.07675,0.90195,1.10725,0.0203,0.3013,0.4592,0.0,0.0,1.0,20000,/root/autodl-tmp/StreamDFP/llm/framework_v1_mc1/cache_mc1_zs_structured_v2_pilot20k_stratified_v2_qwen35plus_api.jsonl
