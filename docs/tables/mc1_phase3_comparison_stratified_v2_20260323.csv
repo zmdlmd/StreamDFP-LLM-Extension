@@ -1,0 +1,4 @@
+model,status_counts,best_dim_key,best_q_gate,best_sev_sum_gate,best_require_rule_match,best_recall,best_acc,baseline_recall,baseline_acc,delta_recall_vs_nollm,delta_acc_vs_nollm,notes
+Qwen3.5-4B (tp2+eager),"existing=5;ok=17;degenerate_skip=2",compact14,0.0,0.0,0,100.0,99.548854005,97.77043688,99.495622659,2.2295631199999946,0.0532313459999898,"Best result matches other models, but runtime cost is highest and phase3 contains degenerate skips."
+Qwen3.5-Plus,"ok=24",compact14,0.0,0.0,0,100.0,99.548854005,97.77043688,99.495622659,2.2295631199999946,0.0532313459999898,"Best result matches other models and all 24 combinations complete normally."
+Qwen3-4B-Instruct-2507,"existing=3;ok=21",compact14,0.0,0.0,0,100.0,99.548854005,97.77043688,99.495622659,2.2295631199999946,0.0532313459999898,"Strongest phase2 extractor and same best phase3 result on corrected input."

@@ -28,9 +28,9 @@
 
 | model_key | Qwen3-Instruct | Qwen3.5-4B | Qwen3.5-Plus |
 |---|---|---|---|
-| mc1_pilot20k | action=llm_enabled, ΔRecall=2.2296, params=compact14, q=0.00, sev=0.0, rule=0 | action=degenerate_skip, params=strict phase3: no valid row (kept=0 all combos) | action=degenerate_skip, params=strict phase3: no valid row (kept=0 all combos) |
+| mc1_pilot20k_stratified_v2 | action=llm_enabled, ΔRecall=+2.2296, params=compact14, q=0.00, sev=0.0, rule=0 | action=llm_enabled, ΔRecall=+2.2296, params=compact14, q=0.00, sev=0.0, rule=0 | action=llm_enabled, ΔRecall=+2.2296, params=compact14, q=0.00, sev=0.0, rule=0 |
 
-说明：`mc1` 在当前严格 `phase3` 口径下，`Qwen3.5-4B` 与 `Qwen3.5-Plus` 都是 `kept=0`，因此没有有效结果行；历史 `Qwen3-4B-Instruct-2507` 的 `+2.2296` 来自 legacy 路线。
+说明：`mc1` 在旧版错误 `pilot20k` 输入上确实存在 `kept=0` 和 legacy 才能复现的问题；但在修正后的 `pilot20k_stratified_v2` 输入上，三模型都已经能在当前严格 `phase3` 口径下得到相同的正增益结果。
 
 ## 简要结论
 
@@ -38,3 +38,4 @@
 - HDD 通过盘型平均 `ΔRecall`：`Qwen3-Instruct = 18.0903`，`Qwen3.5-4B = 19.2081`，`Qwen3.5-Plus = 20.1520`。
 - `Qwen3.5-Plus` 相比 `Qwen3.5-4B` 的主要增益盘型是 `hi7` 和 `st31500341as`；相比 `Qwen3-Instruct` 仍然没有修复 `st31500541as` 这类 hard case。
 - `Qwen3.5-Plus` 没有扩大 HDD 的启用盘型覆盖面，只是在已有可启用盘型上做了小幅增强。
+- `mc1` 需要单独看：旧错误输入下的结论已经被废弃，修正后的 `mc1_stratified_v2` 显示三模型都能复现 `+2.2296`，差异主要体现在 `phase2` 抽取质量和工程可用性，而不是 best-case `phase3` 指标。

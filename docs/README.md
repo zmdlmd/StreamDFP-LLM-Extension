@@ -27,12 +27,14 @@ This directory holds the public-facing experiment narrative, policy summaries, r
 - [reports/llm_recent_experiments_qwen35_pilot20k_summary_20260310.md](reports/llm_recent_experiments_qwen35_pilot20k_summary_20260310.md): Qwen3.5-4B `pilot20k` results across 12 HDD models
 - [reports/qwen3_4b_vs_qwen35_4b_hdd_comparison_20260310.md](reports/qwen3_4b_vs_qwen35_4b_hdd_comparison_20260310.md): side-by-side comparison between `Qwen3-4B-Instruct-2507` and `Qwen3.5-4B`
 - [reports/llm_robust_eval_report_v4_merged_all12.md](reports/llm_robust_eval_report_v4_merged_all12.md): merged policy guard table across all 12 HDD models plus MC1 pilot
+- [reports/mc1_stratified_v2_final_summary_20260323.md](reports/mc1_stratified_v2_final_summary_20260323.md): final `mc1` summary after replacing the broken sequential `pilot20k` input with `stratified_v2`
 
 ## Model-Specific Diagnosis
 
 - [diagnostics/st31500541as_ab_same_subset_20260310.md](diagnostics/st31500541as_ab_same_subset_20260310.md): same-subset A/B comparison for `st31500541as`
 - [diagnostics/st31500541as_regression_windows_20260310.md](diagnostics/st31500541as_regression_windows_20260310.md): regression window tracing for the `st31500541as` degradation case
 - [diagnostics/st31500541as_media_gate_validation_20260310.md](diagnostics/st31500541as_media_gate_validation_20260310.md): validation of `three_stage` soft-gate behavior on `media -> unknown`
+- [reports/mc1_抽取失败原因与修复进展_20260320.md](reports/mc1_抽取失败原因与修复进展_20260320.md): failure analysis for old `mc1` input and the subsequent `stratified_v2` fix
 
 ## Result Tables
 
