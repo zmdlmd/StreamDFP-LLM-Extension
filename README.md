@@ -10,6 +10,7 @@ The codebase keeps both the upstream Python + Java prediction pipeline and the e
 - LLM-enhanced `framework_v1` pipeline for Phase1 window summarization, Phase2 root-cause extraction, and Phase3 policy evaluation.
 - New-model calibration branch for `pilot20k` admission testing before a disk model is added to the per-model LLM policy registry.
 - Local workbench UI plus normalized `workflows/` wrappers so common tasks do not depend on memorizing historical script names.
+- Default local base model: `Qwen3-4B-Instruct-2507`. API-side comparison runs such as `Qwen3.5-Plus` remain optional comparison branches rather than the repository default.
 
 ## Pipeline Overview
 

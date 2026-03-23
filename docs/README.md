@@ -2,6 +2,8 @@
 
 This directory holds the public-facing experiment narrative, policy summaries, result tables, and a small amount of retained diagnosis material.
 
+Current local base model recommendation: `Qwen3-4B-Instruct-2507`.
+
 ## Start Here
 
 - [../README.md](../README.md): repository overview and main entry points

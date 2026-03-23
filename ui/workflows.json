@@ -193,7 +193,7 @@
           "name": "MODEL_PATH",
           "label": "Model Path",
           "default": "",
-          "placeholder": "../models/Qwen/Qwen3.5-4B",
+          "placeholder": "../models/Qwen/Qwen3-4B-Instruct-2507",
           "help": "Optional local model override."
         }
       ]
@@ -277,7 +277,7 @@
           "name": "MODEL_PATH",
           "label": "Model Path",
           "default": "",
-          "placeholder": "../models/Qwen/Qwen3.5-4B",
+          "placeholder": "../models/Qwen/Qwen3-4B-Instruct-2507",
           "help": "Optional local model override used by Phase2."
         },
         {
@@ -324,7 +324,7 @@
           "name": "MODEL_PATH",
           "label": "Model Path",
           "default": "",
-          "placeholder": "../models/Qwen/Qwen3.5-4B",
+          "placeholder": "../models/Qwen/Qwen3-4B-Instruct-2507",
           "help": "Optional local model override used by Phase2 extraction."
         },
         {
@@ -362,7 +362,7 @@
           "name": "MODEL_PATH",
           "label": "Model Path",
           "default": "",
-          "placeholder": "../models/Qwen/Qwen3.5-4B",
+          "placeholder": "../models/Qwen/Qwen3-4B-Instruct-2507",
           "help": "Optional local model override."
         },
         {
@@ -407,7 +407,7 @@
           "name": "MODEL_PATH",
           "label": "Model Path",
           "default": "",
-          "placeholder": "../models/Qwen/Qwen3.5-4B",
+          "placeholder": "../models/Qwen/Qwen3-4B-Instruct-2507",
           "help": "Optional local model override."
         }
       ]

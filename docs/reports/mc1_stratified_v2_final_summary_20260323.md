@@ -131,13 +131,13 @@ legacy 诊断文档仍保留，主要用于解释旧失败链路：
 - 不再复用旧版 `window_text_mc1_pilot20k.jsonl`
 - 如果优先看研究结论：
   - 三模型都可视为 `mc1` 上有效
-- 如果优先看工程可用性：
-  1. `Qwen3.5-Plus`
-  2. `Qwen3-4B-Instruct-2507`
+- 如果要定义仓库默认的本地 base model：
+  1. `Qwen3-4B-Instruct-2507`
+  2. `Qwen3.5-Plus` 作为 API 对照/扩展方案
   3. `Qwen3.5-4B`
 
 更具体地说：
 
-- `Qwen3.5-Plus` 是最稳的上线候选
-- `Qwen3-Instruct` 是最强的本地模型基线
+- `Qwen3-Instruct` 是当前最合适的本地 base model
+- `Qwen3.5-Plus` 仍然是稳定的 API 对照方案
 - `Qwen3.5-4B` 不建议作为首选正式方案

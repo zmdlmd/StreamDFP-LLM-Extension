@@ -6,7 +6,7 @@ ROOT="${ROOT:-$(cd "$SCRIPT_DIR/.." && pwd)}"
 cd "$ROOT"
 
 REPO_PARENT="$(cd "$ROOT/.." && pwd)"
-MODEL_PATH="${MODEL_PATH:-$REPO_PARENT/models/Qwen/Qwen3.5-4B}"
+MODEL_PATH="${MODEL_PATH:-$REPO_PARENT/models/Qwen/Qwen3-4B-Instruct-2507}"
 DATA_ROOT="${DATA_ROOT:-$ROOT/data/ssd_2018}"
 FEATURES_PATH="${FEATURES_PATH:-$ROOT/pyloader/features_erg/mc1_all.txt}"
 DISK_MODEL="${DISK_MODEL:-MC1}"
@@ -36,10 +36,17 @@ REFERENCE_MAX_EXAMPLES="${REFERENCE_MAX_EXAMPLES:-6}"
 FEWSHOT_PER_CAUSE_CAP="${FEWSHOT_PER_CAUSE_CAP:-1}"
 
 BACKEND="${BACKEND:-vllm}"
+API_BASE_URL="${API_BASE_URL:-${OPENAI_BASE_URL:-}}"
+API_KEY_ENV="${API_KEY_ENV:-OPENAI_API_KEY}"
+API_TIMEOUT="${API_TIMEOUT:-120}"
+API_MAX_RETRIES="${API_MAX_RETRIES:-3}"
+API_JSON_MODE="${API_JSON_MODE:-0}"
 BATCH_SIZE="${BATCH_SIZE:-64}"
 VLLM_GPU_MEM="${VLLM_GPU_MEM:-0.92}"
+VLLM_TENSOR_PARALLEL_SIZE="${VLLM_TENSOR_PARALLEL_SIZE:-1}"
 VLLM_MAX_MODEL_LEN="${VLLM_MAX_MODEL_LEN:-8192}"
 VLLM_MAX_NUM_BATCHED_TOKENS="${VLLM_MAX_NUM_BATCHED_TOKENS:-16384}"
+VLLM_ENFORCE_EAGER="${VLLM_ENFORCE_EAGER:-0}"
 MAX_NEW_TOKENS="${MAX_NEW_TOKENS:-180}"
 TEMPERATURE="${TEMPERATURE:-0}"
 TOP_P="${TOP_P:-0.9}"
@@ -58,6 +65,14 @@ LOG_DIR="${LOG_DIR:-$ROOT/logs/framework_v1_phase2_mc1}"
 DOC_DIR="${DOC_DIR:-$ROOT/docs}"
 
 mkdir -p "$OUT_DIR" "$LOG_DIR" "$DOC_DIR"
+
+export LD_LIBRARY_PATH="/root/miniconda3/lib/python3.12/site-packages/torch/lib:/root/miniconda3/lib/python3.12/site-packages/nvidia/cu13/lib:/root/miniconda3/lib/python3.12/site-packages/nvidia/cuda_runtime/lib:/root/miniconda3/lib/python3.12/site-packages/nvidia/cuda_nvrtc/lib:${LD_LIBRARY_PATH:-}"
+if ! [[ "${OMP_NUM_THREADS:-}" =~ ^[1-9][0-9]*$ ]]; then
+  export OMP_NUM_THREADS=8
+fi
+export CUDA_VISIBLE_DEVICES="${CUDA_VISIBLE_DEVICES:-0}"
+export PYTORCH_CUDA_ALLOC_CONF="${PYTORCH_CUDA_ALLOC_CONF:-expandable_segments:True}"
+export VLLM_WORKER_MULTIPROC_METHOD="${VLLM_WORKER_MULTIPROC_METHOD:-spawn}"
 
 WINDOW_TEXT_OUT="$OUT_DIR/window_text_mc1_${RUN_TAG}.jsonl"
 REFERENCE_OUT="$OUT_DIR/reference_mc1_${RUN_TAG}.json"
@@ -155,6 +170,7 @@ for combo in $EXTRACT_COMBOS; do
     --model "$MODEL_PATH" \
     --backend "$BACKEND" \
     --batch_size "$BATCH_SIZE" \
+    --vllm_tensor_parallel_size "$VLLM_TENSOR_PARALLEL_SIZE" \
     --vllm_gpu_memory_utilization "$VLLM_GPU_MEM" \
     --vllm_max_model_len "$VLLM_MAX_MODEL_LEN" \
     --vllm_max_num_batched_tokens "$VLLM_MAX_NUM_BATCHED_TOKENS" \
@@ -166,6 +182,18 @@ for combo in $EXTRACT_COMBOS; do
     --log_every_batches "$LOG_EVERY_BATCHES" \
     --write_root_cause_pred \
     --show_progress)
+  if [[ "$BACKEND" == "openai" ]]; then
+    extract_cmd+=(--api_key_env "$API_KEY_ENV" --api_timeout "$API_TIMEOUT" --api_max_retries "$API_MAX_RETRIES")
+    if [[ -n "$API_BASE_URL" ]]; then
+      extract_cmd+=(--api_base_url "$API_BASE_URL")
+    fi
+    if [[ "$API_JSON_MODE" == "1" ]]; then
+      extract_cmd+=(--api_json_mode)
+    fi
+  fi
+  if [[ "$VLLM_ENFORCE_EAGER" == "1" ]]; then
+    extract_cmd+=(--vllm_enforce_eager)
+  fi
   if [[ -n "$MAX_WINDOWS" && "$MAX_WINDOWS" != "0" ]]; then
     extract_cmd+=(--max_windows "$MAX_WINDOWS")
   fi

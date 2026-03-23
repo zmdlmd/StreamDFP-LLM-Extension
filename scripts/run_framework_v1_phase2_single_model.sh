@@ -6,7 +6,7 @@ ROOT="${ROOT:-$(cd "$SCRIPT_DIR/.." && pwd)}"
 cd "$ROOT"
 
 REPO_PARENT="$(cd "$ROOT/.." && pwd)"
-MODEL_PATH="${MODEL_PATH:-$REPO_PARENT/models/Qwen/Qwen3.5-4B}"
+MODEL_PATH="${MODEL_PATH:-$REPO_PARENT/models/Qwen/Qwen3-4B-Instruct-2507}"
 DATA_ROOT_HDD="${DATA_ROOT_HDD:-$ROOT/data/data_2014/2014}"
 FEATURES_HDD="${FEATURES_HDD:-$ROOT/pyloader/features_erg/hi7_all.txt}"
 DISK_MODEL="${DISK_MODEL:?DISK_MODEL is required}"
@@ -37,6 +37,12 @@ SUMMARY_ANOMALY_TOP_K="${SUMMARY_ANOMALY_TOP_K:-5}"
 REFERENCE_MAX_EXAMPLES="${REFERENCE_MAX_EXAMPLES:-6}"
 FEWSHOT_PER_CAUSE_CAP="${FEWSHOT_PER_CAUSE_CAP:-1}"
 
+BACKEND="${BACKEND:-vllm}"
+API_BASE_URL="${API_BASE_URL:-${OPENAI_BASE_URL:-}}"
+API_KEY_ENV="${API_KEY_ENV:-OPENAI_API_KEY}"
+API_TIMEOUT="${API_TIMEOUT:-120}"
+API_MAX_RETRIES="${API_MAX_RETRIES:-3}"
+API_JSON_MODE="${API_JSON_MODE:-0}"
 BATCH_SIZE="${BATCH_SIZE:-8}"
 VLLM_GPU_MEMORY_UTILIZATION="${VLLM_GPU_MEMORY_UTILIZATION:-0.80}"
 VLLM_MAX_MODEL_LEN="${VLLM_MAX_MODEL_LEN:-3072}"
@@ -179,7 +185,7 @@ extract_cmd=(stdbuf -oL -eL python "$ROOT/llm/llm_offline_extract.py" \
   --reference_examples "$REFERENCE_OUT" \
   --out "$OUT_CACHE" \
   --model "$MODEL_PATH" \
-  --backend vllm \
+  --backend "$BACKEND" \
   --batch_size "$BATCH_SIZE" \
   --vllm_gpu_memory_utilization "$VLLM_GPU_MEMORY_UTILIZATION" \
   --vllm_max_model_len "$VLLM_MAX_MODEL_LEN" \
@@ -203,6 +209,15 @@ extract_cmd=(stdbuf -oL -eL python "$ROOT/llm/llm_offline_extract.py" \
   --log_every_batches 20 \
   --write_root_cause_pred \
   --show_progress)
+if [[ "$BACKEND" == "openai" ]]; then
+  extract_cmd+=(--api_key_env "$API_KEY_ENV" --api_timeout "$API_TIMEOUT" --api_max_retries "$API_MAX_RETRIES")
+  if [[ -n "$API_BASE_URL" ]]; then
+    extract_cmd+=(--api_base_url "$API_BASE_URL")
+  fi
+  if [[ "$API_JSON_MODE" == "1" ]]; then
+    extract_cmd+=(--api_json_mode)
+  fi
+fi
 if [[ -n "$MAX_WINDOWS" && "$MAX_WINDOWS" != "0" ]]; then
   extract_cmd+=(--max_windows "$MAX_WINDOWS")
 fi

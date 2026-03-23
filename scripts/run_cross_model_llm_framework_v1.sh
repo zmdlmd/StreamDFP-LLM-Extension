@@ -7,7 +7,7 @@ cd "$ROOT"
 
 PHASE="${PHASE:-all}" # 0|1|2|3|4|5|all
 REPO_PARENT="$(cd "$ROOT/.." && pwd)"
-MODEL_PATH="${MODEL_PATH:-$REPO_PARENT/models/Qwen/Qwen3.5-4B}"
+MODEL_PATH="${MODEL_PATH:-$REPO_PARENT/models/Qwen/Qwen3-4B-Instruct-2507}"
 DATA_ROOT_HDD="${DATA_ROOT_HDD:-$ROOT/data/data_2014/2014}"
 FEATURES_HDD="${FEATURES_HDD:-$ROOT/pyloader/features_erg/hi7_all.txt}"
 FEATURE_CONTRACT_MODE="${FEATURE_CONTRACT_MODE:-auto}"   # auto|off|force

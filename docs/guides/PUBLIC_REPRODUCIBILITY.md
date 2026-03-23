@@ -64,13 +64,15 @@ The public reproducibility path assumes Backblaze-style daily SMART CSV files ar
 
 ## 4. Download a Qwen Model
 
+Recommended local base model: `Qwen3-4B-Instruct-2507`.
+
 Example with ModelScope:
 
 ```python
 from modelscope import snapshot_download
 snapshot_download(
-    "Qwen/Qwen3.5-4B",
-    local_dir="/absolute/path/to/models/Qwen/Qwen3.5-4B"
+    "Qwen/Qwen3-4B-Instruct-2507",
+    local_dir="/absolute/path/to/models/Qwen/Qwen3-4B-Instruct-2507"
 )
 ```
 

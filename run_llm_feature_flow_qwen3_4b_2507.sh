@@ -4,7 +4,7 @@ set -euo pipefail
 ROOT="${ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)}"
 REPO_PARENT="$(cd "$ROOT/.." && pwd)"
 DATA_ROOT="${DATA_ROOT:-$ROOT/data/data_2014/2014}"
-MODEL_PATH="${MODEL_PATH:-$REPO_PARENT/models/Qwen/Qwen3.5-4B}"
+MODEL_PATH="${MODEL_PATH:-$REPO_PARENT/models/Qwen/Qwen3-4B-Instruct-2507}"
 FEATURES_PATH="${FEATURES_PATH:-$ROOT/pyloader/features_erg/hi7_all.txt}"
 EVENT_MAPPING_CONFIG="${EVENT_MAPPING_CONFIG:-$ROOT/llm/event_mapping_hi7.yaml}"
 CACHE_OUT="${CACHE_OUT:-$ROOT/llm_cache_qwen3_4b_2507.jsonl}"
