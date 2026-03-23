@@ -1,107 +1,253 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>StreamDFP Workbench</title>
+    <title>StreamDFP 实验工作台</title>
     <link rel="stylesheet" href="/static/styles.css" />
   </head>
   <body>
     <div class="page-shell">
       <header class="topbar">
         <div>
-          <p class="eyebrow">Local Workbench</p>
-          <h1>StreamDFP Workflow Console</h1>
+          <p class="eyebrow">本地实验工作台</p>
+          <h1>StreamDFP 实验中控台</h1>
           <p class="subtitle">
-            Use normalized workflow names and categories instead of hunting through legacy script filenames.
+            不再直接暴露底层脚本列表，改成围绕 HDD 主链、MC1 修正链、结果复核和存储清理的端到端入口。
           </p>
         </div>
-        <div class="topbar-card">
-          <div class="topbar-kv">
-            <span>Entry</span>
-            <code>./run_workbench.sh</code>
-          </div>
-          <div class="topbar-kv">
-            <span>Scope</span>
-            <span>Curated launchers only</span>
+        <div class="topbar-meta">
+          <div class="topbar-card">
+            <div class="topbar-kv">
+              <span>启动命令</span>
+              <code>./run_workbench.sh</code>
+            </div>
+            <div class="topbar-kv">
+              <span>默认本地基线</span>
+              <span id="baseModelBadge">Qwen3-4B-Instruct-2507</span>
+            </div>
+            <div class="topbar-kv">
+              <span>工作台地址</span>
+              <span>127.0.0.1:8765</span>
+            </div>
           </div>
         </div>
       </header>
 
-      <main class="layout">
-        <section class="left-panel panel">
-          <div class="panel-head">
-            <h2>Workflows</h2>
-            <span id="workflowCount" class="pill">0</span>
-          </div>
-          <label class="field">
-            <span>Search</span>
-            <input id="searchInput" type="text" placeholder="Search display name, tags, or legacy script" />
-          </label>
-          <div id="categoryFilters" class="filter-row"></div>
-          <div id="workflowList" class="workflow-list"></div>
-        </section>
+      <nav class="tabbar">
+        <button class="tab-button active" data-tab="overview" type="button">总览</button>
+        <button class="tab-button" data-tab="wizard" type="button">实验向导</button>
+        <button class="tab-button" data-tab="results" type="button">结果看板</button>
+        <button class="tab-button" data-tab="storage" type="button">存储清理</button>
+        <button class="tab-button" data-tab="jobs" type="button">作业监控</button>
+      </nav>
 
-        <section class="center-panel panel">
-          <div class="panel-head">
-            <h2>Details</h2>
-            <span id="selectedCategory" class="pill muted">Select one</span>
+      <main class="tab-shell">
+        <section id="tab-overview" class="tab-panel">
+          <div class="cards-grid">
+            <div class="panel wide-panel">
+              <div class="panel-head">
+                <h2>全局状态</h2>
+                <span class="pill">当前实验总览</span>
+              </div>
+              <div id="overviewHighlights" class="metric-grid"></div>
+            </div>
+            <div class="panel">
+              <div class="panel-head">
+                <h2>最近作业</h2>
+              </div>
+              <div id="recentJobsOverview" class="list-grid"></div>
+            </div>
           </div>
-          <div id="emptyState" class="empty-state">
-            <p>Select a workflow on the left to view its purpose, canonical entrypoint, legacy script path, and launch options.</p>
+
+          <div class="cards-grid">
+            <div class="panel">
+              <div class="panel-head">
+                <h2>实验入口</h2>
+              </div>
+              <div id="scenarioCards" class="cards-grid compact-grid"></div>
+            </div>
+            <div class="panel">
+              <div class="panel-head">
+                <h2>前置检查</h2>
+                <button id="refreshPreflightButton" class="ghost-button" type="button">刷新检查</button>
+              </div>
+              <div id="preflightList" class="list-grid"></div>
+            </div>
           </div>
-          <div id="detailView" class="detail-view hidden">
-            <div class="detail-title-row">
-              <div>
-                <p id="detailEyebrow" class="eyebrow"></p>
-                <h3 id="detailTitle"></h3>
+
+          <div class="cards-grid">
+            <div class="panel">
+              <div class="panel-head">
+                <h2>模型基线</h2>
               </div>
-              <span id="detailTags" class="tag-row"></span>
+              <div id="modelPresetCards" class="cards-grid compact-grid"></div>
             </div>
-            <p id="detailDescription" class="detail-description"></p>
-            <div id="detailWarning" class="callout warning hidden"></div>
-            <div class="info-grid">
-              <div class="info-card">
-                <span class="label">Canonical Entry</span>
-                <code id="detailCanonical"></code>
+            <div class="panel">
+              <div class="panel-head">
+                <h2>当前建议</h2>
               </div>
-              <div class="info-card">
-                <span class="label">Legacy Entry</span>
-                <code id="detailLegacy"></code>
-              </div>
-              <div class="info-card">
-                <span class="label">Run Directory</span>
-                <code id="detailCwd"></code>
-              </div>
-            </div>
-            <div class="panel-subsection">
-              <h4>Launch Options</h4>
-              <form id="envForm" class="env-form"></form>
-              <button id="runButton" class="primary-button" type="button">Run Workflow</button>
-            </div>
-            <div class="panel-subsection">
-              <h4>Command Preview</h4>
-              <pre id="commandPreview" class="code-block"></pre>
-            </div>
-            <div class="panel-subsection">
-              <h4>Notes</h4>
-              <ul id="detailNotes" class="note-list"></ul>
+              <div id="focusCards" class="list-grid"></div>
             </div>
           </div>
         </section>
 
-        <section class="right-panel panel">
-          <div class="panel-head">
-            <h2>Jobs</h2>
-            <button id="refreshJobsButton" class="ghost-button" type="button">Refresh</button>
-          </div>
-          <div id="jobList" class="job-list"></div>
-          <div class="panel-subsection">
-            <div class="panel-head compact">
-              <h4>Selected Job Log</h4>
-              <button id="stopJobButton" class="ghost-button hidden" type="button">Stop Job</button>
+        <section id="tab-wizard" class="tab-panel hidden">
+          <div class="wizard-grid">
+            <div class="panel wizard-sidebar">
+              <div class="panel-head">
+                <h2>步骤 1 · 选择场景</h2>
+              </div>
+              <div id="wizardScenarioRail" class="selector-grid"></div>
+
+              <div class="panel-head section-divider">
+                <h2>步骤 2 · 选择模型</h2>
+              </div>
+              <div id="wizardPresetRail" class="selector-grid"></div>
             </div>
-            <pre id="jobLog" class="code-block tall"></pre>
+
+            <div class="panel wizard-main">
+              <div class="panel-head">
+                <h2>步骤 3 · 配置并启动</h2>
+                <span id="wizardWorkflowBadge" class="pill muted"></span>
+              </div>
+
+              <div id="wizardHeader" class="wizard-header"></div>
+
+              <div class="cards-grid wizard-meta-grid">
+                <div class="subpanel">
+                  <div class="panel-head">
+                    <h3>流程步骤</h3>
+                  </div>
+                  <div id="wizardStepList" class="list-grid"></div>
+                </div>
+                <div class="subpanel">
+                  <div class="panel-head">
+                    <h3>前置条件</h3>
+                  </div>
+                  <div id="wizardRelevantChecks" class="list-grid"></div>
+                </div>
+              </div>
+
+              <div class="subpanel">
+                <div class="panel-head">
+                  <h3>核心参数</h3>
+                </div>
+                <div id="wizardPrimaryFields" class="env-grid"></div>
+              </div>
+
+              <details class="advanced-box">
+                <summary>高级参数</summary>
+                <div id="wizardAdvancedFields" class="env-grid"></div>
+              </details>
+
+              <div class="cards-grid wizard-meta-grid">
+                <div class="subpanel">
+                  <div class="panel-head">
+                    <h3>输出位置</h3>
+                  </div>
+                  <div id="wizardOutputs" class="list-grid"></div>
+                </div>
+                <div class="subpanel">
+                  <div class="panel-head">
+                    <h3>启动预览</h3>
+                  </div>
+                  <pre id="wizardPreview" class="code-block small"></pre>
+                </div>
+              </div>
+
+              <div class="button-row">
+                <button id="wizardApplyPresetButton" class="ghost-button" type="button">恢复预设</button>
+                <button id="wizardRunButton" class="primary-button" type="button">启动当前场景</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="tab-results" class="tab-panel hidden">
+          <div id="resultsHighlights" class="metric-grid"></div>
+
+          <div class="cards-grid">
+            <div class="panel">
+              <div class="panel-head">
+                <h2>MC1 Phase2 结论</h2>
+              </div>
+              <div id="mc1Overview" class="list-grid"></div>
+            </div>
+            <div class="panel">
+              <div class="panel-head">
+                <h2>HDD 三模型结论</h2>
+              </div>
+              <div id="hddOverview" class="list-grid"></div>
+            </div>
+          </div>
+
+          <div class="cards-grid">
+            <div class="panel">
+              <div class="panel-head">
+                <h2>MC1 Phase2 质量对照</h2>
+                <span id="mc1Phase2Path" class="pill muted"></span>
+              </div>
+              <div class="table-wrap">
+                <table id="mc1Phase2Table" class="result-table"></table>
+              </div>
+            </div>
+            <div class="panel">
+              <div class="panel-head">
+                <h2>MC1 Phase3 对照</h2>
+                <span id="mc1Phase3Path" class="pill muted"></span>
+              </div>
+              <div class="table-wrap">
+                <table id="mc1Phase3Table" class="result-table"></table>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head">
+              <h2>HDD 三模型摘要</h2>
+              <span id="hddPath" class="pill muted"></span>
+            </div>
+            <div class="table-wrap">
+              <table id="hddSummaryTable" class="result-table"></table>
+            </div>
+          </div>
+        </section>
+
+        <section id="tab-storage" class="tab-panel hidden">
+          <div class="panel">
+            <div class="panel-head">
+              <h2>实验产物清理</h2>
+            </div>
+            <div id="storageHeadline" class="metric-grid"></div>
+            <div class="action-center-row">
+              <button id="cleanupExperimentButton" class="primary-button" type="button">清理实验中间产物</button>
+            </div>
+            <div class="panel-head section-divider">
+              <h3>清理范围</h3>
+            </div>
+            <div id="cleanupSuggestions" class="list-grid"></div>
+            <pre id="cleanupStatus" class="code-block small"></pre>
+          </div>
+        </section>
+
+        <section id="tab-jobs" class="tab-panel hidden">
+          <div class="cards-grid jobs-grid">
+            <div class="panel">
+              <div class="panel-head">
+                <h2>运行中的作业</h2>
+                <button id="refreshJobsButton" class="ghost-button" type="button">刷新</button>
+              </div>
+              <div id="jobList" class="job-list"></div>
+            </div>
+            <div class="panel">
+              <div class="panel-head">
+                <h2>作业日志</h2>
+                <button id="stopJobButton" class="ghost-button hidden" type="button">停止作业</button>
+              </div>
+              <div id="jobArtifacts" class="list-grid"></div>
+              <pre id="jobLog" class="code-block tall"></pre>
+            </div>
           </div>
         </section>
       </main>

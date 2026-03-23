@@ -160,6 +160,45 @@
       ]
     },
     {
+      "id": "llm.pilot20k.full-all12",
+      "display_name": "LLM / Pilot20k / Full Flow All12",
+      "category": "LLM Framework",
+      "canonical_entry": "workflows/llm/pilot20k-full-all12.sh",
+      "legacy_entry": "scripts/run_phase2_pilot20k_all12_qwen35_then_shutdown.sh + scripts/run_phase3_all_pilot20k_qwen35.sh",
+      "cwd": ".",
+      "command": ["bash", "workflows/llm/pilot20k-full-all12.sh"],
+      "description": "Run the full all12 HDD flow end-to-end: Phase2 extraction first, then Phase3 grid evaluation.",
+      "notes": [
+        "This is the end-to-end wrapper for the common HDD pilot20k experiment path.",
+        "Auto shutdown is disabled by default."
+      ],
+      "warning": "GPU required for Phase2. Phase3 is CPU and Java heavy.",
+      "tags": ["llm", "pilot20k", "phase2", "phase3", "all12", "gpu", "cpu"],
+      "env": [
+        {
+          "name": "RUN_TAG",
+          "label": "Run Tag",
+          "default": "pilot20k_qwen3instruct2507",
+          "placeholder": "pilot20k_qwen3instruct2507",
+          "help": "Shared Phase2 output tag."
+        },
+        {
+          "name": "PHASE3_RUN_TAG",
+          "label": "Phase3 Run Tag",
+          "default": "pilot20k_qwen3instruct2507",
+          "placeholder": "pilot20k_qwen3instruct2507",
+          "help": "Usually matches RUN_TAG."
+        },
+        {
+          "name": "PHASE3_TAG_SUFFIX",
+          "label": "Phase3 Tag Suffix",
+          "default": "qwen3instruct2507",
+          "placeholder": "qwen3instruct2507",
+          "help": "Suffix for Phase3 result files."
+        }
+      ]
+    },
+    {
       "id": "llm.pilot20k.phase2-all12",
       "display_name": "LLM / Pilot20k / Phase 2 All12",
       "category": "LLM Framework",
@@ -378,6 +417,45 @@
           "default": "20000",
           "placeholder": "20000",
           "help": "Upper bound for each model's input windows."
+        }
+      ]
+    },
+    {
+      "id": "llm.mc1.full-stratified-v2",
+      "display_name": "LLM / MC1 / Full Flow Stratified_v2",
+      "category": "SSD / MC1",
+      "canonical_entry": "workflows/llm/mc1-full-stratified-v2.sh",
+      "legacy_entry": "scripts/run_framework_v1_phase2_mc1.sh + scripts/run_framework_v1_phase3_grid_mc1.sh",
+      "cwd": ".",
+      "command": ["bash", "workflows/llm/mc1-full-stratified-v2.sh"],
+      "description": "Run the corrected MC1 stratified_v2 flow end-to-end: reuse prepared input, run Phase2 extraction, then Phase3 grid evaluation.",
+      "notes": [
+        "Defaults are aligned with the corrected MC1 stratified_v2 experiment path.",
+        "No full-year SSD rescan is triggered by default."
+      ],
+      "warning": "GPU required for Phase2. Phase3 is CPU and Java heavy.",
+      "tags": ["llm", "mc1", "phase2", "phase3", "ssd", "gpu", "cpu"],
+      "env": [
+        {
+          "name": "PHASE2_RUN_TAG",
+          "label": "Phase2 Run Tag",
+          "default": "pilot20k_stratified_v2_qwen3instruct2507",
+          "placeholder": "pilot20k_stratified_v2_qwen3instruct2507",
+          "help": "Tag used for MC1 Phase2 cache output."
+        },
+        {
+          "name": "PHASE3_RUN_TAG",
+          "label": "Phase3 Run Tag",
+          "default": "pilot20k_stratified_v2",
+          "placeholder": "pilot20k_stratified_v2",
+          "help": "Input tag used by the MC1 Phase3 script."
+        },
+        {
+          "name": "PHASE3_TAG_SUFFIX",
+          "label": "Phase3 Tag Suffix",
+          "default": "qwen3instruct2507",
+          "placeholder": "qwen3instruct2507",
+          "help": "Suffix appended to Phase3 result files."
         }
       ]
     },

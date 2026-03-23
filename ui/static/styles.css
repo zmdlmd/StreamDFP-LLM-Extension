@@ -1,7 +1,7 @@
 :root {
   --bg: #f4efe4;
-  --panel: rgba(255, 252, 247, 0.92);
-  --panel-strong: #fffdf9;
+  --panel: rgba(255, 252, 247, 0.94);
+  --panel-strong: #fffdf8;
   --ink: #1e1f1a;
   --muted: #6a6d62;
   --line: rgba(33, 35, 30, 0.12);
@@ -31,14 +31,12 @@ code,
 pre,
 .eyebrow,
 .pill,
-.filter-chip,
-.status,
-.card-category {
+.status {
   font-family: "IBM Plex Mono", "SFMono-Regular", monospace;
 }
 
 .page-shell {
-  max-width: 1520px;
+  max-width: 1580px;
   margin: 0 auto;
   padding: 1.5rem;
 }
@@ -46,21 +44,21 @@ pre,
 .topbar {
   display: flex;
   justify-content: space-between;
-  gap: 1.25rem;
+  gap: 1.2rem;
   align-items: flex-start;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .topbar h1 {
-  margin: 0.2rem 0 0.35rem;
-  font-size: clamp(1.8rem, 3vw, 3rem);
+  margin: 0.25rem 0 0.4rem;
+  font-size: clamp(2rem, 3vw, 3.3rem);
   line-height: 1;
   letter-spacing: -0.04em;
 }
 
 .subtitle {
-  max-width: 64ch;
   margin: 0;
+  max-width: 68ch;
   color: var(--muted);
 }
 
@@ -74,18 +72,24 @@ pre,
 
 .topbar-card,
 .panel,
-.info-card,
-.workflow-card,
+.preset-card,
 .job-card,
-.callout {
+.metric-card,
+.list-item,
+.selector-card,
+.subpanel,
+.scenario-card {
   border: 1px solid var(--line);
   border-radius: 1rem;
   background: var(--panel);
   box-shadow: var(--shadow);
 }
 
+.topbar-meta {
+  min-width: 24rem;
+}
+
 .topbar-card {
-  min-width: 20rem;
   padding: 1rem 1.1rem;
 }
 
@@ -93,18 +97,76 @@ pre,
   display: flex;
   justify-content: space-between;
   gap: 1rem;
-  padding: 0.25rem 0;
+  padding: 0.3rem 0;
 }
 
-.layout {
+.tabbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-bottom: 1rem;
+}
+
+.tab-button,
+.ghost-button,
+.primary-button {
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  cursor: pointer;
+  font: inherit;
+}
+
+.tab-button,
+.ghost-button {
+  padding: 0.65rem 0.95rem;
+  background: transparent;
+}
+
+.tab-button.active {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
+.primary-button {
+  padding: 0.8rem 1.05rem;
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+  font-weight: 700;
+}
+
+.tab-shell {
   display: grid;
-  grid-template-columns: 1.1fr 1.4fr 1.15fr;
   gap: 1rem;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.compact-grid {
+  grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+}
+
+.jobs-grid {
+  grid-template-columns: 1fr 1.2fr;
 }
 
 .panel {
   padding: 1rem;
-  min-height: 42rem;
+}
+
+.subpanel {
+  padding: 0.95rem;
+  background: var(--panel-strong);
 }
 
 .panel-head {
@@ -112,17 +174,177 @@ pre,
   justify-content: space-between;
   align-items: center;
   gap: 0.75rem;
-  margin-bottom: 1rem;
-}
-
-.panel-head.compact {
-  margin-bottom: 0.6rem;
+  margin-bottom: 0.8rem;
 }
 
 .panel-head h2,
-.panel-head h4,
-.detail-view h3 {
+.panel-head h3 {
   margin: 0;
+}
+
+.panel-head h2 {
+  font-size: 1.12rem;
+}
+
+.panel-head h3 {
+  font-size: 0.98rem;
+}
+
+.section-divider {
+  margin-top: 1rem;
+}
+
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: 0.75rem;
+}
+
+.metric-card {
+  padding: 0.9rem;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.metric-card span {
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.metric-card strong {
+  font-size: 1.15rem;
+}
+
+.metric-card small {
+  color: var(--muted);
+}
+
+.metric-card.accent {
+  border-color: rgba(24, 76, 71, 0.25);
+  background: var(--accent-soft);
+}
+
+.metric-card.success {
+  border-color: rgba(46, 107, 47, 0.25);
+  background: rgba(227, 244, 227, 0.92);
+}
+
+.preset-card,
+.scenario-card {
+  padding: 0.95rem;
+  display: grid;
+  gap: 0.45rem;
+}
+
+.preset-card.recommended {
+  border-color: rgba(24, 76, 71, 0.45);
+}
+
+.preset-topline,
+.scenario-topline {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.preset-family,
+.preset-description,
+.detail-description,
+.scenario-subtitle,
+.wizard-hero span,
+.scenario-hint {
+  margin: 0;
+  color: var(--muted);
+}
+
+.scenario-hint {
+  font-size: 0.86rem;
+}
+
+.list-grid {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.list-item {
+  padding: 0.85rem;
+  display: grid;
+  gap: 0.3rem;
+}
+
+.list-item span,
+.list-item small {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.preflight-fail {
+  border-color: rgba(141, 36, 56, 0.28);
+  background: #fff4f6;
+}
+
+.wizard-grid {
+  display: grid;
+  grid-template-columns: 24rem minmax(0, 1fr);
+  gap: 1rem;
+}
+
+.wizard-sidebar {
+  align-self: start;
+  position: sticky;
+  top: 1rem;
+}
+
+.wizard-main {
+  display: grid;
+  gap: 1rem;
+}
+
+.wizard-header {
+  margin-bottom: 0.2rem;
+}
+
+.wizard-hero {
+  display: grid;
+  gap: 0.25rem;
+  padding: 1rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(24, 76, 71, 0.18);
+  background: linear-gradient(180deg, rgba(215, 235, 230, 0.72) 0%, rgba(255, 253, 248, 0.92) 100%);
+}
+
+.wizard-hero strong {
+  font-size: 1.05rem;
+}
+
+.wizard-meta-grid {
+  margin-bottom: 0;
+}
+
+.selector-grid {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.selector-card {
+  width: 100%;
+  text-align: left;
+  padding: 0.9rem;
+  display: grid;
+  gap: 0.25rem;
+  cursor: pointer;
+  color: inherit;
+}
+
+.selector-card.active {
+  border-color: rgba(24, 76, 71, 0.45);
+  background: var(--accent-soft);
+}
+
+.selector-card span,
+.selector-card small {
+  color: var(--muted);
 }
 
 .field {
@@ -131,92 +353,58 @@ pre,
   margin-bottom: 0.75rem;
 }
 
-.field span,
-.label {
-  font-size: 0.83rem;
+.field span {
+  font-size: 0.82rem;
   color: var(--muted);
 }
 
-.field small {
-  color: var(--muted);
-  font-size: 0.76rem;
-}
-
-.field input {
+.field input,
+.field select {
   border: 1px solid var(--line);
   border-radius: 0.8rem;
-  padding: 0.75rem 0.9rem;
-  background: rgba(255, 255, 255, 0.84);
+  padding: 0.72rem 0.88rem;
+  background: rgba(255, 255, 255, 0.86);
   color: var(--ink);
 }
 
-.filter-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
+.env-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: 0.7rem;
+}
+
+.advanced-box {
+  border: 1px dashed rgba(33, 35, 30, 0.2);
+  border-radius: 1rem;
+  padding: 0.9rem;
+  background: rgba(255, 255, 255, 0.45);
+}
+
+.advanced-box summary {
+  cursor: pointer;
+  font-weight: 700;
   margin-bottom: 0.9rem;
 }
 
-.filter-chip,
-.ghost-button,
-.primary-button {
-  border-radius: 999px;
-  border: 1px solid var(--line);
-  cursor: pointer;
+.button-row {
+  display: flex;
+  gap: 0.7rem;
+  flex-wrap: wrap;
 }
 
-.filter-chip,
-.ghost-button {
-  padding: 0.55rem 0.85rem;
-  background: transparent;
+.action-center-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 1.1rem 0 1.25rem;
 }
 
-.filter-chip.active {
-  background: var(--accent);
-  color: #fff;
-  border-color: var(--accent);
+#tab-storage .metric-grid {
+  margin-bottom: 0.35rem;
 }
 
-.primary-button {
-  padding: 0.85rem 1.1rem;
-  background: var(--accent);
-  color: #fff;
-  border-color: var(--accent);
-  font-weight: 700;
-}
-
-.workflow-list,
-.job-list {
-  display: grid;
-  gap: 0.75rem;
-}
-
-.workflow-card,
-.job-card {
-  display: grid;
-  gap: 0.45rem;
-  width: 100%;
-  text-align: left;
-  padding: 0.95rem;
-  color: inherit;
-}
-
-.workflow-card.active,
-.job-card.active {
-  border-color: rgba(24, 76, 71, 0.45);
-  box-shadow: 0 18px 40px rgba(24, 76, 71, 0.12);
-}
-
-.workflow-card p,
-.job-card p,
-.detail-description {
-  margin: 0;
-  color: var(--muted);
-}
-
-.card-category {
-  color: var(--accent);
-  font-size: 0.78rem;
+#tab-storage .primary-button {
+  min-width: 18rem;
 }
 
 .pill {
@@ -231,65 +419,59 @@ pre,
   color: var(--muted);
 }
 
-.hidden {
-  display: none !important;
+.table-wrap {
+  overflow: auto;
 }
 
-.empty-state {
-  min-height: 28rem;
-  display: grid;
-  place-items: center;
-  text-align: center;
+.result-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+}
+
+.result-table th,
+.result-table td {
+  border-bottom: 1px solid var(--line);
+  padding: 0.7rem 0.6rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.result-table th {
   color: var(--muted);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
-.detail-title-row {
+.job-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.job-card {
+  display: grid;
+  gap: 0.45rem;
+  width: 100%;
+  text-align: left;
+  padding: 0.95rem;
+  color: inherit;
+}
+
+.job-card.active {
+  border-color: rgba(24, 76, 71, 0.45);
+}
+
+.job-topline {
   display: flex;
   justify-content: space-between;
-  gap: 1rem;
-  align-items: flex-start;
+  gap: 0.75rem;
+  align-items: center;
 }
 
-.tag-row {
-  display: flex;
-  gap: 0.45rem;
-  flex-wrap: wrap;
-}
-
-.tag {
-  border-radius: 999px;
-  background: var(--accent-soft);
-  color: var(--accent);
-  padding: 0.3rem 0.6rem;
-  font-size: 0.78rem;
-}
-
-.info-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
-  gap: 0.8rem;
-  margin: 1rem 0;
-}
-
-.info-card {
-  padding: 0.85rem;
-}
-
-.panel-subsection {
-  margin-top: 1rem;
-}
-
-.note-list {
+.job-card p {
   margin: 0;
-  padding-left: 1.2rem;
   color: var(--muted);
-}
-
-.callout.warning {
-  padding: 0.85rem 0.95rem;
-  background: var(--warning-soft);
-  border-color: rgba(177, 76, 45, 0.22);
-  color: var(--warning);
 }
 
 .code-block {
@@ -303,15 +485,12 @@ pre,
   white-space: pre-wrap;
 }
 
-.code-block.tall {
-  min-height: 22rem;
+.code-block.small {
+  min-height: 10rem;
 }
 
-.job-topline {
-  display: flex;
-  justify-content: space-between;
-  gap: 0.75rem;
-  align-items: center;
+.code-block.tall {
+  min-height: 32rem;
 }
 
 .status {
@@ -336,21 +515,30 @@ pre,
   color: var(--danger);
 }
 
-@media (max-width: 1180px) {
-  .layout {
+@media (max-width: 1280px) {
+  .wizard-grid,
+  .cards-grid,
+  .jobs-grid {
     grid-template-columns: 1fr;
   }
 
-  .panel {
-    min-height: auto;
+  .wizard-sidebar {
+    position: static;
   }
+}
 
+@media (max-width: 960px) {
   .topbar {
     flex-direction: column;
   }
 
-  .topbar-card {
+  .topbar-meta {
     min-width: 0;
     width: 100%;
+  }
+
+  .env-grid,
+  .metric-grid {
+    grid-template-columns: 1fr;
   }
 }

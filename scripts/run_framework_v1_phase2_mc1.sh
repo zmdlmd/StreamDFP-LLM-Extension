@@ -58,6 +58,10 @@ RUN_TAG="${RUN_TAG:-pilot20k}"
 EVENT_MAPPING_CONFIG="${EVENT_MAPPING_CONFIG:-$ROOT/llm/event_mapping_mc1.yaml}"
 EXTRACT_COMBOS="${EXTRACT_COMBOS:-fs_legacy fs_structured_v2 zs_legacy zs_structured_v2}"
 SKIP_EXTRACT="${SKIP_EXTRACT:-0}"
+SKIP_WINDOW_BUILD="${SKIP_WINDOW_BUILD:-0}"
+WINDOW_TEXT_IN="${WINDOW_TEXT_IN:-}"
+REFERENCE_IN="${REFERENCE_IN:-}"
+REFERENCE_QUALITY_IN="${REFERENCE_QUALITY_IN:-}"
 DRY_RUN="${DRY_RUN:-0}"
 
 OUT_DIR="${OUT_DIR:-$ROOT/llm/framework_v1_mc1}"
@@ -77,6 +81,16 @@ export VLLM_WORKER_MULTIPROC_METHOD="${VLLM_WORKER_MULTIPROC_METHOD:-spawn}"
 WINDOW_TEXT_OUT="$OUT_DIR/window_text_mc1_${RUN_TAG}.jsonl"
 REFERENCE_OUT="$OUT_DIR/reference_mc1_${RUN_TAG}.json"
 REFERENCE_QUALITY_OUT="$OUT_DIR/reference_mc1_${RUN_TAG}_quality.json"
+
+if [[ -n "$WINDOW_TEXT_IN" ]]; then
+  WINDOW_TEXT_OUT="$WINDOW_TEXT_IN"
+fi
+if [[ -n "$REFERENCE_IN" ]]; then
+  REFERENCE_OUT="$REFERENCE_IN"
+fi
+if [[ -n "$REFERENCE_QUALITY_IN" ]]; then
+  REFERENCE_QUALITY_OUT="$REFERENCE_QUALITY_IN"
+fi
 
 rule_args=()
 if [[ -n "$RULE_CONFIG" ]]; then
@@ -101,38 +115,53 @@ if [[ "$DRY_RUN" == "1" ]]; then
   echo "  WINDOW_TEXT_OUT=$WINDOW_TEXT_OUT"
   echo "  REFERENCE_OUT=$REFERENCE_OUT"
   echo "  EXTRACT_COMBOS=$EXTRACT_COMBOS"
+  echo "  SKIP_WINDOW_BUILD=$SKIP_WINDOW_BUILD"
   exit 0
 fi
 
-echo "[phase2_mc1] building window_text + reference"
-window_cmd=(python "$ROOT/llm/window_to_text.py" \
-  --data_root "$DATA_ROOT" \
-  --features_path "$FEATURES_PATH" \
-  --out "$WINDOW_TEXT_OUT" \
-  --reference_out "$REFERENCE_OUT" \
-  --reference_quality_report_out "$REFERENCE_QUALITY_OUT" \
-  --date_format "$DATE_FORMAT" \
-  --disk_model "$DISK_MODEL" \
-  --disk_id_prefix "$DISK_ID_PREFIX" \
-  --rule_profile "$RULE_PROFILE" \
-  --rule_profile_dir "$RULE_PROFILE_DIR" \
-  --rule_medium "$RULE_MEDIUM" \
-  --summary_schema "$SUMMARY_SCHEMA" \
-  --summary_anomaly_top_k "$SUMMARY_ANOMALY_TOP_K" \
-  "${legacy_args[@]}" \
-  "${rule_args[@]}" \
-  --reference_start_date "$REFERENCE_START_DATE" \
-  --reference_end_date "$REFERENCE_END_DATE" \
-  "${out_range_args[@]}" \
-  --reference_min_non_unknown "$REFERENCE_MIN_NON_UNKNOWN" \
-  --reference_per_cause "$REFERENCE_PER_CAUSE")
-if [[ -n "$MAX_WINDOWS" && "$MAX_WINDOWS" != "0" ]]; then
-  window_cmd+=(--max_windows "$MAX_WINDOWS" --sample_mode "$SAMPLE_MODE" --sample_seed "$SAMPLE_SEED")
+if [[ "$SKIP_WINDOW_BUILD" == "1" ]]; then
+  if [[ ! -f "$WINDOW_TEXT_OUT" ]]; then
+    echo "[phase2_mc1] missing WINDOW_TEXT_IN file: $WINDOW_TEXT_OUT" >&2
+    exit 2
+  fi
+  if [[ ! -f "$REFERENCE_OUT" ]]; then
+    echo "[phase2_mc1] missing REFERENCE_IN file: $REFERENCE_OUT" >&2
+    exit 2
+  fi
+  echo "[phase2_mc1] reusing existing window_text/reference"
+  echo "  WINDOW_TEXT_OUT=$WINDOW_TEXT_OUT"
+  echo "  REFERENCE_OUT=$REFERENCE_OUT"
+else
+  echo "[phase2_mc1] building window_text + reference"
+  window_cmd=(python "$ROOT/llm/window_to_text.py" \
+    --data_root "$DATA_ROOT" \
+    --features_path "$FEATURES_PATH" \
+    --out "$WINDOW_TEXT_OUT" \
+    --reference_out "$REFERENCE_OUT" \
+    --reference_quality_report_out "$REFERENCE_QUALITY_OUT" \
+    --date_format "$DATE_FORMAT" \
+    --disk_model "$DISK_MODEL" \
+    --disk_id_prefix "$DISK_ID_PREFIX" \
+    --rule_profile "$RULE_PROFILE" \
+    --rule_profile_dir "$RULE_PROFILE_DIR" \
+    --rule_medium "$RULE_MEDIUM" \
+    --summary_schema "$SUMMARY_SCHEMA" \
+    --summary_anomaly_top_k "$SUMMARY_ANOMALY_TOP_K" \
+    "${legacy_args[@]}" \
+    "${rule_args[@]}" \
+    --reference_start_date "$REFERENCE_START_DATE" \
+    --reference_end_date "$REFERENCE_END_DATE" \
+    "${out_range_args[@]}" \
+    --reference_min_non_unknown "$REFERENCE_MIN_NON_UNKNOWN" \
+    --reference_per_cause "$REFERENCE_PER_CAUSE")
+  if [[ -n "$MAX_WINDOWS" && "$MAX_WINDOWS" != "0" ]]; then
+    window_cmd+=(--max_windows "$MAX_WINDOWS" --sample_mode "$SAMPLE_MODE" --sample_seed "$SAMPLE_SEED")
+  fi
+  if [[ -n "$REFERENCE_POOL_WINDOWS" && "$REFERENCE_POOL_WINDOWS" != "0" ]]; then
+    window_cmd+=(--reference_pool_windows "$REFERENCE_POOL_WINDOWS")
+  fi
+  "${window_cmd[@]}"
 fi
-if [[ -n "$REFERENCE_POOL_WINDOWS" && "$REFERENCE_POOL_WINDOWS" != "0" ]]; then
-  window_cmd+=(--reference_pool_windows "$REFERENCE_POOL_WINDOWS")
-fi
-"${window_cmd[@]}"
 
 if [[ "$SKIP_EXTRACT" == "1" ]]; then
   echo "[phase2_mc1] SKIP_EXTRACT=1, window_text/reference done."

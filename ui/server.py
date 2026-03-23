@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 import argparse
+import csv
 import json
 import os
 import shlex
+import shutil
 import subprocess
 import threading
 import uuid
@@ -11,15 +13,51 @@ from datetime import datetime, timezone
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 from urllib.parse import parse_qs, urlparse
 
 
 ROOT = Path(__file__).resolve().parents[1]
+REPO_PARENT = ROOT.parent
 UI_DIR = ROOT / "ui"
 STATIC_DIR = UI_DIR / "static"
 REGISTRY_PATH = UI_DIR / "workflows.json"
 LOG_DIR = ROOT / "logs" / "ui_runs"
+
+MODEL_PRESETS = [
+    {
+        "id": "qwen3instruct2507",
+        "name": "Qwen3-4B-Instruct-2507",
+        "family": "Qwen3",
+        "kind": "local",
+        "role": "默认本地 base model",
+        "recommended": True,
+        "description": "当前仓库默认的本地基线模型。MC1 修正输入上 Phase2 最强，Phase3 最优结果与另外两个模型一致。",
+        "model_path": "../models/Qwen/Qwen3-4B-Instruct-2507",
+    },
+    {
+        "id": "qwen35plusapi",
+        "name": "Qwen3.5-Plus",
+        "family": "Qwen3.5",
+        "kind": "api",
+        "role": "API 对照模型",
+        "recommended": False,
+        "description": "API 侧稳定对照方案。HDD 和 MC1 都有完整结果，工程上最省本地 GPU。",
+        "model_path": "qwen3.5-plus",
+        "api_base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+        "api_key_env": "DASHSCOPE_API_KEY",
+    },
+    {
+        "id": "qwen35tp2eager",
+        "name": "Qwen3.5-4B",
+        "family": "Qwen3.5",
+        "kind": "local",
+        "role": "双卡实验模型",
+        "recommended": False,
+        "description": "在 MC1 长提示词场景下需要 TP=2 + eager 才能稳定跑通，本地工程成本最高。",
+        "model_path": "../models/Qwen/Qwen3.5-4B",
+    },
+]
 
 
 def utc_now() -> str:
@@ -35,6 +73,342 @@ def safe_rel_path(path: Path, root: Path) -> str:
         return str(path.resolve().relative_to(root.resolve()))
     except Exception:
         return str(path)
+
+
+def human_bytes(value: int) -> str:
+    units = ["B", "KB", "MB", "GB", "TB"]
+    size = float(value)
+    unit = units[0]
+    for unit in units:
+        if size < 1024.0 or unit == units[-1]:
+            break
+        size /= 1024.0
+    if unit == "B":
+        return f"{int(size)} {unit}"
+    return f"{size:.2f} {unit}"
+
+
+def parse_float(value: Any, default: float = 0.0) -> float:
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return default
+
+
+def read_csv_rows(path: Path) -> List[Dict[str, str]]:
+    if not path.exists():
+        return []
+    with path.open("r", encoding="utf-8", newline="") as handle:
+        return list(csv.DictReader(handle))
+
+
+def summarize_hdd_results() -> Dict[str, Any]:
+    path = ROOT / "docs" / "tables" / "qwen3_instruct_vs_qwen35_4b_vs_qwen35_plus_comparison_20260315.csv"
+    rows = read_csv_rows(path)
+    specs = [
+        {
+            "id": "qwen3_instruct",
+            "label": "Qwen3-4B-Instruct-2507",
+            "action_field": "action_qwen3_instruct",
+            "delta_field": "delta_recall_qwen3_instruct",
+        },
+        {
+            "id": "qwen35_4b",
+            "label": "Qwen3.5-4B",
+            "action_field": "action_qwen35_4b",
+            "delta_field": "delta_recall_qwen35_4b",
+        },
+        {
+            "id": "qwen35_plus",
+            "label": "Qwen3.5-Plus",
+            "action_field": "action_qwen35_plus",
+            "delta_field": "delta_recall_qwen35_plus",
+        },
+    ]
+    model_summaries = []
+    for spec in specs:
+        enabled = [row for row in rows if row.get(spec["action_field"]) not in {"", "nollm"}]
+        deltas = [parse_float(row.get(spec["delta_field"])) for row in enabled]
+        best_row = max(rows, key=lambda row: parse_float(row.get(spec["delta_field"])), default=None)
+        worst_row = min(rows, key=lambda row: parse_float(row.get(spec["delta_field"])), default=None)
+        model_summaries.append(
+            {
+                "id": spec["id"],
+                "label": spec["label"],
+                "enabled_count": len(enabled),
+                "avg_enabled_delta_recall": round(sum(deltas) / len(deltas), 4) if deltas else None,
+                "best_model_key": best_row.get("model_key") if best_row else None,
+                "best_delta_recall": parse_float(best_row.get(spec["delta_field"])) if best_row else None,
+                "worst_model_key": worst_row.get("model_key") if worst_row else None,
+                "worst_delta_recall": parse_float(worst_row.get(spec["delta_field"])) if worst_row else None,
+            }
+        )
+    return {
+        "path": safe_rel_path(path, ROOT),
+        "rows": rows,
+        "models": model_summaries,
+    }
+
+
+def summarize_mc1_phase2() -> Dict[str, Any]:
+    path = ROOT / "docs" / "tables" / "mc1_phase2_quality_comparison_stratified_v2_20260319.csv"
+    rows = read_csv_rows(path)
+    return {"path": safe_rel_path(path, ROOT), "rows": rows}
+
+
+def summarize_mc1_phase3() -> Dict[str, Any]:
+    path = ROOT / "docs" / "tables" / "mc1_phase3_comparison_stratified_v2_20260323.csv"
+    rows = read_csv_rows(path)
+    return {"path": safe_rel_path(path, ROOT), "rows": rows}
+
+
+def results_summary() -> Dict[str, Any]:
+    return {
+        "generated_at": utc_now(),
+        "model_presets": MODEL_PRESETS,
+        "hdd": summarize_hdd_results(),
+        "mc1_phase2": summarize_mc1_phase2(),
+        "mc1_phase3": summarize_mc1_phase3(),
+    }
+
+
+def directory_size(path: Path) -> int:
+    total = 0
+    if not path.exists():
+        return total
+    if path.is_file():
+        return path.stat().st_size
+    for child in path.rglob("*"):
+        try:
+            if child.is_file():
+                total += child.stat().st_size
+        except OSError:
+            continue
+    return total
+
+
+def storage_summary() -> Dict[str, Any]:
+    total, used, free = shutil.disk_usage(ROOT)
+    targets = [
+        ("repo_root", ROOT),
+        ("save_model", ROOT / "save_model"),
+        ("pyloader", ROOT / "pyloader"),
+        ("logs", ROOT / "logs"),
+        ("llm_framework_v1", ROOT / "llm" / "framework_v1"),
+        ("llm_framework_v1_mc1", ROOT / "llm" / "framework_v1_mc1"),
+        ("mc1_mlp", ROOT / "mc1_mlp"),
+        ("hi7_example", ROOT / "hi7_example"),
+        ("data", ROOT / "data"),
+        ("models_qwen", REPO_PARENT / "models" / "Qwen"),
+    ]
+    directories = []
+    for label, path in targets:
+        if not path.exists():
+            continue
+        size = directory_size(path)
+        directories.append(
+            {
+                "label": label,
+                "path": str(path),
+                "size_bytes": size,
+                "size_human": human_bytes(size),
+            }
+        )
+    directories.sort(key=lambda item: item["size_bytes"], reverse=True)
+
+    top_files: List[Dict[str, Any]] = []
+    scan_roots = [ROOT / "logs", ROOT / "pyloader", ROOT / "mc1_mlp", ROOT / "hi7_example", ROOT / "llm", REPO_PARENT / "models" / "Qwen"]
+    for base in scan_roots:
+        if not base.exists():
+            continue
+        for file_path in base.rglob("*"):
+            try:
+                if not file_path.is_file():
+                    continue
+                size = file_path.stat().st_size
+            except OSError:
+                continue
+            if size < 200 * 1024 * 1024:
+                continue
+            top_files.append(
+                {
+                    "path": str(file_path),
+                    "size_bytes": size,
+                    "size_human": human_bytes(size),
+                }
+            )
+    top_files.sort(key=lambda item: item["size_bytes"], reverse=True)
+    top_files = top_files[:20]
+
+    return {
+        "generated_at": utc_now(),
+        "disk": {
+            "path": str(ROOT),
+            "total_bytes": total,
+            "used_bytes": used,
+            "free_bytes": free,
+            "total_human": human_bytes(total),
+            "used_human": human_bytes(used),
+            "free_human": human_bytes(free),
+        },
+        "directories": directories,
+        "top_files": top_files,
+    }
+
+
+def preflight_summary() -> Dict[str, Any]:
+    checks = []
+
+    def add_check(scope: str, label: str, ok: bool, detail: str) -> None:
+        checks.append({"scope": scope, "label": label, "ok": ok, "detail": detail})
+
+    simulate_jar = ROOT / "simulate" / "target" / "simulate-2019.01.0-SNAPSHOT.jar"
+    moa_jar = ROOT / "moa" / "target" / "moa-2019.01.0-SNAPSHOT.jar"
+    add_check("global", "Java simulate jar", simulate_jar.exists(), str(simulate_jar))
+    add_check("global", "MOA jar", moa_jar.exists(), str(moa_jar))
+
+    disk_total, disk_used, disk_free = shutil.disk_usage(ROOT)
+    add_check("global", "可用磁盘空间 > 50GB", disk_free > 50 * 1024**3, human_bytes(disk_free))
+
+    for preset in MODEL_PRESETS:
+      if preset["kind"] == "local":
+        model_path = (REPO_PARENT / preset["model_path"].replace("../", "", 1)) if preset["model_path"].startswith("../") else Path(preset["model_path"])
+        add_check("models", f"{preset['name']} 本地模型目录", model_path.exists(), str(model_path))
+      else:
+        add_check("models", f"{preset['name']} API 配置", True, preset.get("api_base_url", ""))
+
+    mc1_window = ROOT / "llm" / "framework_v1_mc1" / "window_text_mc1_pilot20k_stratified_v2.jsonl"
+    mc1_ref = ROOT / "llm" / "framework_v1_mc1" / "reference_mc1_pilot20k_stratified_v2.json"
+    mc1_baseline = ROOT / "mc1_mlp" / "example_mc1_nollm_20180103_20180313_compare_aligned_i10.csv"
+    add_check("mc1", "MC1 stratified_v2 window_text", mc1_window.exists(), str(mc1_window))
+    add_check("mc1", "MC1 stratified_v2 reference", mc1_ref.exists(), str(mc1_ref))
+    add_check("mc1", "MC1 baseline CSV", mc1_baseline.exists(), str(mc1_baseline))
+
+    hdd_window_dir = ROOT / "llm" / "framework_v1"
+    add_check("hdd", "HDD framework_v1 目录", hdd_window_dir.exists(), str(hdd_window_dir))
+
+    return {"generated_at": utc_now(), "checks": checks}
+
+
+def add_artifact(items: List[Dict[str, Any]], label: str, path: Path) -> None:
+    items.append(
+        {
+            "label": label,
+            "path": safe_rel_path(path, ROOT),
+            "exists": path.exists(),
+        }
+    )
+
+
+def infer_job_artifacts(workflow_id: str, env: Dict[str, str], log_path: Path) -> List[Dict[str, Any]]:
+    items: List[Dict[str, Any]] = []
+    add_artifact(items, "作业日志", log_path)
+
+    if workflow_id in {"llm.mc1.phase2", "llm.mc1.full-stratified-v2"}:
+        run_tag = env.get("RUN_TAG") or env.get("PHASE2_RUN_TAG")
+        if run_tag:
+            add_artifact(
+                items,
+                "MC1 cache",
+                ROOT / "llm" / "framework_v1_mc1" / f"cache_mc1_zs_structured_v2_{run_tag}.jsonl",
+            )
+            add_artifact(
+                items,
+                "MC1 抽取质量",
+                ROOT / "docs" / f"extract_quality_mc1_{run_tag}_v1.csv",
+            )
+
+    if workflow_id in {"llm.mc1.phase3-grid", "llm.mc1.full-stratified-v2"}:
+        run_tag = env.get("RUN_TAG") or env.get("PHASE3_RUN_TAG")
+        tag_suffix = env.get("TAG_SUFFIX") or env.get("PHASE3_TAG_SUFFIX")
+        if run_tag and tag_suffix:
+            add_artifact(
+                items,
+                "MC1 Phase3 CSV",
+                ROOT / "docs" / f"prearff_grid_mc1_{run_tag}_{tag_suffix}_v1.csv",
+            )
+            add_artifact(
+                items,
+                "MC1 Phase3 Markdown",
+                ROOT / "docs" / f"prearff_grid_mc1_{run_tag}_{tag_suffix}_v1.md",
+            )
+            add_artifact(
+                items,
+                "MC1 组合记录",
+                ROOT / "logs" / "framework_v1_phase3_mc1" / f"phase3_mc1_combo_records_{run_tag}_{tag_suffix}.tsv",
+            )
+
+    if workflow_id in {"llm.pilot20k.phase2-all12", "llm.pilot20k.full-all12"}:
+        run_tag = env.get("RUN_TAG")
+        if run_tag:
+            add_artifact(items, "HDD Phase2 日志目录", ROOT / "logs" / "framework_v1")
+            add_artifact(items, "HDD cache 目录", ROOT / "llm" / "framework_v1")
+            add_artifact(items, "HDD 质量结果目录", ROOT / "docs")
+
+    if workflow_id in {"llm.pilot20k.phase3-all12", "llm.pilot20k.full-all12"}:
+        run_tag = env.get("PHASE3_RUN_TAG")
+        if run_tag:
+            add_artifact(
+                items,
+                "HDD core 汇总 CSV",
+                ROOT / "docs" / f"prearff_grid_2models_{run_tag}_v1.csv",
+            )
+            add_artifact(
+                items,
+                "HDD batch7 汇总 CSV",
+                ROOT / "docs" / f"prearff_grid_batch7_zs_{run_tag}_v1.csv",
+            )
+            add_artifact(
+                items,
+                "HDD Phase3 记录目录",
+                ROOT / "logs" / "framework_v1_phase3",
+            )
+    return items
+
+
+def cleanup_experiment_artifacts() -> Dict[str, Any]:
+    with JOBS_LOCK:
+        running = [job.to_dict() for job in JOBS.values() if job.status == "running"]
+    if running:
+        raise RuntimeError("存在运行中的作业，无法清理实验中间产物。")
+
+    targets: List[Path] = []
+    targets.extend((ROOT / "save_model").glob("*.pickle"))
+    targets.extend((ROOT / "pyloader").glob("phase3_train_*"))
+    targets.extend((ROOT / "pyloader").glob("phase3_test_*"))
+    targets.extend((ROOT / "pyloader").glob("phase3b7_train_*"))
+    targets.extend((ROOT / "pyloader").glob("phase3b7_test_*"))
+    targets.extend((ROOT / "llm" / "framework_v1" / "phase3_variants").glob("*.jsonl"))
+    targets.extend((ROOT / "llm" / "framework_v1" / "phase3_variants_batch7").glob("*.jsonl"))
+    targets.extend((ROOT / "llm" / "framework_v1_mc1" / "phase3_variants").glob("*.jsonl"))
+
+    removed = []
+    reclaimed = 0
+    for path in targets:
+        if not path.exists():
+            continue
+        size = directory_size(path)
+        try:
+            if path.is_dir():
+                shutil.rmtree(path)
+            else:
+                path.unlink()
+        except OSError:
+            continue
+        reclaimed += size
+        removed.append(
+            {
+                "path": safe_rel_path(path, ROOT),
+                "size_bytes": size,
+                "size_human": human_bytes(size),
+            }
+        )
+    return {
+        "removed_count": len(removed),
+        "reclaimed_bytes": reclaimed,
+        "reclaimed_human": human_bytes(reclaimed),
+        "removed": removed[:30],
+    }
 
 
 def load_registry(path: Path) -> Dict:
@@ -107,6 +481,7 @@ class Job:
             "log_path": safe_rel_path(self.log_path, ROOT),
             "command_preview": shell_preview(self.command),
             "env": self.env,
+            "artifacts": infer_job_artifacts(self.workflow_id, self.env, self.log_path),
         }
 
 
@@ -167,18 +542,26 @@ def serve_static(handler: BaseHTTPRequestHandler, rel_path: str) -> None:
     text_response(handler, HTTPStatus.OK, file_path.read_text(encoding="utf-8"), content_type)
 
 
-def allowed_env(workflow: Dict, requested: Dict[str, str]) -> Dict[str, str]:
+def allowed_env(workflow: Dict, requested: Dict[str, str], allow_extra: bool = False) -> Dict[str, str]:
     allowed = {}
     declared = {item["name"]: item for item in workflow.get("env", [])}
     for name, meta in declared.items():
         value = requested.get(name, meta.get("default", ""))
         allowed[name] = str(value).strip()
+    if allow_extra:
+        for name, value in requested.items():
+            if name in declared:
+                continue
+            name = str(name).strip()
+            if not name:
+                continue
+            allowed[name] = str(value).strip()
     return allowed
 
 
-def launch_job(workflow: Dict, requested_env: Dict[str, str]) -> Job:
+def launch_job(workflow: Dict, requested_env: Dict[str, str], allow_extra_env: bool = False) -> Job:
     LOG_DIR.mkdir(parents=True, exist_ok=True)
-    env_values = allowed_env(workflow, requested_env)
+    env_values = allowed_env(workflow, requested_env, allow_extra=allow_extra_env)
     runtime_env = os.environ.copy()
     runtime_env["ROOT"] = str(ROOT)
     for key, value in env_values.items():
@@ -243,6 +626,33 @@ class WorkbenchHandler(BaseHTTPRequestHandler):
         if parsed.path == "/api/workflows":
             json_response(self, HTTPStatus.OK, {"title": REGISTRY.get("title", "Workbench"), "workflows": workflow_payload()})
             return
+        if parsed.path == "/api/results/summary":
+            json_response(self, HTTPStatus.OK, results_summary())
+            return
+        if parsed.path == "/api/preflight":
+            json_response(self, HTTPStatus.OK, preflight_summary())
+            return
+        if parsed.path == "/api/storage":
+            json_response(self, HTTPStatus.OK, storage_summary())
+            return
+        if parsed.path == "/api/cleanup-preview":
+            json_response(
+                self,
+                HTTPStatus.OK,
+                {
+                    "targets": [
+                        "save_model/*.pickle",
+                        "pyloader/phase3_train_*",
+                        "pyloader/phase3_test_*",
+                        "pyloader/phase3b7_train_*",
+                        "pyloader/phase3b7_test_*",
+                        "llm/framework_v1/phase3_variants/*.jsonl",
+                        "llm/framework_v1/phase3_variants_batch7/*.jsonl",
+                        "llm/framework_v1_mc1/phase3_variants/*.jsonl",
+                    ]
+                },
+            )
+            return
         if parsed.path == "/api/jobs":
             with JOBS_LOCK:
                 jobs = [job.to_dict() for job in sorted(JOBS.values(), key=lambda item: item.started_at, reverse=True)]
@@ -288,6 +698,22 @@ class WorkbenchHandler(BaseHTTPRequestHandler):
                 JOBS[job.job_id] = job
             json_response(self, HTTPStatus.OK, {"job": job.to_dict()})
             return
+        if parsed.path == "/api/run_custom":
+            payload = read_json(self)
+            workflow_id = payload.get("workflow_id", "")
+            workflow = WORKFLOWS.get(workflow_id)
+            if workflow is None:
+                json_response(self, HTTPStatus.BAD_REQUEST, {"error": f"unknown workflow: {workflow_id}"})
+                return
+            requested_env = payload.get("env", {})
+            if not isinstance(requested_env, dict):
+                json_response(self, HTTPStatus.BAD_REQUEST, {"error": "env must be a JSON object"})
+                return
+            job = launch_job(workflow, requested_env, allow_extra_env=True)
+            with JOBS_LOCK:
+                JOBS[job.job_id] = job
+            json_response(self, HTTPStatus.OK, {"job": job.to_dict()})
+            return
         if parsed.path.startswith("/api/jobs/") and parsed.path.endswith("/stop"):
             job_id = parsed.path.split("/")[3]
             with JOBS_LOCK:
@@ -300,6 +726,14 @@ class WorkbenchHandler(BaseHTTPRequestHandler):
                 return
             job.process.terminate()
             json_response(self, HTTPStatus.OK, {"job": job.to_dict(), "message": "termination requested"})
+            return
+        if parsed.path == "/api/cleanup/experiment-artifacts":
+            try:
+                payload = cleanup_experiment_artifacts()
+            except RuntimeError as exc:
+                json_response(self, HTTPStatus.CONFLICT, {"error": str(exc)})
+                return
+            json_response(self, HTTPStatus.OK, payload)
             return
         self.send_error(HTTPStatus.NOT_FOUND)
 
