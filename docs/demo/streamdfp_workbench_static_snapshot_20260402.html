@@ -1,10 +1,574 @@
 <!DOCTYPE html>
-<!-- saved from url=(0022)http://127.0.0.1:8765/ -->
-<html lang="zh-CN"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>StreamDFP 实验工作台（静态演示版）</title>
+    <style>
+:root {
+  --bg: #f4efe4;
+  --panel: rgba(255, 252, 247, 0.94);
+  --panel-strong: #fffdf8;
+  --ink: #1e1f1a;
+  --muted: #6a6d62;
+  --line: rgba(33, 35, 30, 0.12);
+  --accent: #184c47;
+  --accent-soft: #d7ebe6;
+  --warning: #b14c2d;
+  --warning-soft: #fde7df;
+  --success: #2e6b2f;
+  --danger: #8d2438;
+  --shadow: 0 18px 40px rgba(32, 30, 20, 0.08);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  color: var(--ink);
+  background:
+    radial-gradient(circle at top left, rgba(24, 76, 71, 0.12), transparent 24rem),
+    linear-gradient(180deg, #f8f3ea 0%, var(--bg) 100%);
+  font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
+}
+
+code,
+pre,
+.eyebrow,
+.pill,
+.status {
+  font-family: "IBM Plex Mono", "SFMono-Regular", monospace;
+}
+
+.page-shell {
+  max-width: 1580px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  gap: 1.2rem;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.topbar h1 {
+  margin: 0.25rem 0 0.4rem;
+  font-size: clamp(2rem, 3vw, 3.3rem);
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+
+.subtitle {
+  margin: 0;
+  max-width: 68ch;
+  color: var(--muted);
+}
+
+.eyebrow {
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+  font-size: 0.78rem;
+}
+
+.topbar-card,
+.panel,
+.preset-card,
+.job-card,
+.metric-card,
+.list-item,
+.selector-card,
+.subpanel,
+.scenario-card {
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  background: var(--panel);
+  box-shadow: var(--shadow);
+}
+
+.topbar-meta {
+  min-width: 24rem;
+}
+
+.topbar-card {
+  padding: 1rem 1.1rem;
+}
+
+.topbar-kv {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.3rem 0;
+}
+
+.tabbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-bottom: 1rem;
+}
+
+.tab-button,
+.ghost-button,
+.primary-button {
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  cursor: pointer;
+  font: inherit;
+}
+
+.tab-button,
+.ghost-button {
+  padding: 0.65rem 0.95rem;
+  background: transparent;
+}
+
+.tab-button.active {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
+.primary-button {
+  padding: 0.8rem 1.05rem;
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+  font-weight: 700;
+}
+
+.tab-shell {
+  display: grid;
+  gap: 1rem;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.compact-grid {
+  grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+}
+
+.jobs-grid {
+  grid-template-columns: 1fr 1.2fr;
+}
+
+.panel {
+  padding: 1rem;
+}
+
+.subpanel {
+  padding: 0.95rem;
+  background: var(--panel-strong);
+}
+
+.panel-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.8rem;
+}
+
+.panel-head h2,
+.panel-head h3 {
+  margin: 0;
+}
+
+.panel-head h2 {
+  font-size: 1.12rem;
+}
+
+.panel-head h3 {
+  font-size: 0.98rem;
+}
+
+.section-divider {
+  margin-top: 1rem;
+}
+
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: 0.75rem;
+}
+
+.metric-card {
+  padding: 0.9rem;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.metric-card span {
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.metric-card strong {
+  font-size: 1.15rem;
+}
+
+.metric-card small {
+  color: var(--muted);
+}
+
+.metric-card.accent {
+  border-color: rgba(24, 76, 71, 0.25);
+  background: var(--accent-soft);
+}
+
+.metric-card.success {
+  border-color: rgba(46, 107, 47, 0.25);
+  background: rgba(227, 244, 227, 0.92);
+}
+
+.preset-card,
+.scenario-card {
+  padding: 0.95rem;
+  display: grid;
+  gap: 0.45rem;
+}
+
+.preset-card.recommended {
+  border-color: rgba(24, 76, 71, 0.45);
+}
+
+.preset-topline,
+.scenario-topline {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.preset-family,
+.preset-description,
+.detail-description,
+.scenario-subtitle,
+.wizard-hero span,
+.scenario-hint {
+  margin: 0;
+  color: var(--muted);
+}
+
+.scenario-hint {
+  font-size: 0.86rem;
+}
+
+.list-grid {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.list-item {
+  padding: 0.85rem;
+  display: grid;
+  gap: 0.3rem;
+}
+
+.list-item span,
+.list-item small {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.preflight-fail {
+  border-color: rgba(141, 36, 56, 0.28);
+  background: #fff4f6;
+}
+
+.wizard-grid {
+  display: grid;
+  grid-template-columns: 24rem minmax(0, 1fr);
+  gap: 1rem;
+}
+
+.wizard-sidebar {
+  align-self: start;
+  position: sticky;
+  top: 1rem;
+}
+
+.wizard-main {
+  display: grid;
+  gap: 1rem;
+}
+
+.wizard-header {
+  margin-bottom: 0.2rem;
+}
+
+.wizard-hero {
+  display: grid;
+  gap: 0.25rem;
+  padding: 1rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(24, 76, 71, 0.18);
+  background: linear-gradient(180deg, rgba(215, 235, 230, 0.72) 0%, rgba(255, 253, 248, 0.92) 100%);
+}
+
+.wizard-hero strong {
+  font-size: 1.05rem;
+}
+
+.wizard-meta-grid {
+  margin-bottom: 0;
+}
+
+.selector-grid {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.selector-card {
+  width: 100%;
+  text-align: left;
+  padding: 0.9rem;
+  display: grid;
+  gap: 0.25rem;
+  cursor: pointer;
+  color: inherit;
+}
+
+.selector-card.active {
+  border-color: rgba(24, 76, 71, 0.45);
+  background: var(--accent-soft);
+}
+
+.selector-card span,
+.selector-card small {
+  color: var(--muted);
+}
+
+.field {
+  display: grid;
+  gap: 0.35rem;
+  margin-bottom: 0.75rem;
+}
+
+.field span {
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+.field input,
+.field select {
+  border: 1px solid var(--line);
+  border-radius: 0.8rem;
+  padding: 0.72rem 0.88rem;
+  background: rgba(255, 255, 255, 0.86);
+  color: var(--ink);
+}
+
+.env-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: 0.7rem;
+}
+
+.advanced-box {
+  border: 1px dashed rgba(33, 35, 30, 0.2);
+  border-radius: 1rem;
+  padding: 0.9rem;
+  background: rgba(255, 255, 255, 0.45);
+}
+
+.advanced-box summary {
+  cursor: pointer;
+  font-weight: 700;
+  margin-bottom: 0.9rem;
+}
+
+.button-row {
+  display: flex;
+  gap: 0.7rem;
+  flex-wrap: wrap;
+}
+
+.action-center-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 1.1rem 0 1.25rem;
+}
+
+#tab-storage .metric-grid {
+  margin-bottom: 0.35rem;
+}
+
+#tab-storage .primary-button {
+  min-width: 18rem;
+}
+
+.pill {
+  border: 1px solid var(--line);
+  background: var(--panel-strong);
+  border-radius: 999px;
+  padding: 0.3rem 0.65rem;
+  font-size: 0.75rem;
+}
+
+.pill.muted {
+  color: var(--muted);
+}
+
+.table-wrap {
+  overflow: auto;
+}
+
+.result-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+}
+
+.result-table th,
+.result-table td {
+  border-bottom: 1px solid var(--line);
+  padding: 0.7rem 0.6rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.result-table th {
+  color: var(--muted);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.job-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.job-card {
+  display: grid;
+  gap: 0.45rem;
+  width: 100%;
+  text-align: left;
+  padding: 0.95rem;
+  color: inherit;
+}
+
+.job-card.active {
+  border-color: rgba(24, 76, 71, 0.45);
+}
+
+.job-topline {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.job-card p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.code-block {
+  margin: 0;
+  padding: 0.95rem;
+  border-radius: 1rem;
+  background: #17221f;
+  color: #e4f0eb;
+  overflow: auto;
+  min-height: 7rem;
+  white-space: pre-wrap;
+}
+
+.code-block.small {
+  min-height: 10rem;
+}
+
+.code-block.tall {
+  min-height: 32rem;
+}
+
+.status {
+  border-radius: 999px;
+  padding: 0.2rem 0.55rem;
+  font-size: 0.74rem;
+  text-transform: uppercase;
+}
+
+.status.running {
+  background: #e8eefc;
+  color: #345bc9;
+}
+
+.status.success {
+  background: #e3f4e3;
+  color: var(--success);
+}
+
+.status.failed {
+  background: #fde5ea;
+  color: var(--danger);
+}
+
+@media (max-width: 1280px) {
+  .wizard-grid,
+  .cards-grid,
+  .jobs-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .wizard-sidebar {
+    position: static;
+  }
+}
+
+@media (max-width: 960px) {
+  .topbar {
+    flex-direction: column;
+  }
+
+  .topbar-meta {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .env-grid,
+  .metric-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+      .static-banner {
+        margin-bottom: 1rem;
+        padding: 0.95rem 1rem;
+        border-radius: 1rem;
+        border: 1px solid rgba(24, 76, 71, 0.18);
+        background: linear-gradient(180deg, rgba(215, 235, 230, 0.72) 0%, rgba(255, 253, 248, 0.92) 100%);
+        display: grid;
+        gap: 0.25rem;
+        box-shadow: 0 18px 40px rgba(32, 30, 20, 0.08);
+      }
+      .static-banner strong {
+        font-size: 1rem;
+      }
+      .static-banner span {
+        color: #6a6d62;
+      }
     
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>StreamDFP 实验工作台</title>
-    <link rel="stylesheet" href="./StreamDFP 实验工作台_files/styles.css">
+</style>
   </head>
   <body>
     <div class="page-shell">
@@ -42,6 +606,13 @@
         <button class="tab-button" data-tab="jobs" type="button">作业监控</button>
       </nav>
 
+      
+      <section class="static-banner">
+        <strong>静态演示版</strong>
+        <span>这个 HTML 已经内联样式、脚本和结果快照，可在其他电脑直接打开。</span>
+        <span>启动作业、停止作业和清理产物等操作在静态版中已禁用。</span>
+      </section>
+    
       <main class="tab-shell">
         <section id="tab-overview" class="tab-panel">
           <div class="cards-grid">
@@ -50,33 +621,13 @@
                 <h2>全局状态</h2>
                 <span class="pill">当前实验总览</span>
               </div>
-              <div id="overviewHighlights" class="metric-grid"><div class="metric-card accent">
-    <span>默认本地基线</span>
-    <strong>Qwen3-4B-Instruct-2507</strong>
-    <small>当前仓库默认推荐</small>
-  </div><div class="metric-card">
-    <span>运行中作业</span>
-    <strong>0</strong>
-    
-  </div><div class="metric-card success">
-    <span>MC1 最佳 ΔRecall</span>
-    <strong>2.2296</strong>
-    <small>Qwen3.5-4B (tp2+eager)</small>
-  </div><div class="metric-card">
-    <span>HDD 覆盖最多模型</span>
-    <strong>Qwen3-4B-Instruct-2507 · 9</strong>
-    <small>可启用盘型数</small>
-  </div><div class="metric-card success">
-    <span>磁盘可用空间</span>
-    <strong>155.40 GB</strong>
-    
-  </div></div>
+              <div id="overviewHighlights" class="metric-grid"></div>
             </div>
             <div class="panel">
               <div class="panel-head">
                 <h2>最近作业</h2>
               </div>
-              <div id="recentJobsOverview" class="list-grid"><div class="list-item"><strong>暂无作业</strong><span>还没有通过 UI 启动的任务</span></div></div>
+              <div id="recentJobsOverview" class="list-grid"></div>
             </div>
           </div>
 
@@ -85,86 +636,14 @@
               <div class="panel-head">
                 <h2>实验入口</h2>
               </div>
-              <div id="scenarioCards" class="cards-grid compact-grid"><div class="scenario-card">
-      <div class="scenario-topline">
-        <strong>HDD 完整流程</strong>
-        <span class="pill">HDD</span>
-      </div>
-      <p class="scenario-subtitle">Phase2 + Phase3 一键串联</p>
-      <p class="preset-description">一次启动 12 个 HDD 盘型的抽取和网格评估，适合新一轮统一对照实验。</p>
-      <span class="scenario-hint">推荐模型：Qwen3-4B-Instruct-2507</span>
-      <div class="button-row">
-        <button class="ghost-button" type="button" data-role="open">进入向导</button>
-        <button class="primary-button" type="button" data-role="run">快速启动默认配置</button>
-      </div>
-    </div><div class="scenario-card">
-      <div class="scenario-topline">
-        <strong>HDD 仅跑 Phase2</strong>
-        <span class="pill">HDD</span>
-      </div>
-      <p class="scenario-subtitle">先抽取，再决定是否继续 Phase3</p>
-      <p class="preset-description">适合只补 cache 或先做模型抽取质量对比。</p>
-      <span class="scenario-hint">推荐模型：Qwen3-4B-Instruct-2507</span>
-      <div class="button-row">
-        <button class="ghost-button" type="button" data-role="open">进入向导</button>
-        <button class="primary-button" type="button" data-role="run">快速启动默认配置</button>
-      </div>
-    </div><div class="scenario-card">
-      <div class="scenario-topline">
-        <strong>HDD 仅跑 Phase3</strong>
-        <span class="pill">HDD</span>
-      </div>
-      <p class="scenario-subtitle">使用已有 cache 做 CPU/Java 网格</p>
-      <p class="preset-description">适合 cache 已备好、只需要跑 Phase3 网格评估的场景。</p>
-      <span class="scenario-hint">推荐模型：Qwen3-4B-Instruct-2507</span>
-      <div class="button-row">
-        <button class="ghost-button" type="button" data-role="open">进入向导</button>
-        <button class="primary-button" type="button" data-role="run">快速启动默认配置</button>
-      </div>
-    </div><div class="scenario-card">
-      <div class="scenario-topline">
-        <strong>MC1 完整流程</strong>
-        <span class="pill">MC1</span>
-      </div>
-      <p class="scenario-subtitle">复用 stratified_v2 输入跑完整链路</p>
-      <p class="preset-description">直接复用已修正的 MC1 stratified_v2 输入，自动串联 Phase2 与 Phase3。</p>
-      <span class="scenario-hint">推荐模型：Qwen3-4B-Instruct-2507</span>
-      <div class="button-row">
-        <button class="ghost-button" type="button" data-role="open">进入向导</button>
-        <button class="primary-button" type="button" data-role="run">快速启动默认配置</button>
-      </div>
-    </div><div class="scenario-card">
-      <div class="scenario-topline">
-        <strong>MC1 仅跑 Phase2</strong>
-        <span class="pill">MC1</span>
-      </div>
-      <p class="scenario-subtitle">复用修正输入做模型抽取对比</p>
-      <p class="preset-description">面向 MC1 的单模型抽取入口，默认不再重扫全年 SSD 数据。</p>
-      <span class="scenario-hint">推荐模型：Qwen3-4B-Instruct-2507</span>
-      <div class="button-row">
-        <button class="ghost-button" type="button" data-role="open">进入向导</button>
-        <button class="primary-button" type="button" data-role="run">快速启动默认配置</button>
-      </div>
-    </div><div class="scenario-card">
-      <div class="scenario-topline">
-        <strong>MC1 仅跑 Phase3</strong>
-        <span class="pill">MC1</span>
-      </div>
-      <p class="scenario-subtitle">用已有 cache 做 24 组网格</p>
-      <p class="preset-description">适合 cache 已备好，只补 CPU/Java 侧的网格评估。</p>
-      <span class="scenario-hint">推荐模型：Qwen3-4B-Instruct-2507</span>
-      <div class="button-row">
-        <button class="ghost-button" type="button" data-role="open">进入向导</button>
-        <button class="primary-button" type="button" data-role="run">快速启动默认配置</button>
-      </div>
-    </div></div>
+              <div id="scenarioCards" class="cards-grid compact-grid"></div>
             </div>
             <div class="panel">
               <div class="panel-head">
                 <h2>前置检查</h2>
                 <button id="refreshPreflightButton" class="ghost-button" type="button">刷新检查</button>
               </div>
-              <div id="preflightList" class="list-grid"><div class="list-item"><strong>Java simulate jar</strong><span>全局 · 通过</span><span>/root/autodl-tmp/StreamDFP/simulate/target/simulate-2019.01.0-SNAPSHOT.jar</span></div><div class="list-item"><strong>MOA jar</strong><span>全局 · 通过</span><span>/root/autodl-tmp/StreamDFP/moa/target/moa-2019.01.0-SNAPSHOT.jar</span></div><div class="list-item"><strong>可用磁盘空间 &gt; 50GB</strong><span>全局 · 通过</span><span>155.40 GB</span></div><div class="list-item"><strong>Qwen3-4B-Instruct-2507 本地模型目录</strong><span>MODELS · 通过</span><span>/root/autodl-tmp/models/Qwen/Qwen3-4B-Instruct-2507</span></div><div class="list-item"><strong>Qwen3.5-Plus API 配置</strong><span>MODELS · 通过</span><span>https://dashscope.aliyuncs.com/compatible-mode/v1</span></div><div class="list-item"><strong>Qwen3.5-4B 本地模型目录</strong><span>MODELS · 通过</span><span>/root/autodl-tmp/models/Qwen/Qwen3.5-4B</span></div><div class="list-item"><strong>MC1 stratified_v2 window_text</strong><span>MC1 · 通过</span><span>/root/autodl-tmp/StreamDFP/llm/framework_v1_mc1/window_text_mc1_pilot20k_stratified_v2.jsonl</span></div><div class="list-item"><strong>MC1 stratified_v2 reference</strong><span>MC1 · 通过</span><span>/root/autodl-tmp/StreamDFP/llm/framework_v1_mc1/reference_mc1_pilot20k_stratified_v2.json</span></div><div class="list-item"><strong>MC1 baseline CSV</strong><span>MC1 · 通过</span><span>/root/autodl-tmp/StreamDFP/mc1_mlp/example_mc1_nollm_20180103_20180313_compare_aligned_i10.csv</span></div><div class="list-item"><strong>HDD framework_v1 目录</strong><span>HDD · 通过</span><span>/root/autodl-tmp/StreamDFP/llm/framework_v1</span></div></div>
+              <div id="preflightList" class="list-grid"></div>
             </div>
           </div>
 
@@ -173,37 +652,13 @@
               <div class="panel-head">
                 <h2>模型基线</h2>
               </div>
-              <div id="modelPresetCards" class="cards-grid compact-grid"><div class="preset-card recommended">
-      <div class="preset-topline">
-        <strong>Qwen3-4B-Instruct-2507</strong>
-        <span class="pill ">默认本地 base model</span>
-      </div>
-      <p class="preset-family">Qwen3 · 本地模型</p>
-      <p class="preset-description">当前仓库默认的本地基线模型。MC1 修正输入上 Phase2 最强，Phase3 最优结果与另外两个模型一致。</p>
-      <code>../models/Qwen/Qwen3-4B-Instruct-2507</code>
-    </div><div class="preset-card ">
-      <div class="preset-topline">
-        <strong>Qwen3.5-Plus</strong>
-        <span class="pill muted">API 对照模型</span>
-      </div>
-      <p class="preset-family">Qwen3.5 · API 模型</p>
-      <p class="preset-description">API 侧稳定对照方案。HDD 和 MC1 都有完整结果，工程上最省本地 GPU。</p>
-      <code>qwen3.5-plus</code>
-    </div><div class="preset-card ">
-      <div class="preset-topline">
-        <strong>Qwen3.5-4B</strong>
-        <span class="pill muted">双卡实验模型</span>
-      </div>
-      <p class="preset-family">Qwen3.5 · 本地模型</p>
-      <p class="preset-description">在 MC1 长提示词场景下需要 TP=2 + eager 才能稳定跑通，本地工程成本最高。</p>
-      <code>../models/Qwen/Qwen3.5-4B</code>
-    </div></div>
+              <div id="modelPresetCards" class="cards-grid compact-grid"></div>
             </div>
             <div class="panel">
               <div class="panel-head">
                 <h2>当前建议</h2>
               </div>
-              <div id="focusCards" class="list-grid"><div class="list-item"><strong>MC1 默认推荐</strong><span>优先模型：Qwen3-4B-Instruct-2507</span><span>non-unknown 8.4450% · q_score 0.450343</span></div><div class="list-item"><strong>HDD 默认推荐</strong><span>平均增益最高：Qwen3.5-Plus</span><span>平均 ΔRecall 17.6330</span></div><div class="list-item"><strong>流程建议</strong><span>先走实验向导，再进结果看板复核</span><span>MC1 建议优先使用 stratified_v2 路线</span></div></div>
+              <div id="focusCards" class="list-grid"></div>
             </div>
           </div>
         </section>
@@ -214,76 +669,34 @@
               <div class="panel-head">
                 <h2>步骤 1 · 选择场景</h2>
               </div>
-              <div id="wizardScenarioRail" class="selector-grid"><button type="button" class="selector-card ">
-      <strong>HDD 完整流程</strong>
-      <span>Phase2 + Phase3 一键串联</span>
-      <small>HDD</small>
-    </button><button type="button" class="selector-card ">
-      <strong>HDD 仅跑 Phase2</strong>
-      <span>先抽取，再决定是否继续 Phase3</span>
-      <small>HDD</small>
-    </button><button type="button" class="selector-card ">
-      <strong>HDD 仅跑 Phase3</strong>
-      <span>使用已有 cache 做 CPU/Java 网格</span>
-      <small>HDD</small>
-    </button><button type="button" class="selector-card active">
-      <strong>MC1 完整流程</strong>
-      <span>复用 stratified_v2 输入跑完整链路</span>
-      <small>MC1</small>
-    </button><button type="button" class="selector-card ">
-      <strong>MC1 仅跑 Phase2</strong>
-      <span>复用修正输入做模型抽取对比</span>
-      <small>MC1</small>
-    </button><button type="button" class="selector-card ">
-      <strong>MC1 仅跑 Phase3</strong>
-      <span>用已有 cache 做 24 组网格</span>
-      <small>MC1</small>
-    </button></div>
+              <div id="wizardScenarioRail" class="selector-grid"></div>
 
               <div class="panel-head section-divider">
                 <h2>步骤 2 · 选择模型</h2>
               </div>
-              <div id="wizardPresetRail" class="selector-grid"><button type="button" class="selector-card active">
-      <strong>Qwen3-4B-Instruct-2507</strong>
-      <span>默认本地 base model</span>
-      <small>本地 · Qwen3</small>
-    </button><button type="button" class="selector-card ">
-      <strong>Qwen3.5-Plus</strong>
-      <span>API 对照模型</span>
-      <small>API · Qwen3.5</small>
-    </button><button type="button" class="selector-card ">
-      <strong>Qwen3.5-4B</strong>
-      <span>双卡实验模型</span>
-      <small>本地 · Qwen3.5</small>
-    </button></div>
+              <div id="wizardPresetRail" class="selector-grid"></div>
             </div>
 
             <div class="panel wizard-main">
               <div class="panel-head">
                 <h2>步骤 3 · 配置并启动</h2>
-                <span id="wizardWorkflowBadge" class="pill muted">LLM / MC1 / Full Flow Stratified_v2</span>
+                <span id="wizardWorkflowBadge" class="pill muted"></span>
               </div>
 
-              <div id="wizardHeader" class="wizard-header">
-    <div class="wizard-hero">
-      <strong>MC1 完整流程</strong>
-      <span>直接复用已修正的 MC1 stratified_v2 输入，自动串联 Phase2 与 Phase3。</span>
-      <small>当前模型：Qwen3-4B-Instruct-2507</small>
-    </div>
-  </div>
+              <div id="wizardHeader" class="wizard-header"></div>
 
               <div class="cards-grid wizard-meta-grid">
                 <div class="subpanel">
                   <div class="panel-head">
                     <h3>流程步骤</h3>
                   </div>
-                  <div id="wizardStepList" class="list-grid"><div class="list-item"><strong>步骤 1</strong><span>复用 stratified_v2 window_text/reference</span></div><div class="list-item"><strong>步骤 2</strong><span>运行 MC1 Phase2</span></div><div class="list-item"><strong>步骤 3</strong><span>运行 MC1 Phase3</span></div><div class="list-item"><strong>步骤 4</strong><span>输出 docs 对照表</span></div></div>
+                  <div id="wizardStepList" class="list-grid"></div>
                 </div>
                 <div class="subpanel">
                   <div class="panel-head">
                     <h3>前置条件</h3>
                   </div>
-                  <div id="wizardRelevantChecks" class="list-grid"><div class="list-item"><strong>Java simulate jar</strong><span>通过</span><span>/root/autodl-tmp/StreamDFP/simulate/target/simulate-2019.01.0-SNAPSHOT.jar</span></div><div class="list-item"><strong>MOA jar</strong><span>通过</span><span>/root/autodl-tmp/StreamDFP/moa/target/moa-2019.01.0-SNAPSHOT.jar</span></div><div class="list-item"><strong>可用磁盘空间 &gt; 50GB</strong><span>通过</span><span>155.40 GB</span></div><div class="list-item"><strong>Qwen3-4B-Instruct-2507 本地模型目录</strong><span>通过</span><span>/root/autodl-tmp/models/Qwen/Qwen3-4B-Instruct-2507</span></div><div class="list-item"><strong>Qwen3.5-Plus API 配置</strong><span>通过</span><span>https://dashscope.aliyuncs.com/compatible-mode/v1</span></div><div class="list-item"><strong>Qwen3.5-4B 本地模型目录</strong><span>通过</span><span>/root/autodl-tmp/models/Qwen/Qwen3.5-4B</span></div><div class="list-item"><strong>MC1 stratified_v2 window_text</strong><span>通过</span><span>/root/autodl-tmp/StreamDFP/llm/framework_v1_mc1/window_text_mc1_pilot20k_stratified_v2.jsonl</span></div><div class="list-item"><strong>MC1 stratified_v2 reference</strong><span>通过</span><span>/root/autodl-tmp/StreamDFP/llm/framework_v1_mc1/reference_mc1_pilot20k_stratified_v2.json</span></div><div class="list-item"><strong>MC1 baseline CSV</strong><span>通过</span><span>/root/autodl-tmp/StreamDFP/mc1_mlp/example_mc1_nollm_20180103_20180313_compare_aligned_i10.csv</span></div></div>
+                  <div id="wizardRelevantChecks" class="list-grid"></div>
                 </div>
               </div>
 
@@ -291,60 +704,12 @@
                 <div class="panel-head">
                   <h3>核心参数</h3>
                 </div>
-                <div id="wizardPrimaryFields" class="env-grid"><label class="field">
-      <span>Phase2 运行标签</span>
-      <input data-env-name="PHASE2_RUN_TAG" type="text" value="pilot20k_stratified_v2_qwen3instruct2507">
-    </label><label class="field">
-      <span>Phase3 输入标签</span>
-      <input data-env-name="PHASE3_RUN_TAG" type="text" value="pilot20k_stratified_v2">
-    </label><label class="field">
-      <span>Phase3 结果后缀</span>
-      <input data-env-name="PHASE3_TAG_SUFFIX" type="text" value="qwen3instruct2507">
-    </label><label class="field">
-      <span>模型路径 / API 模型名</span>
-      <input data-env-name="MODEL_PATH" type="text" value="../models/Qwen/Qwen3-4B-Instruct-2507">
-    </label><label class="field">
-      <span>后端</span>
-      <input data-env-name="BACKEND" type="text" value="vllm">
-    </label><label class="field">
-      <span>window_text 路径</span>
-      <input data-env-name="WINDOW_TEXT_IN" type="text" value="llm/framework_v1_mc1/window_text_mc1_pilot20k_stratified_v2.jsonl">
-    </label><label class="field">
-      <span>reference 路径</span>
-      <input data-env-name="REFERENCE_IN" type="text" value="llm/framework_v1_mc1/reference_mc1_pilot20k_stratified_v2.json">
-    </label><label class="field">
-      <span>baseline CSV</span>
-      <input data-env-name="BASELINE_CSV" type="text" value="mc1_mlp/example_mc1_nollm_20180103_20180313_compare_aligned_i10.csv">
-    </label><label class="field">
-      <span>API Base URL</span>
-      <input data-env-name="API_BASE_URL" type="text" value="">
-    </label><label class="field">
-      <span>API Key 环境变量</span>
-      <input data-env-name="API_KEY_ENV" type="text" value="OPENAI_API_KEY">
-    </label></div>
+                <div id="wizardPrimaryFields" class="env-grid"></div>
               </div>
 
               <details class="advanced-box">
                 <summary>高级参数</summary>
-                <div id="wizardAdvancedFields" class="env-grid"><label class="field">
-      <span>批大小</span>
-      <input data-env-name="BATCH_SIZE" type="text" value="64">
-    </label><label class="field">
-      <span>Tensor Parallel</span>
-      <input data-env-name="VLLM_TENSOR_PARALLEL_SIZE" type="text" value="1">
-    </label><label class="field">
-      <span>Enforce Eager</span>
-      <input data-env-name="VLLM_ENFORCE_EAGER" type="text" value="0">
-    </label><label class="field">
-      <span>GPU 利用率</span>
-      <input data-env-name="VLLM_GPU_MEM" type="text" value="0.90">
-    </label><label class="field">
-      <span>Max Model Len</span>
-      <input data-env-name="VLLM_MAX_MODEL_LEN" type="text" value="8192">
-    </label><label class="field">
-      <span>Max Batched Tokens</span>
-      <input data-env-name="VLLM_MAX_NUM_BATCHED_TOKENS" type="text" value="8192">
-    </label></div>
+                <div id="wizardAdvancedFields" class="env-grid"></div>
               </details>
 
               <div class="cards-grid wizard-meta-grid">
@@ -352,28 +717,13 @@
                   <div class="panel-head">
                     <h3>输出位置</h3>
                   </div>
-                  <div id="wizardOutputs" class="list-grid"><div class="list-item output-item"><strong>llm/framework_v1_mc1/cache_*.jsonl</strong><span>运行完成后优先检查这里</span></div><div class="list-item output-item"><strong>logs/framework_v1_phase2_mc1</strong><span>运行完成后优先检查这里</span></div><div class="list-item output-item"><strong>logs/framework_v1_phase3_mc1</strong><span>运行完成后优先检查这里</span></div><div class="list-item output-item"><strong>docs/prearff_grid_mc1_*</strong><span>运行完成后优先检查这里</span></div></div>
+                  <div id="wizardOutputs" class="list-grid"></div>
                 </div>
                 <div class="subpanel">
                   <div class="panel-head">
                     <h3>启动预览</h3>
                   </div>
-                  <pre id="wizardPreview" class="code-block small">PHASE2_RUN_TAG=pilot20k_stratified_v2_qwen3instruct2507
-PHASE3_RUN_TAG=pilot20k_stratified_v2
-PHASE3_TAG_SUFFIX=qwen3instruct2507
-WINDOW_TEXT_IN=llm/framework_v1_mc1/window_text_mc1_pilot20k_stratified_v2.jsonl
-REFERENCE_IN=llm/framework_v1_mc1/reference_mc1_pilot20k_stratified_v2.json
-BASELINE_CSV=mc1_mlp/example_mc1_nollm_20180103_20180313_compare_aligned_i10.csv
-MODEL_PATH=../models/Qwen/Qwen3-4B-Instruct-2507
-BACKEND=vllm
-API_KEY_ENV=OPENAI_API_KEY
-BATCH_SIZE=64
-VLLM_TENSOR_PARALLEL_SIZE=1
-VLLM_ENFORCE_EAGER=0
-VLLM_GPU_MEM=0.90
-VLLM_MAX_MODEL_LEN=8192
-VLLM_MAX_NUM_BATCHED_TOKENS=8192
-bash workflows/llm/mc1-full-stratified-v2.sh</pre>
+                  <pre id="wizardPreview" class="code-block small"></pre>
                 </div>
               </div>
 
@@ -386,32 +736,20 @@ bash workflows/llm/mc1-full-stratified-v2.sh</pre>
         </section>
 
         <section id="tab-results" class="tab-panel hidden">
-          <div id="resultsHighlights" class="metric-grid"><div class="metric-card accent">
-    <span>MC1 Phase2 最强</span>
-    <strong>Qwen3-4B-Instruct-2507</strong>
-    <small>non-unknown 8.4450%</small>
-  </div><div class="metric-card success">
-    <span>MC1 Phase3 最优</span>
-    <strong>Qwen3.5-4B (tp2+eager)</strong>
-    <small>ΔRecall 2.2296</small>
-  </div><div class="metric-card">
-    <span>HDD 平均增益最高</span>
-    <strong>Qwen3.5-Plus</strong>
-    <small>17.6330</small>
-  </div></div>
+          <div id="resultsHighlights" class="metric-grid"></div>
 
           <div class="cards-grid">
             <div class="panel">
               <div class="panel-head">
                 <h2>MC1 Phase2 结论</h2>
               </div>
-              <div id="mc1Overview" class="list-grid"><div class="list-item"><strong>Qwen3.5-4B (tp2+eager)</strong><span>non-unknown 7.5550% · mapped_event 77.4600%</span><span>confidence 0.224724 · q_score 0.247004</span></div><div class="list-item"><strong>Qwen3.5-Plus</strong><span>non-unknown 7.6750% · mapped_event 90.1950%</span><span>confidence 0.372721 · q_score 0.297431</span></div><div class="list-item"><strong>Qwen3-4B-Instruct-2507</strong><span>non-unknown 8.4450% · mapped_event 90.7750%</span><span>confidence 0.854688 · q_score 0.450343</span></div></div>
+              <div id="mc1Overview" class="list-grid"></div>
             </div>
             <div class="panel">
               <div class="panel-head">
                 <h2>HDD 三模型结论</h2>
               </div>
-              <div id="hddOverview" class="list-grid"><div class="list-item"><strong>Qwen3-4B-Instruct-2507</strong><span>可启用盘型 9 · 平均 ΔRecall 16.328</span><span>最佳 hds723030ala640 · 最差 wdcwd10eads</span></div><div class="list-item"><strong>Qwen3.5-4B</strong><span>可启用盘型 8 · 平均 ΔRecall 16.8071</span><span>最佳 hds723030ala640 · 最差 wdcwd10eads</span></div><div class="list-item"><strong>Qwen3.5-Plus</strong><span>可启用盘型 8 · 平均 ΔRecall 17.633</span><span>最佳 hds723030ala640 · 最差 wdcwd10eads</span></div></div>
+              <div id="hddOverview" class="list-grid"></div>
             </div>
           </div>
 
@@ -419,19 +757,19 @@ bash workflows/llm/mc1-full-stratified-v2.sh</pre>
             <div class="panel">
               <div class="panel-head">
                 <h2>MC1 Phase2 质量对照</h2>
-                <span id="mc1Phase2Path" class="pill muted">docs/tables/mc1_phase2_quality_comparison_stratified_v2_20260319.csv</span>
+                <span id="mc1Phase2Path" class="pill muted"></span>
               </div>
               <div class="table-wrap">
-                <table id="mc1Phase2Table" class="result-table"><thead><tr><th>模型</th><th>unknown%</th><th>非unknown%</th><th>映射事件%</th><th>平均置信度</th><th>平均Q分数</th></tr></thead><tbody><tr><td>Qwen3.5-4B (tp2+eager)</td><td>92.4450</td><td>7.5550</td><td>77.4600</td><td>0.224724</td><td>0.247004</td></tr><tr><td>Qwen3.5-Plus</td><td>92.3250</td><td>7.6750</td><td>90.1950</td><td>0.372721</td><td>0.297431</td></tr><tr><td>Qwen3-4B-Instruct-2507</td><td>91.5550</td><td>8.4450</td><td>90.7750</td><td>0.854688</td><td>0.450343</td></tr></tbody></table>
+                <table id="mc1Phase2Table" class="result-table"></table>
               </div>
             </div>
             <div class="panel">
               <div class="panel-head">
                 <h2>MC1 Phase3 对照</h2>
-                <span id="mc1Phase3Path" class="pill muted">docs/tables/mc1_phase3_comparison_stratified_v2_20260323.csv</span>
+                <span id="mc1Phase3Path" class="pill muted"></span>
               </div>
               <div class="table-wrap">
-                <table id="mc1Phase3Table" class="result-table"><thead><tr><th>模型</th><th>状态计数</th><th>最佳维度</th><th>q_gate</th><th>sev_gate</th><th>ΔRecall</th><th>ΔACC</th><th>说明</th></tr></thead><tbody><tr><td>Qwen3.5-4B (tp2+eager)</td><td>existing=5;ok=17;degenerate_skip=2</td><td>compact14</td><td>0.0</td><td>0.0</td><td>2.2295631199999946</td><td>0.0532313459999898</td><td>Best result matches other models, but runtime cost is highest and phase3 contains degenerate skips.</td></tr><tr><td>Qwen3.5-Plus</td><td>ok=24</td><td>compact14</td><td>0.0</td><td>0.0</td><td>2.2295631199999946</td><td>0.0532313459999898</td><td>Best result matches other models and all 24 combinations complete normally.</td></tr><tr><td>Qwen3-4B-Instruct-2507</td><td>existing=3;ok=21</td><td>compact14</td><td>0.0</td><td>0.0</td><td>2.2295631199999946</td><td>0.0532313459999898</td><td>Strongest phase2 extractor and same best phase3 result on corrected input.</td></tr></tbody></table>
+                <table id="mc1Phase3Table" class="result-table"></table>
               </div>
             </div>
           </div>
@@ -439,10 +777,10 @@ bash workflows/llm/mc1-full-stratified-v2.sh</pre>
           <div class="panel">
             <div class="panel-head">
               <h2>HDD 三模型摘要</h2>
-              <span id="hddPath" class="pill muted">docs/tables/qwen3_instruct_vs_qwen35_4b_vs_qwen35_plus_comparison_20260315.csv</span>
+              <span id="hddPath" class="pill muted"></span>
             </div>
             <div class="table-wrap">
-              <table id="hddSummaryTable" class="result-table"><thead><tr><th>模型</th><th>可启用盘型数</th><th>平均ΔRecall</th><th>最佳盘型</th><th>最佳增益</th><th>最差盘型</th><th>最差增益</th></tr></thead><tbody><tr><td>Qwen3-4B-Instruct-2507</td><td>9</td><td>16.328</td><td>hds723030ala640</td><td>70</td><td>wdcwd10eads</td><td>-90</td></tr><tr><td>Qwen3.5-4B</td><td>8</td><td>16.8071</td><td>hds723030ala640</td><td>70</td><td>wdcwd10eads</td><td>-90</td></tr><tr><td>Qwen3.5-Plus</td><td>8</td><td>17.633</td><td>hds723030ala640</td><td>70</td><td>wdcwd10eads</td><td>-90</td></tr></tbody></table>
+              <table id="hddSummaryTable" class="result-table"></table>
             </div>
           </div>
         </section>
@@ -452,27 +790,15 @@ bash workflows/llm/mc1-full-stratified-v2.sh</pre>
             <div class="panel-head">
               <h2>实验产物清理</h2>
             </div>
-            <div id="storageHeadline" class="metric-grid"><div class="metric-card accent">
-    <span>总容量</span>
-    <strong>310.00 GB</strong>
-    
-  </div><div class="metric-card">
-    <span>已使用</span>
-    <strong>154.60 GB</strong>
-    
-  </div><div class="metric-card success">
-    <span>可用空间</span>
-    <strong>155.40 GB</strong>
-    
-  </div></div>
+            <div id="storageHeadline" class="metric-grid"></div>
             <div class="action-center-row">
               <button id="cleanupExperimentButton" class="primary-button" type="button">清理实验中间产物</button>
             </div>
             <div class="panel-head section-divider">
               <h3>清理范围</h3>
             </div>
-            <div id="cleanupSuggestions" class="list-grid"><div class="list-item"><strong>按钮会清理这些中间产物</strong><span>save_model/*.pickle</span><span>pyloader/phase3_train_*</span><span>pyloader/phase3_test_*</span><span>pyloader/phase3b7_train_*</span><span>pyloader/phase3b7_test_*</span><span>llm/framework_v1/phase3_variants/*.jsonl</span><span>llm/framework_v1/phase3_variants_batch7/*.jsonl</span><span>llm/framework_v1_mc1/phase3_variants/*.jsonl</span></div><div class="list-item"><strong>不会清理这些结果</strong><span>docs 下的 csv / md 汇总</span><span>mc1_mlp 和 hi7_example 中的最终结果 CSV</span><span>phase2 cache 与 window_text/reference</span></div><div class="list-item"><strong>安全限制</strong><span>如果当前有运行中的作业，按钮会拒绝执行</span><span>清理后无法从中间状态续跑，只保留最终结果</span></div></div>
-            <pre id="cleanupStatus" class="code-block small">尚未执行清理。</pre>
+            <div id="cleanupSuggestions" class="list-grid"></div>
+            <pre id="cleanupStatus" class="code-block small"></pre>
           </div>
         </section>
 
@@ -490,14 +816,1223 @@ bash workflows/llm/mc1-full-stratified-v2.sh</pre>
                 <h2>作业日志</h2>
                 <button id="stopJobButton" class="ghost-button hidden" type="button">停止作业</button>
               </div>
-              <div id="jobArtifacts" class="list-grid"><div class="list-item"><strong>未选择作业</strong><span>选中左侧作业后，这里会显示对应产物路径。</span></div></div>
+              <div id="jobArtifacts" class="list-grid"></div>
               <pre id="jobLog" class="code-block tall"></pre>
             </div>
           </div>
         </section>
       </main>
     </div>
-    <script src="./StreamDFP 实验工作台_files/app.js.下载"></script>
-  
+    
+<script>
+window.__STREAMDFP_STATIC_DEMO__ = {"workflows": {"title": "StreamDFP Workbench", "workflows": [{"id": "classic.preprocess.hi7", "display_name": "Classic / HI7 Preprocess", "category": "Classic Pipeline", "canonical_entry": "workflows/classic/hi7-preprocess.sh", "legacy_entry": "pyloader/run_hi7_loader.sh", "cwd": ".", "command": ["bash", "workflows/classic/hi7-preprocess.sh"], "description": "Generate HI7 train/test ARFF data for the classic HDD classification baseline.", "notes": ["Runs the upstream loader from pyloader/ with repository-root path resolution.", "Use this before HI7 classic training."], "tags": ["classic", "hi7", "preprocess", "hdd"], "env": [], "command_preview": "bash workflows/classic/hi7-preprocess.sh"}, {"id": "classic.run.hi7", "display_name": "Classic / HI7 Train And Simulate", "category": "Classic Pipeline", "canonical_entry": "workflows/classic/hi7-train.sh", "legacy_entry": "run_hi7.sh", "cwd": ".", "command": ["bash", "workflows/classic/hi7-train.sh"], "description": "Run the classic Adaptive Random Forest baseline on preprocessed HI7 data.", "notes": ["Requires HI7 preprocessing outputs.", "Requires simulate/ and moa/ jars to be built."], "tags": ["classic", "hi7", "train", "simulate"], "env": [], "command_preview": "bash workflows/classic/hi7-train.sh"}, {"id": "classic.preprocess.hi7-regression", "display_name": "Classic / HI7 Regression Preprocess", "category": "Classic Pipeline", "canonical_entry": "workflows/classic/hi7-regression-preprocess.sh", "legacy_entry": "pyloader/run_hi7_reg_loader.sh", "cwd": ".", "command": ["bash", "workflows/classic/hi7-regression-preprocess.sh"], "description": "Generate HI7 regression train/test data used by the regression baseline.", "notes": ["Runs inside pyloader/ because the upstream loader uses relative paths."], "tags": ["classic", "hi7", "regression", "preprocess"], "env": [], "command_preview": "bash workflows/classic/hi7-regression-preprocess.sh"}, {"id": "classic.run.hi7-regression", "display_name": "Classic / HI7 Regression Train", "category": "Classic Pipeline", "canonical_entry": "workflows/classic/hi7-regression-train.sh", "legacy_entry": "run_hi7_reg.sh", "cwd": ".", "command": ["bash", "workflows/classic/hi7-regression-train.sh"], "description": "Run the HI7 regression experiment on preprocessed regression data.", "notes": ["Requires pyloader/run_hi7_reg_loader.sh outputs to exist."], "tags": ["classic", "hi7", "regression", "train"], "env": [], "command_preview": "bash workflows/classic/hi7-regression-train.sh"}, {"id": "classic.run.hi640-transfer", "display_name": "Classic / HI640 Transfer Learning", "category": "Classic Pipeline", "canonical_entry": "workflows/classic/hi640-transfer-run.sh", "legacy_entry": "run_hi640_transfer.sh", "cwd": ".", "command": ["bash", "workflows/classic/hi640-transfer-run.sh"], "description": "Run the classic transfer-learning experiment for HI640 using the upstream pipeline.", "notes": ["Requires transfer-learning preprocessing outputs under pyloader/."], "tags": ["classic", "transfer", "hi640"], "env": [], "command_preview": "bash workflows/classic/hi640-transfer-run.sh"}, {"id": "classic.run.mc1-mlp", "display_name": "Classic / MC1 MLP", "category": "Classic Pipeline", "canonical_entry": "workflows/classic/mc1-mlp-run.sh", "legacy_entry": "run_mc1_mlp.sh", "cwd": ".", "command": ["bash", "workflows/classic/mc1-mlp-run.sh"], "description": "Run the SSD-side MC1 MLP baseline.", "notes": ["Requires MC1 preprocessing outputs and enough memory for Java."], "tags": ["classic", "mc1", "mlp", "ssd"], "env": [], "command_preview": "bash workflows/classic/mc1-mlp-run.sh"}, {"id": "llm.framework.phase0", "display_name": "LLM / Framework V1 / Phase 0 Prepare", "category": "LLM Framework", "canonical_entry": "workflows/llm/framework-phase0.sh", "legacy_entry": "scripts/run_cross_model_llm_framework_v1.sh (PHASE=0)", "cwd": ".", "command": ["bash", "workflows/llm/framework-phase0.sh"], "description": "Prepare framework_v1 inputs and contracts for the main cross-model LLM workflow.", "notes": ["Automatically sources configs/public_repro.env if it exists.", "Mainly CPU and filesystem work."], "tags": ["llm", "framework_v1", "phase0"], "env": [{"name": "RUN_TAG", "label": "Run Tag", "default": "pilot20k", "placeholder": "pilot20k", "help": "Optional output tag used by framework_v1."}], "command_preview": "bash workflows/llm/framework-phase0.sh"}, {"id": "llm.framework.phase1", "display_name": "LLM / Framework V1 / Phase 1 Window Text", "category": "LLM Framework", "canonical_entry": "workflows/llm/framework-phase1.sh", "legacy_entry": "scripts/run_cross_model_llm_framework_v1.sh (PHASE=1)", "cwd": ".", "command": ["bash", "workflows/llm/framework-phase1.sh"], "description": "Generate Phase1 textual summaries used as the main LLM input.", "notes": ["Outputs go to llm/framework_v1/ and are ignored by Git."], "tags": ["llm", "framework_v1", "phase1", "summary_text"], "env": [{"name": "RUN_TAG", "label": "Run Tag", "default": "pilot20k", "placeholder": "pilot20k", "help": "Optional output tag used by framework_v1."}], "command_preview": "bash workflows/llm/framework-phase1.sh"}, {"id": "llm.framework.phase2", "display_name": "LLM / Framework V1 / Phase 2 Extract", "category": "LLM Framework", "canonical_entry": "workflows/llm/framework-phase2.sh", "legacy_entry": "scripts/run_cross_model_llm_framework_v1.sh (PHASE=2)", "cwd": ".", "command": ["bash", "workflows/llm/framework-phase2.sh"], "description": "Run the main Phase2 offline LLM extraction flow for framework_v1.", "notes": ["Requires a CUDA-capable GPU and a local compatible model checkpoint."], "warning": "GPU required. This can be a long-running extraction job.", "tags": ["llm", "framework_v1", "phase2", "gpu"], "env": [{"name": "RUN_TAG", "label": "Run Tag", "default": "pilot20k", "placeholder": "pilot20k", "help": "Optional output tag used by framework_v1."}], "command_preview": "bash workflows/llm/framework-phase2.sh"}, {"id": "llm.pilot20k.full-all12", "display_name": "LLM / Pilot20k / Full Flow All12", "category": "LLM Framework", "canonical_entry": "workflows/llm/pilot20k-full-all12.sh", "legacy_entry": "scripts/run_phase2_pilot20k_all12_qwen35_then_shutdown.sh + scripts/run_phase3_all_pilot20k_qwen35.sh", "cwd": ".", "command": ["bash", "workflows/llm/pilot20k-full-all12.sh"], "description": "Run the full all12 HDD flow end-to-end: Phase2 extraction first, then Phase3 grid evaluation.", "notes": ["This is the end-to-end wrapper for the common HDD pilot20k experiment path.", "Auto shutdown is disabled by default."], "warning": "GPU required for Phase2. Phase3 is CPU and Java heavy.", "tags": ["llm", "pilot20k", "phase2", "phase3", "all12", "gpu", "cpu"], "env": [{"name": "RUN_TAG", "label": "Run Tag", "default": "pilot20k_qwen3instruct2507", "placeholder": "pilot20k_qwen3instruct2507", "help": "Shared Phase2 output tag."}, {"name": "PHASE3_RUN_TAG", "label": "Phase3 Run Tag", "default": "pilot20k_qwen3instruct2507", "placeholder": "pilot20k_qwen3instruct2507", "help": "Usually matches RUN_TAG."}, {"name": "PHASE3_TAG_SUFFIX", "label": "Phase3 Tag Suffix", "default": "qwen3instruct2507", "placeholder": "qwen3instruct2507", "help": "Suffix for Phase3 result files."}], "command_preview": "bash workflows/llm/pilot20k-full-all12.sh"}, {"id": "llm.pilot20k.phase2-all12", "display_name": "LLM / Pilot20k / Phase 2 All12", "category": "LLM Framework", "canonical_entry": "workflows/llm/pilot20k-phase2-all12.sh", "legacy_entry": "scripts/run_phase2_pilot20k_all12_qwen35_then_shutdown.sh", "cwd": ".", "command": ["bash", "workflows/llm/pilot20k-phase2-all12.sh"], "description": "Run the pilot20k Phase2 extraction across all 12 HDD models with auto-shutdown disabled by default.", "notes": ["The normalized wrapper forces AUTO_SHUTDOWN=0 unless you override it explicitly.", "Use TARGET_KEYS to restrict to a subset of models."], "warning": "GPU required. Long-running job. Auto shutdown is off by default in the wrapper.", "tags": ["llm", "pilot20k", "phase2", "all12", "gpu"], "env": [{"name": "RUN_TAG", "label": "Run Tag", "default": "pilot20k_qwen35", "placeholder": "pilot20k_qwen35", "help": "Phase2 output tag."}, {"name": "TARGET_KEYS", "label": "Target Models", "default": "", "placeholder": "st31500541as,st3000dm001", "help": "Optional comma-separated model keys. Leave empty for all12."}, {"name": "MODEL_PATH", "label": "Model Path", "default": "", "placeholder": "../models/Qwen/Qwen3-4B-Instruct-2507", "help": "Optional local model override."}], "command_preview": "bash workflows/llm/pilot20k-phase2-all12.sh"}, {"id": "llm.pilot20k.phase3-all12", "display_name": "LLM / Pilot20k / Phase 3 All12", "category": "LLM Framework", "canonical_entry": "workflows/llm/pilot20k-phase3-all12.sh", "legacy_entry": "scripts/run_phase3_all_pilot20k_qwen35.sh", "cwd": ".", "command": ["bash", "workflows/llm/pilot20k-phase3-all12.sh"], "description": "Run the pilot20k Phase3 grid evaluation across all 12 HDD models.", "notes": ["CPU-heavy evaluation step after Phase2 extraction is complete."], "tags": ["llm", "pilot20k", "phase3", "all12", "cpu"], "env": [{"name": "PHASE3_RUN_TAG", "label": "Phase3 Run Tag", "default": "pilot20k_qwen35", "placeholder": "pilot20k_qwen35", "help": "Phase3 input tag. Usually matches Phase2 run tag."}, {"name": "PHASE3_TAG_SUFFIX", "label": "Tag Suffix", "default": "qwen35p20k", "placeholder": "qwen35p20k", "help": "Suffix used in Phase3 result filenames."}, {"name": "MAX_WINDOWS", "label": "Max Windows", "default": "20000", "placeholder": "20000", "help": "Upper bound for each model's input windows."}], "command_preview": "bash workflows/llm/pilot20k-phase3-all12.sh"}, {"id": "llm.pilot20k.single-model-calibration", "display_name": "LLM / Pilot20k / Single-Model Calibration", "category": "LLM Framework", "canonical_entry": "workflows/llm/pilot20k-single-model-calibration.sh", "legacy_entry": "scripts/run_phase2_pilot20k_all12_qwen35_then_shutdown.sh + scripts/run_framework_v1_phase3_grid*.sh", "cwd": ".", "command": ["bash", "workflows/llm/pilot20k-single-model-calibration.sh"], "description": "Run the single-model pilot20k calibration branch: restricted Phase2 extraction followed by single-model Phase3 grid evaluation.", "notes": ["Intended for models that are already registered in the public pilot20k scripts.", "This is the closest UI entrypoint to the new-model admission-test branch documented in README.", "It does not auto-register the resulting policy; it only produces the calibration outputs."], "warning": "Requires a registered model key. GPU is needed for Phase2; Phase3 is CPU-heavy.", "tags": ["llm", "pilot20k", "calibration", "single-model", "gpu", "cpu"], "env": [{"name": "MODEL_KEY", "label": "Model Key", "default": "", "placeholder": "st31500541as", "help": "Required registered model key. Example: st31500541as."}, {"name": "RUN_TAG", "label": "Run Tag", "default": "pilot20k_qwen35_calib", "placeholder": "pilot20k_qwen35_calib", "help": "Shared Phase2 output tag for this calibration run."}, {"name": "PHASE3_TAG_SUFFIX", "label": "Tag Suffix", "default": "qwen35calib", "placeholder": "qwen35calib", "help": "Suffix appended to Phase3 output filenames."}, {"name": "MODEL_PATH", "label": "Model Path", "default": "", "placeholder": "../models/Qwen/Qwen3-4B-Instruct-2507", "help": "Optional local model override used by Phase2."}, {"name": "MAX_WINDOWS", "label": "Max Windows", "default": "20000", "placeholder": "20000", "help": "Upper bound for the pilot input windows."}], "command_preview": "bash workflows/llm/pilot20k-single-model-calibration.sh"}, {"id": "llm.new-model.onboarding", "display_name": "LLM / New Model / Onboarding Calibration", "category": "LLM Framework", "canonical_entry": "workflows/llm/new-model-onboarding-calibration.sh", "legacy_entry": "scripts/run_framework_v1_onboard_single_model.sh", "cwd": ".", "command": ["bash", "workflows/llm/new-model-onboarding-calibration.sh"], "description": "Run the new-model onboarding branch from a raw DISK_MODEL name: build contract, generate event mapping, run no-LLM baseline, then execute pilot20k Phase2 and Phase3 calibration.", "notes": ["This workflow is designed for previously unseen HDD disk models.", "You only need to provide DISK_MODEL; model_key, contract path, event mapping path, baseline path, and policy suggestion are derived automatically.", "The workflow writes a suggested calibration YAML under llm/calibration/generated/ and a sidecar JSON with the best row."], "warning": "GPU required for Phase2 and Java artifacts must already be built for baseline and Phase3.", "tags": ["llm", "onboarding", "new-model", "pilot20k", "gpu", "cpu"], "env": [{"name": "DISK_MODEL", "label": "Disk Model", "default": "", "placeholder": "Seagate ST4000DX000", "help": "Required raw disk model name as it appears in the HDD CSV data."}, {"name": "RUN_TAG", "label": "Run Tag", "default": "", "placeholder": "pilot20k_onboard_st4000dx000", "help": "Optional calibration tag. Leave empty to derive it from DISK_MODEL."}, {"name": "MODEL_PATH", "label": "Model Path", "default": "", "placeholder": "../models/Qwen/Qwen3-4B-Instruct-2507", "help": "Optional local model override used by Phase2 extraction."}, {"name": "MAX_WINDOWS", "label": "Max Windows", "default": "20000", "placeholder": "20000", "help": "Upper bound for the pilot calibration windows."}, {"name": "PHASE3_TAG_SUFFIX", "label": "Tag Suffix", "default": "onboard", "placeholder": "onboard", "help": "Suffix appended to Phase3 output filenames."}], "command_preview": "bash workflows/llm/new-model-onboarding-calibration.sh"}, {"id": "llm.batch7.phase2-zs", "display_name": "LLM / Batch7 / Phase 2 ZS", "category": "LLM Framework", "canonical_entry": "workflows/llm/batch7-phase2-zs.sh", "legacy_entry": "scripts/run_batch7_phase2_zs.sh", "cwd": ".", "command": ["bash", "workflows/llm/batch7-phase2-zs.sh"], "description": "Run the batch7 HDD Phase2 zero-shot extraction flow.", "notes": ["Good when you want the expansion set only instead of the full all12 wrapper."], "warning": "GPU required.", "tags": ["llm", "batch7", "phase2", "zs", "gpu"], "env": [{"name": "MODEL_PATH", "label": "Model Path", "default": "", "placeholder": "../models/Qwen/Qwen3-4B-Instruct-2507", "help": "Optional local model override."}, {"name": "BATCH_SIZE", "label": "Batch Size", "default": "64", "placeholder": "64", "help": "Phase2 batch size."}, {"name": "MAX_WINDOWS", "label": "Max Windows", "default": "20000", "placeholder": "20000", "help": "Upper bound for each model's input windows."}], "command_preview": "bash workflows/llm/batch7-phase2-zs.sh"}, {"id": "llm.mc1.full-stratified-v2", "display_name": "LLM / MC1 / Full Flow Stratified_v2", "category": "SSD / MC1", "canonical_entry": "workflows/llm/mc1-full-stratified-v2.sh", "legacy_entry": "scripts/run_framework_v1_phase2_mc1.sh + scripts/run_framework_v1_phase3_grid_mc1.sh", "cwd": ".", "command": ["bash", "workflows/llm/mc1-full-stratified-v2.sh"], "description": "Run the corrected MC1 stratified_v2 flow end-to-end: reuse prepared input, run Phase2 extraction, then Phase3 grid evaluation.", "notes": ["Defaults are aligned with the corrected MC1 stratified_v2 experiment path.", "No full-year SSD rescan is triggered by default."], "warning": "GPU required for Phase2. Phase3 is CPU and Java heavy.", "tags": ["llm", "mc1", "phase2", "phase3", "ssd", "gpu", "cpu"], "env": [{"name": "PHASE2_RUN_TAG", "label": "Phase2 Run Tag", "default": "pilot20k_stratified_v2_qwen3instruct2507", "placeholder": "pilot20k_stratified_v2_qwen3instruct2507", "help": "Tag used for MC1 Phase2 cache output."}, {"name": "PHASE3_RUN_TAG", "label": "Phase3 Run Tag", "default": "pilot20k_stratified_v2", "placeholder": "pilot20k_stratified_v2", "help": "Input tag used by the MC1 Phase3 script."}, {"name": "PHASE3_TAG_SUFFIX", "label": "Phase3 Tag Suffix", "default": "qwen3instruct2507", "placeholder": "qwen3instruct2507", "help": "Suffix appended to Phase3 result files."}], "command_preview": "bash workflows/llm/mc1-full-stratified-v2.sh"}, {"id": "llm.mc1.phase2", "display_name": "LLM / MC1 / Phase 2", "category": "SSD / MC1", "canonical_entry": "workflows/llm/mc1-phase2.sh", "legacy_entry": "scripts/run_framework_v1_phase2_mc1.sh", "cwd": ".", "command": ["bash", "workflows/llm/mc1-phase2.sh"], "description": "Run the MC1 pilot20k Phase2 extraction flow.", "notes": ["Useful for SSD-side LLM validation."], "warning": "GPU required.", "tags": ["llm", "mc1", "phase2", "ssd", "gpu"], "env": [{"name": "RUN_TAG", "label": "Run Tag", "default": "pilot20k", "placeholder": "pilot20k", "help": "Output tag used for MC1 cache files."}, {"name": "MODEL_PATH", "label": "Model Path", "default": "", "placeholder": "../models/Qwen/Qwen3-4B-Instruct-2507", "help": "Optional local model override."}], "command_preview": "bash workflows/llm/mc1-phase2.sh"}, {"id": "llm.mc1.phase3-grid", "display_name": "LLM / MC1 / Phase 3 Grid", "category": "SSD / MC1", "canonical_entry": "workflows/llm/mc1-phase3-grid.sh", "legacy_entry": "scripts/run_framework_v1_phase3_grid_mc1.sh", "cwd": ".", "command": ["bash", "workflows/llm/mc1-phase3-grid.sh"], "description": "Run the MC1 Phase3 grid evaluation over cache variants.", "notes": ["Runs CPU and Java simulation after MC1 Phase2 outputs are ready."], "tags": ["llm", "mc1", "phase3", "ssd", "cpu"], "env": [{"name": "RUN_TAG", "label": "Run Tag", "default": "pilot20k", "placeholder": "pilot20k", "help": "Input tag used for MC1 Phase2 outputs."}, {"name": "PHASE3_COMBO_LIMIT", "label": "Combo Limit", "default": "12", "placeholder": "12", "help": "How many new Phase3 combos to run in this invocation. Use 0 for all."}, {"name": "PHASE3_EXTRACT_MODE", "label": "Extract Mode", "default": "zs", "placeholder": "zs", "help": "Usually zs or fs."}], "command_preview": "bash workflows/llm/mc1-phase3-grid.sh"}, {"id": "monitor.pilot20k.phase2", "display_name": "Monitor / Pilot20k Phase 2", "category": "Monitoring", "canonical_entry": "workflows/monitoring/pilot20k-phase2-monitor.sh", "legacy_entry": "scripts/monitor_phase2_all12_qwen35.sh", "cwd": ".", "command": ["bash", "workflows/monitoring/pilot20k-phase2-monitor.sh"], "description": "Tail all12 Phase2 progress by cache rows, active model, and GPU state.", "notes": ["Read-only monitor. Does not launch extraction by itself."], "tags": ["monitor", "pilot20k", "phase2", "gpu"], "env": [{"name": "RUN_TAG", "label": "Run Tag", "default": "pilot20k_qwen35", "placeholder": "pilot20k_qwen35", "help": "Used to locate the newest summary file."}, {"name": "SUMMARY_TSV", "label": "Summary TSV", "default": "", "placeholder": "logs/framework_v1/phase2_all12_xxx.tsv", "help": "Optional explicit summary file path."}, {"name": "INTERVAL_SEC", "label": "Interval Seconds", "default": "300", "placeholder": "300", "help": "Sampling interval."}], "command_preview": "bash workflows/monitoring/pilot20k-phase2-monitor.sh"}, {"id": "maintenance.workbench-registry-check", "display_name": "Maintenance / Workbench Registry Check", "category": "Maintenance", "canonical_entry": "workflows/maintenance/workbench-registry-check.sh", "legacy_entry": "python ui/server.py --check", "cwd": ".", "command": ["bash", "workflows/maintenance/workbench-registry-check.sh"], "description": "Validate that the local workbench registry loads cleanly.", "notes": ["Use after changing ui/workflows.json or adding new aliases."], "tags": ["maintenance", "workbench", "registry"], "env": [], "command_preview": "bash workflows/maintenance/workbench-registry-check.sh"}]}, "results": {"generated_at": "2026-04-02T01:19:40+00:00", "model_presets": [{"id": "qwen3instruct2507", "name": "Qwen3-4B-Instruct-2507", "family": "Qwen3", "kind": "local", "role": "默认本地 base model", "recommended": true, "description": "当前仓库默认的本地基线模型。MC1 修正输入上 Phase2 最强，Phase3 最优结果与另外两个模型一致。", "model_path": "../models/Qwen/Qwen3-4B-Instruct-2507"}, {"id": "qwen35plusapi", "name": "Qwen3.5-Plus", "family": "Qwen3.5", "kind": "api", "role": "API 对照模型", "recommended": false, "description": "API 侧稳定对照方案。HDD 和 MC1 都有完整结果，工程上最省本地 GPU。", "model_path": "qwen3.5-plus", "api_base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1", "api_key_env": "DASHSCOPE_API_KEY"}, {"id": "qwen35tp2eager", "name": "Qwen3.5-4B", "family": "Qwen3.5", "kind": "local", "role": "双卡实验模型", "recommended": false, "description": "在 MC1 长提示词场景下需要 TP=2 + eager 才能稳定跑通，本地工程成本最高。", "model_path": "../models/Qwen/Qwen3.5-4B"}], "hdd": {"path": "docs/tables/qwen3_instruct_vs_qwen35_4b_vs_qwen35_plus_comparison_20260315.csv", "rows": [{"model_key": "hds5c3030ala630", "action_qwen3_instruct": "nollm", "recall_qwen3_instruct": "65.0", "delta_recall_qwen3_instruct": "-30.0", "acc_qwen3_instruct": "99.8824", "delta_acc_qwen3_instruct": "9.7701", "best_params_qwen3_instruct": "full70, q=0.00, sev=0.0, rule=0", "action_qwen35_4b": "nollm", "recall_qwen35_4b": "65.0", "delta_recall_qwen35_4b": "-30.0", "acc_qwen35_4b": "99.882421249", "delta_acc_qwen35_4b": "9.770146730999995", "best_params_qwen35_4b": "full70, q=0.00, sev=0.0, rule=0", "action_qwen35_plus": "nollm", "recall_qwen35_plus": "65.0", "delta_recall_qwen35_plus": "-30.0", "acc_qwen35_plus": "99.882421249", "delta_acc_qwen35_plus": "9.770146730999995", "best_params_qwen35_plus": "full70, q=0.00, sev=0.0, rule=0", "delta_recall_plus_vs_q35": "0.0", "delta_recall_plus_vs_qwen3": "0.0"}, {"model_key": "hds723030ala640", "action_qwen3_instruct": "llm_enabled", "recall_qwen3_instruct": "100.0", "delta_recall_qwen3_instruct": "70.0", "acc_qwen3_instruct": "100.0", "delta_acc_qwen3_instruct": "0.0978", "best_params_qwen3_instruct": "full70, q=0.00, sev=0.0, rule=0", "action_qwen35_4b": "llm_enabled", "recall_qwen35_4b": "100.0", "delta_recall_qwen35_4b": "70.0", "acc_qwen35_4b": "98.95324326", "delta_acc_qwen35_4b": "-0.948938038999998", "best_params_qwen35_4b": "compact9, q=0.00, sev=0.0, rule=0", "action_qwen35_plus": "llm_enabled", "recall_qwen35_plus": "100.0", "delta_recall_qwen35_plus": "70.0", "acc_qwen35_plus": "99.021736449", "delta_acc_qwen35_plus": "-0.8804448499999893", "best_params_qwen35_plus": "compact9, q=0.00, sev=0.0, rule=0", "delta_recall_plus_vs_q35": "0.0", "delta_recall_plus_vs_qwen3": "0.0"}, {"model_key": "hgsthms5c4040ale640", "action_qwen3_instruct": "llm_enabled", "recall_qwen3_instruct": "75.8929", "delta_recall_qwen3_instruct": "0.6548", "acc_qwen3_instruct": "99.4447", "delta_acc_qwen3_instruct": "0.0483", "best_params_qwen3_instruct": "full70, q=0.00, sev=0.0, rule=0", "action_qwen35_4b": "llm_enabled", "recall_qwen35_4b": "75.892857142", "delta_recall_qwen35_4b": "0.6547619029999936", "acc_qwen35_4b": "99.444676824", "delta_acc_qwen35_4b": "0.0483409419999958", "best_params_qwen35_4b": "full70, q=0.00, sev=0.0, rule=0", "action_qwen35_plus": "llm_enabled", "recall_qwen35_plus": "75.892857142", "delta_recall_qwen35_plus": "0.6547619029999936", "acc_qwen35_plus": "99.444676824", "delta_acc_qwen35_plus": "0.0483409419999958", "best_params_qwen35_plus": "full70, q=0.00, sev=0.0, rule=0", "delta_recall_plus_vs_q35": "0.0", "delta_recall_plus_vs_qwen3": "-3.8097000006453996e-05"}, {"model_key": "hi7", "action_qwen3_instruct": "llm_enabled", "recall_qwen3_instruct": "70.9524", "delta_recall_qwen3_instruct": "2.8571", "acc_qwen3_instruct": "99.436", "delta_acc_qwen3_instruct": "-0.049", "best_params_qwen3_instruct": "compact14, q=0.00, sev=0.8, rule=0", "action_qwen35_4b": "llm_enabled", "recall_qwen35_4b": "70.95238095500001", "delta_recall_qwen35_4b": "2.8571428569999995", "acc_qwen35_4b": "99.791421431", "delta_acc_qwen35_4b": "0.3064595089999926", "best_params_qwen35_4b": "compact14, q=0.55, sev=0.0, rule=0", "action_qwen35_plus": "llm_enabled", "recall_qwen35_plus": "74.28571428700002", "delta_recall_qwen35_plus": "6.190476189000009", "acc_qwen35_plus": "99.789291509", "delta_acc_qwen35_plus": "0.3043295869999838", "best_params_qwen35_plus": "compact14, q=0.55, sev=0.0, rule=0", "delta_recall_plus_vs_q35": "3.3333333320000094", "delta_recall_plus_vs_qwen3": "3.333376189000009"}, {"model_key": "hitachihds5c4040ale630", "action_qwen3_instruct": "llm_enabled", "recall_qwen3_instruct": "0.0", "delta_recall_qwen3_instruct": "0.0", "acc_qwen3_instruct": "99.9213", "delta_acc_qwen3_instruct": "0.0", "best_params_qwen3_instruct": "compact9, q=0.00, sev=0.0, rule=0", "action_qwen35_4b": "llm_enabled", "recall_qwen35_4b": "0.0", "delta_recall_qwen35_4b": "0.0", "acc_qwen35_4b": "99.921340354", "delta_acc_qwen35_4b": "0.0", "best_params_qwen35_4b": "compact9, q=0.00, sev=0.0, rule=0", "action_qwen35_plus": "llm_enabled", "recall_qwen35_plus": "0.0", "delta_recall_qwen35_plus": "0.0", "acc_qwen35_plus": "99.921340354", "delta_acc_qwen35_plus": "0.0", "best_params_qwen35_plus": "compact9, q=0.00, sev=0.0, rule=0", "delta_recall_plus_vs_q35": "0.0", "delta_recall_plus_vs_qwen3": "0.0"}, {"model_key": "hms5c4040ble640", "action_qwen3_instruct": "nollm", "recall_qwen3_instruct": "13.3333", "delta_recall_qwen3_instruct": "-23.3333", "acc_qwen3_instruct": "99.9445", "delta_acc_qwen3_instruct": "-0.0208", "best_params_qwen3_instruct": "compact14, q=0.00, sev=0.0, rule=0", "action_qwen35_4b": "nollm", "recall_qwen35_4b": "13.333333332", "delta_recall_qwen35_4b": "-23.333333335999995", "acc_qwen35_4b": "99.944521498", "delta_acc_qwen35_4b": "-0.0208044419999851", "best_params_qwen35_4b": "compact14, q=0.00, sev=0.0, rule=0", "action_qwen35_plus": "nollm", "recall_qwen35_plus": "13.333333332", "delta_recall_qwen35_plus": "-23.333333335999995", "acc_qwen35_plus": "99.944521498", "delta_acc_qwen35_plus": "-0.0208044419999851", "best_params_qwen35_plus": "compact14, q=0.00, sev=0.0, rule=0", "delta_recall_plus_vs_q35": "0.0", "delta_recall_plus_vs_qwen3": "-3.3335999994221766e-05"}, {"model_key": "mc1_pilot20k", "action_qwen3_instruct": "llm_enabled", "recall_qwen3_instruct": "100.0", "delta_recall_qwen3_instruct": "2.2296", "acc_qwen3_instruct": "99.5489", "delta_acc_qwen3_instruct": "0.0532", "best_params_qwen3_instruct": "compact14, q=0.00, sev=0.0, rule=0", "action_qwen35_4b": "degenerate_skip", "recall_qwen35_4b": "", "delta_recall_qwen35_4b": "", "acc_qwen35_4b": "", "delta_acc_qwen35_4b": "", "best_params_qwen35_4b": "strict phase3: no valid row (kept=0 all combos)", "action_qwen35_plus": "degenerate_skip", "recall_qwen35_plus": "", "delta_recall_qwen35_plus": "", "acc_qwen35_plus": "", "delta_acc_qwen35_plus": "", "best_params_qwen35_plus": "strict phase3: no valid row (kept=0 all combos)", "delta_recall_plus_vs_q35": "", "delta_recall_plus_vs_qwen3": ""}, {"model_key": "st3000dm001", "action_qwen3_instruct": "llm_enabled", "recall_qwen3_instruct": "63.7434", "delta_recall_qwen3_instruct": "28.0157", "acc_qwen3_instruct": "98.0812", "delta_acc_qwen3_instruct": "0.6634", "best_params_qwen3_instruct": "compact9, q=0.55, sev=0.8, rule=1", "action_qwen35_4b": "llm_enabled", "recall_qwen35_4b": "65.00611985500001", "delta_recall_qwen35_4b": "29.278385576000005", "acc_qwen35_4b": "98.141485276", "delta_acc_qwen35_4b": "0.7236904430000095", "best_params_qwen35_4b": "compact9, q=0.55, sev=0.8, rule=0", "action_qwen35_plus": "llm_enabled", "recall_qwen35_plus": "62.089656179", "delta_recall_qwen35_plus": "26.36192189999999", "acc_qwen35_plus": "98.223991222", "delta_acc_qwen35_plus": "0.8061963890000072", "best_params_qwen35_plus": "compact14, q=0.55, sev=0.0, rule=0", "delta_recall_plus_vs_q35": "-2.9164636760000135", "delta_recall_plus_vs_qwen3": "-1.6537781000000074"}, {"model_key": "st31500341as", "action_qwen3_instruct": "llm_enabled", "recall_qwen3_instruct": "70.2381", "delta_recall_qwen3_instruct": "1.6667", "acc_qwen3_instruct": "99.4381", "delta_acc_qwen3_instruct": "0.0847", "best_params_qwen3_instruct": "compact9, q=0.00, sev=0.8, rule=0", "action_qwen35_4b": "llm_enabled", "recall_qwen35_4b": "70.238095239", "delta_recall_qwen35_4b": "1.6666666659999834", "acc_qwen35_4b": "99.438121346", "delta_acc_qwen35_4b": "0.0847457619999971", "best_params_qwen35_4b": "compact9, q=0.00, sev=0.8, rule=0", "action_qwen35_plus": "llm_enabled", "recall_qwen35_plus": "76.428571429", "delta_recall_qwen35_plus": "7.857142855999982", "acc_qwen35_plus": "99.55032353", "delta_acc_qwen35_plus": "0.1969479459999803", "best_params_qwen35_plus": "full70, q=0.00, sev=0.8, rule=0", "delta_recall_plus_vs_q35": "6.190476189999998", "delta_recall_plus_vs_qwen3": "6.190442855999981"}, {"model_key": "st31500541as", "action_qwen3_instruct": "llm_enabled", "recall_qwen3_instruct": "68.3333", "delta_recall_qwen3_instruct": "11.5278", "acc_qwen3_instruct": "99.7957", "delta_acc_qwen3_instruct": "0.103", "best_params_qwen3_instruct": "full70, q=0.00, sev=0.0, rule=0", "action_qwen35_4b": "nollm", "recall_qwen35_4b": "49.444444443", "delta_recall_qwen35_4b": "-7.361111112000003", "acc_qwen35_4b": "99.706052545", "delta_acc_qwen35_4b": "0.0133364060000076", "best_params_qwen35_4b": "compact9, q=0.00, sev=0.0, rule=0", "action_qwen35_plus": "nollm", "recall_qwen35_plus": "49.444444443", "delta_recall_qwen35_plus": "-7.361111112000003", "acc_qwen35_plus": "99.706052545", "delta_acc_qwen35_plus": "0.0133364060000076", "best_params_qwen35_plus": "compact9, q=0.00, sev=0.0, rule=0", "delta_recall_plus_vs_q35": "0.0", "delta_recall_plus_vs_qwen3": "-18.888911112000002"}, {"model_key": "st4000dm000", "action_qwen3_instruct": "nollm", "recall_qwen3_instruct": "54.1005", "delta_recall_qwen3_instruct": "-3.8043", "acc_qwen3_instruct": "99.9137", "delta_acc_qwen3_instruct": "0.0342", "best_params_qwen3_instruct": "compact14, q=0.00, sev=0.0, rule=0", "action_qwen35_4b": "nollm", "recall_qwen35_4b": "54.100508187", "delta_recall_qwen35_4b": "-3.80434782599999", "acc_qwen35_4b": "99.913700437", "delta_acc_qwen35_4b": "0.0341868860000005", "best_params_qwen35_4b": "compact14, q=0.00, sev=0.0, rule=0", "action_qwen35_plus": "nollm", "recall_qwen35_plus": "54.100508187", "delta_recall_qwen35_plus": "-3.80434782599999", "acc_qwen35_plus": "99.913700437", "delta_acc_qwen35_plus": "0.0341868860000005", "best_params_qwen35_plus": "compact14, q=0.00, sev=0.0, rule=0", "delta_recall_plus_vs_q35": "0.0", "delta_recall_plus_vs_qwen3": "-4.782599999009207e-05"}, {"model_key": "wdcwd10eads", "action_qwen3_instruct": "nollm", "recall_qwen3_instruct": "0.0", "delta_recall_qwen3_instruct": "-90.0", "acc_qwen3_instruct": "99.789", "delta_acc_qwen3_instruct": "-0.1899", "best_params_qwen3_instruct": "compact9, q=0.00, sev=0.0, rule=0", "action_qwen35_4b": "nollm", "recall_qwen35_4b": "0.0", "delta_recall_qwen35_4b": "-90.0", "acc_qwen35_4b": "99.78902954", "delta_acc_qwen35_4b": "-0.1898734140000044", "best_params_qwen35_4b": "compact9, q=0.00, sev=0.0, rule=0", "action_qwen35_plus": "nollm", "recall_qwen35_plus": "0.0", "delta_recall_qwen35_plus": "-90.0", "acc_qwen35_plus": "99.78902954", "delta_acc_qwen35_plus": "-0.1898734140000044", "best_params_qwen35_plus": "compact9, q=0.00, sev=0.0, rule=0", "delta_recall_plus_vs_q35": "0.0", "delta_recall_plus_vs_qwen3": "0.0"}, {"model_key": "wdcwd30efrx", "action_qwen3_instruct": "llm_enabled", "recall_qwen3_instruct": "30.0", "delta_recall_qwen3_instruct": "30.0", "acc_qwen3_instruct": "99.9003", "delta_acc_qwen3_instruct": "0.0423", "best_params_qwen3_instruct": "compact14, q=0.00, sev=0.0, rule=0", "action_qwen35_4b": "llm_enabled", "recall_qwen35_4b": "30.0", "delta_recall_qwen35_4b": "30.0", "acc_qwen35_4b": "99.900299075", "delta_acc_qwen35_4b": "0.0423330379999953", "best_params_qwen35_4b": "compact14, q=0.00, sev=0.0, rule=0", "action_qwen35_plus": "llm_enabled", "recall_qwen35_plus": "30.0", "delta_recall_qwen35_plus": "30.0", "acc_qwen35_plus": "99.900299075", "delta_acc_qwen35_plus": "0.0423330379999953", "best_params_qwen35_plus": "compact14, q=0.00, sev=0.0, rule=0", "delta_recall_plus_vs_q35": "0.0", "delta_recall_plus_vs_qwen3": "0.0"}], "models": [{"id": "qwen3_instruct", "label": "Qwen3-4B-Instruct-2507", "enabled_count": 9, "avg_enabled_delta_recall": 16.328, "best_model_key": "hds723030ala640", "best_delta_recall": 70.0, "worst_model_key": "wdcwd10eads", "worst_delta_recall": -90.0}, {"id": "qwen35_4b", "label": "Qwen3.5-4B", "enabled_count": 8, "avg_enabled_delta_recall": 16.8071, "best_model_key": "hds723030ala640", "best_delta_recall": 70.0, "worst_model_key": "wdcwd10eads", "worst_delta_recall": -90.0}, {"id": "qwen35_plus", "label": "Qwen3.5-Plus", "enabled_count": 8, "avg_enabled_delta_recall": 17.633, "best_model_key": "hds723030ala640", "best_delta_recall": 70.0, "worst_model_key": "wdcwd10eads", "worst_delta_recall": -90.0}]}, "mc1_phase2": {"path": "docs/tables/mc1_phase2_quality_comparison_stratified_v2_20260319.csv", "rows": [{"model": "Qwen3.5-4B (tp2+eager)", "cache_path": "/root/autodl-tmp/StreamDFP/llm/framework_v1_mc1/cache_mc1_zs_structured_v2_pilot20k_stratified_v2_qwen35_tp2eager.jsonl", "total": "20000", "unknown_count": "18489", "unknown_pct": "92.4450", "non_unknown_count": "1511", "non_unknown_pct": "7.5550", "mapped_event_ratio_pct": "77.4600", "rule_match_ratio_pct": "7.5500", "avg_confidence": "0.224724", "avg_risk_hint": "0.210495", "avg_llm_q_score": "0.247004", "temperature_count": "1218", "media_count": "231", "workload_count": "47", "power_count": "13", "interface_count": "2"}, {"model": "Qwen3.5-Plus", "cache_path": "/root/autodl-tmp/StreamDFP/llm/framework_v1_mc1/cache_mc1_zs_structured_v2_pilot20k_stratified_v2_qwen35plus_api.jsonl", "total": "20000", "unknown_count": "18465", "unknown_pct": "92.3250", "non_unknown_count": "1535", "non_unknown_pct": "7.6750", "mapped_event_ratio_pct": "90.1950", "rule_match_ratio_pct": "7.6750", "avg_confidence": "0.372721", "avg_risk_hint": "0.277886", "avg_llm_q_score": "0.297431", "temperature_count": "1238", "media_count": "234", "workload_count": "47", "power_count": "14", "interface_count": "2"}, {"model": "Qwen3-4B-Instruct-2507", "cache_path": "/root/autodl-tmp/StreamDFP/llm/framework_v1_mc1/cache_mc1_zs_structured_v2_pilot20k_stratified_v2_qwen3instruct2507.jsonl", "total": "20000", "unknown_count": "18311", "unknown_pct": "91.5550", "non_unknown_count": "1689", "non_unknown_pct": "8.4450", "mapped_event_ratio_pct": "90.7750", "rule_match_ratio_pct": "8.4450", "avg_confidence": "0.854688", "avg_risk_hint": "0.713300", "avg_llm_q_score": "0.450343", "temperature_count": "1315", "media_count": "270", "workload_count": "87", "power_count": "15", "interface_count": "2"}]}, "mc1_phase3": {"path": "docs/tables/mc1_phase3_comparison_stratified_v2_20260323.csv", "rows": [{"model": "Qwen3.5-4B (tp2+eager)", "status_counts": "existing=5;ok=17;degenerate_skip=2", "best_dim_key": "compact14", "best_q_gate": "0.0", "best_sev_sum_gate": "0.0", "best_require_rule_match": "0", "best_recall": "100.0", "best_acc": "99.548854005", "baseline_recall": "97.77043688", "baseline_acc": "99.495622659", "delta_recall_vs_nollm": "2.2295631199999946", "delta_acc_vs_nollm": "0.0532313459999898", "notes": "Best result matches other models, but runtime cost is highest and phase3 contains degenerate skips."}, {"model": "Qwen3.5-Plus", "status_counts": "ok=24", "best_dim_key": "compact14", "best_q_gate": "0.0", "best_sev_sum_gate": "0.0", "best_require_rule_match": "0", "best_recall": "100.0", "best_acc": "99.548854005", "baseline_recall": "97.77043688", "baseline_acc": "99.495622659", "delta_recall_vs_nollm": "2.2295631199999946", "delta_acc_vs_nollm": "0.0532313459999898", "notes": "Best result matches other models and all 24 combinations complete normally."}, {"model": "Qwen3-4B-Instruct-2507", "status_counts": "existing=3;ok=21", "best_dim_key": "compact14", "best_q_gate": "0.0", "best_sev_sum_gate": "0.0", "best_require_rule_match": "0", "best_recall": "100.0", "best_acc": "99.548854005", "baseline_recall": "97.77043688", "baseline_acc": "99.495622659", "delta_recall_vs_nollm": "2.2295631199999946", "delta_acc_vs_nollm": "0.0532313459999898", "notes": "Strongest phase2 extractor and same best phase3 result on corrected input."}]}}, "preflight": {"generated_at": "2026-04-02T01:19:40+00:00", "checks": [{"scope": "global", "label": "Java simulate jar", "ok": true, "detail": "/root/autodl-tmp/StreamDFP/simulate/target/simulate-2019.01.0-SNAPSHOT.jar"}, {"scope": "global", "label": "MOA jar", "ok": true, "detail": "/root/autodl-tmp/StreamDFP/moa/target/moa-2019.01.0-SNAPSHOT.jar"}, {"scope": "global", "label": "可用磁盘空间 > 50GB", "ok": true, "detail": "155.40 GB"}, {"scope": "models", "label": "Qwen3-4B-Instruct-2507 本地模型目录", "ok": true, "detail": "/root/autodl-tmp/models/Qwen/Qwen3-4B-Instruct-2507"}, {"scope": "models", "label": "Qwen3.5-Plus API 配置", "ok": true, "detail": "https://dashscope.aliyuncs.com/compatible-mode/v1"}, {"scope": "models", "label": "Qwen3.5-4B 本地模型目录", "ok": true, "detail": "/root/autodl-tmp/models/Qwen/Qwen3.5-4B"}, {"scope": "mc1", "label": "MC1 stratified_v2 window_text", "ok": true, "detail": "/root/autodl-tmp/StreamDFP/llm/framework_v1_mc1/window_text_mc1_pilot20k_stratified_v2.jsonl"}, {"scope": "mc1", "label": "MC1 stratified_v2 reference", "ok": true, "detail": "/root/autodl-tmp/StreamDFP/llm/framework_v1_mc1/reference_mc1_pilot20k_stratified_v2.json"}, {"scope": "mc1", "label": "MC1 baseline CSV", "ok": true, "detail": "/root/autodl-tmp/StreamDFP/mc1_mlp/example_mc1_nollm_20180103_20180313_compare_aligned_i10.csv"}, {"scope": "hdd", "label": "HDD framework_v1 目录", "ok": true, "detail": "/root/autodl-tmp/StreamDFP/llm/framework_v1"}]}, "storage": {"generated_at": "2026-04-02T01:19:40+00:00", "disk": {"path": "/root/autodl-tmp/StreamDFP", "total_bytes": 332859965440, "used_bytes": 166000824320, "free_bytes": 166859141120, "total_human": "310.00 GB", "used_human": "154.60 GB", "free_human": "155.40 GB"}, "directories": [{"label": "repo_root", "path": "/root/autodl-tmp/StreamDFP", "size_bytes": 121992170402, "size_human": "113.61 GB"}, {"label": "data", "path": "/root/autodl-tmp/StreamDFP/data", "size_bytes": 67855531521, "size_human": "63.20 GB"}, {"label": "models_qwen", "path": "/root/autodl-tmp/models/Qwen", "size_bytes": 53130681060, "size_human": "49.48 GB"}, {"label": "logs", "path": "/root/autodl-tmp/StreamDFP/logs", "size_bytes": 36517719428, "size_human": "34.01 GB"}, {"label": "pyloader", "path": "/root/autodl-tmp/StreamDFP/pyloader", "size_bytes": 4896026556, "size_human": "4.56 GB"}, {"label": "llm_framework_v1", "path": "/root/autodl-tmp/StreamDFP/llm/framework_v1", "size_bytes": 2313570942, "size_human": "2.15 GB"}, {"label": "llm_framework_v1_mc1", "path": "/root/autodl-tmp/StreamDFP/llm/framework_v1_mc1", "size_bytes": 130180667, "size_human": "124.15 MB"}, {"label": "hi7_example", "path": "/root/autodl-tmp/StreamDFP/hi7_example", "size_bytes": 35865972, "size_human": "34.20 MB"}, {"label": "mc1_mlp", "path": "/root/autodl-tmp/StreamDFP/mc1_mlp", "size_bytes": 1439251, "size_human": "1.37 MB"}, {"label": "save_model", "path": "/root/autodl-tmp/StreamDFP/save_model", "size_bytes": 0, "size_human": "0 B"}], "top_files": [{"path": "/root/autodl-tmp/StreamDFP/logs/llm_cache_miss.log", "size_bytes": 36469581673, "size_human": "33.96 GB"}, {"path": "/root/autodl-tmp/models/Qwen/Qwen3.5-9B/model.safetensors-00003-of-00004.safetensors", "size_bytes": 5368717440, "size_human": "5.00 GB"}, {"path": "/root/autodl-tmp/models/Qwen/Qwen3.5-9B/model.safetensors-00002-of-00004.safetensors", "size_bytes": 5335161512, "size_human": "4.97 GB"}, {"path": "/root/autodl-tmp/models/Qwen/Qwen3.5-4B/model.safetensors-00001-of-00002.safetensors", "size_bytes": 5329398688, "size_human": "4.96 GB"}, {"path": "/root/autodl-tmp/models/Qwen/Qwen3.5-9B/model.safetensors-00001-of-00004.safetensors", "size_bytes": 5276436216, "size_human": "4.91 GB"}, {"path": "/root/autodl-tmp/models/Qwen/Qwen3-8B/model-00001-of-00005.safetensors", "size_bytes": 3996250744, "size_human": "3.72 GB"}, {"path": "/root/autodl-tmp/models/Qwen/Qwen3-8B/model-00002-of-00005.safetensors", "size_bytes": 3993160032, "size_human": "3.72 GB"}, {"path": "/root/autodl-tmp/models/Qwen/Qwen3.5-4B/model.safetensors-00002-of-00002.safetensors", "size_bytes": 3990429408, "size_human": "3.72 GB"}, {"path": "/root/autodl-tmp/models/Qwen/Qwen3-4B-Instruct-2507/model-00002-of-00003.safetensors", "size_bytes": 3987450520, "size_human": "3.71 GB"}, {"path": "/root/autodl-tmp/models/Qwen/Qwen3-8B/model-00003-of-00005.safetensors", "size_bytes": 3959604768, "size_human": "3.69 GB"}, {"path": "/root/autodl-tmp/models/Qwen/Qwen3-4B-Instruct-2507/model-00001-of-00003.safetensors", "size_bytes": 3957900840, "size_human": "3.69 GB"}, {"path": "/root/autodl-tmp/models/Qwen/Qwen3.5-9B/model.safetensors-00004-of-00004.safetensors", "size_bytes": 3325995712, "size_human": "3.10 GB"}, {"path": "/root/autodl-tmp/models/Qwen/Qwen3-8B/model-00004-of-00005.safetensors", "size_bytes": 3187841392, "size_human": "2.97 GB"}, {"path": "/root/autodl-tmp/models/Qwen/Qwen3-8B/model-00005-of-00005.safetensors", "size_bytes": 1244659840, "size_human": "1.16 GB"}]}, "jobs": {"jobs": []}, "cleanup_preview": {"targets": ["save_model/*.pickle", "pyloader/phase3_train_*", "pyloader/phase3_test_*", "pyloader/phase3b7_train_*", "pyloader/phase3b7_test_*", "llm/framework_v1/phase3_variants/*.jsonl", "llm/framework_v1/phase3_variants_batch7/*.jsonl", "llm/framework_v1_mc1/phase3_variants/*.jsonl"]}};
+(function() {
+  const data = window.__STREAMDFP_STATIC_DEMO__;
+  function jsonResponse(payload, status) {
+    return Promise.resolve(new Response(JSON.stringify(payload), {
+      status: status || 200,
+      headers: { "Content-Type": "application/json; charset=utf-8" }
+    }));
+  }
+  const originalFetch = window.fetch ? window.fetch.bind(window) : null;
+  window.fetch = function(url, options) {
+    const requestUrl = typeof url === "string" ? url : String(url);
+    const method = ((options && options.method) || "GET").toUpperCase();
+    if (requestUrl === "/api/workflows" && method === "GET") return jsonResponse(data.workflows);
+    if (requestUrl === "/api/results/summary" && method === "GET") return jsonResponse(data.results);
+    if (requestUrl === "/api/preflight" && method === "GET") return jsonResponse(data.preflight);
+    if (requestUrl === "/api/storage" && method === "GET") return jsonResponse(data.storage);
+    if (requestUrl === "/api/cleanup-preview" && method === "GET") return jsonResponse(data.cleanup_preview);
+    if (requestUrl === "/api/jobs" && method === "GET") return jsonResponse(data.jobs);
+    if (requestUrl.startsWith("/api/jobs/") && requestUrl.endsWith("/log") && method === "GET") {
+      return jsonResponse({ job_id: "static-demo", log: "静态演示版不包含实时作业日志。" });
+    }
+    if (requestUrl.startsWith("/api/jobs/") && method === "GET") {
+      return jsonResponse({ error: "静态演示版不包含实时作业状态。" }, 404);
+    }
+    if (
+      requestUrl === "/api/run" ||
+      requestUrl === "/api/run_custom" ||
+      requestUrl === "/api/cleanup/experiment-artifacts" ||
+      requestUrl.endsWith("/stop")
+    ) {
+      return jsonResponse({ error: "这是静态演示版，不能执行写操作。" }, 409);
+    }
+    if (originalFetch) return originalFetch(url, options);
+    return Promise.reject(new Error("fetch unavailable"));
+  };
+})();
+</script>
+<script>
+const BASE_WINDOW_TEXT = "llm/framework_v1_mc1/window_text_mc1_pilot20k_stratified_v2.jsonl";
+const BASE_REFERENCE = "llm/framework_v1_mc1/reference_mc1_pilot20k_stratified_v2.json";
+const BASELINE_CSV = "mc1_mlp/example_mc1_nollm_20180103_20180313_compare_aligned_i10.csv";
+const DASHSCOPE_BASE_URL = "https://dashscope.aliyuncs.com/compatible-mode/v1";
 
-</body></html>
+const MODEL_PRESET_DEFAULTS = {
+  qwen3instruct2507: {
+    hddFull: {
+      RUN_TAG: "pilot20k_qwen3instruct2507",
+      PHASE3_RUN_TAG: "pilot20k_qwen3instruct2507",
+      PHASE3_TAG_SUFFIX: "qwen3instruct2507",
+      MODEL_PATH: "../models/Qwen/Qwen3-4B-Instruct-2507",
+      BACKEND: "vllm",
+      API_BASE_URL: "",
+      API_KEY_ENV: "OPENAI_API_KEY",
+    },
+    hddPhase2: {
+      RUN_TAG: "pilot20k_qwen3instruct2507",
+      TARGET_KEYS: "",
+      MODEL_PATH: "../models/Qwen/Qwen3-4B-Instruct-2507",
+      BACKEND: "vllm",
+      API_BASE_URL: "",
+      API_KEY_ENV: "OPENAI_API_KEY",
+      BATCH_SIZE: "8",
+      VLLM_GPU_MEMORY_UTILIZATION: "0.80",
+      VLLM_MAX_MODEL_LEN: "3072",
+      VLLM_MAX_NUM_BATCHED_TOKENS: "1024",
+      MAX_NEW_TOKENS: "128",
+    },
+    hddPhase3: {
+      PHASE3_RUN_TAG: "pilot20k_qwen3instruct2507",
+      PHASE3_TAG_SUFFIX: "qwen3instruct2507",
+      MAX_WINDOWS: "20000",
+    },
+    mc1Phase2: {
+      RUN_TAG: "pilot20k_stratified_v2_qwen3instruct2507",
+      MODEL_PATH: "../models/Qwen/Qwen3-4B-Instruct-2507",
+      BACKEND: "vllm",
+      API_BASE_URL: "",
+      API_KEY_ENV: "OPENAI_API_KEY",
+      BATCH_SIZE: "64",
+      VLLM_TENSOR_PARALLEL_SIZE: "1",
+      VLLM_ENFORCE_EAGER: "0",
+      VLLM_GPU_MEM: "0.90",
+      VLLM_MAX_MODEL_LEN: "8192",
+      VLLM_MAX_NUM_BATCHED_TOKENS: "8192",
+      SKIP_WINDOW_BUILD: "1",
+      WINDOW_TEXT_IN: BASE_WINDOW_TEXT,
+      REFERENCE_IN: BASE_REFERENCE,
+    },
+    mc1Full: {
+      PHASE2_RUN_TAG: "pilot20k_stratified_v2_qwen3instruct2507",
+      PHASE3_RUN_TAG: "pilot20k_stratified_v2",
+      PHASE3_TAG_SUFFIX: "qwen3instruct2507",
+      WINDOW_TEXT_IN: BASE_WINDOW_TEXT,
+      REFERENCE_IN: BASE_REFERENCE,
+      BASELINE_CSV,
+      MODEL_PATH: "../models/Qwen/Qwen3-4B-Instruct-2507",
+      BACKEND: "vllm",
+      API_BASE_URL: "",
+      API_KEY_ENV: "OPENAI_API_KEY",
+      BATCH_SIZE: "64",
+      VLLM_TENSOR_PARALLEL_SIZE: "1",
+      VLLM_ENFORCE_EAGER: "0",
+      VLLM_GPU_MEM: "0.90",
+      VLLM_MAX_MODEL_LEN: "8192",
+      VLLM_MAX_NUM_BATCHED_TOKENS: "8192",
+    },
+    mc1Phase3: {
+      RUN_TAG: "pilot20k_stratified_v2",
+      WINDOW_TEXT: BASE_WINDOW_TEXT,
+      CACHE_IN: "llm/framework_v1_mc1/cache_mc1_zs_structured_v2_pilot20k_stratified_v2_qwen3instruct2507.jsonl",
+      BASELINE_CSV,
+      TAG_SUFFIX: "qwen3instruct2507",
+      PHASE3_COMBO_LIMIT: "24",
+      PHASE3_EXTRACT_MODE: "zs",
+      PHASE3_PROMPT_PROFILE: "structured_v2",
+      PHASE3_DIM_KEYS: "compact9,compact14",
+    },
+  },
+  qwen35plusapi: {
+    hddFull: {
+      RUN_TAG: "pilot20k_qwen35plus_api",
+      PHASE3_RUN_TAG: "pilot20k_qwen35plus_api",
+      PHASE3_TAG_SUFFIX: "qwen35plusapi",
+      MODEL_PATH: "qwen3.5-plus",
+      BACKEND: "openai",
+      API_BASE_URL: DASHSCOPE_BASE_URL,
+      API_KEY_ENV: "DASHSCOPE_API_KEY",
+    },
+    hddPhase2: {
+      RUN_TAG: "pilot20k_qwen35plus_api",
+      TARGET_KEYS: "",
+      MODEL_PATH: "qwen3.5-plus",
+      BACKEND: "openai",
+      API_BASE_URL: DASHSCOPE_BASE_URL,
+      API_KEY_ENV: "DASHSCOPE_API_KEY",
+      BATCH_SIZE: "16",
+      VLLM_GPU_MEMORY_UTILIZATION: "0.80",
+      VLLM_MAX_MODEL_LEN: "3072",
+      VLLM_MAX_NUM_BATCHED_TOKENS: "1024",
+      MAX_NEW_TOKENS: "96",
+    },
+    hddPhase3: {
+      PHASE3_RUN_TAG: "pilot20k_qwen35plus_api",
+      PHASE3_TAG_SUFFIX: "qwen35plusapi",
+      MAX_WINDOWS: "20000",
+    },
+    mc1Phase2: {
+      RUN_TAG: "pilot20k_stratified_v2_qwen35plus_api",
+      MODEL_PATH: "qwen3.5-plus",
+      BACKEND: "openai",
+      API_BASE_URL: DASHSCOPE_BASE_URL,
+      API_KEY_ENV: "DASHSCOPE_API_KEY",
+      BATCH_SIZE: "16",
+      VLLM_TENSOR_PARALLEL_SIZE: "1",
+      VLLM_ENFORCE_EAGER: "0",
+      VLLM_GPU_MEM: "0.90",
+      VLLM_MAX_MODEL_LEN: "8192",
+      VLLM_MAX_NUM_BATCHED_TOKENS: "8192",
+      SKIP_WINDOW_BUILD: "1",
+      WINDOW_TEXT_IN: BASE_WINDOW_TEXT,
+      REFERENCE_IN: BASE_REFERENCE,
+    },
+    mc1Full: {
+      PHASE2_RUN_TAG: "pilot20k_stratified_v2_qwen35plus_api",
+      PHASE3_RUN_TAG: "pilot20k_stratified_v2",
+      PHASE3_TAG_SUFFIX: "qwen35plusapi",
+      WINDOW_TEXT_IN: BASE_WINDOW_TEXT,
+      REFERENCE_IN: BASE_REFERENCE,
+      BASELINE_CSV,
+      MODEL_PATH: "qwen3.5-plus",
+      BACKEND: "openai",
+      API_BASE_URL: DASHSCOPE_BASE_URL,
+      API_KEY_ENV: "DASHSCOPE_API_KEY",
+      BATCH_SIZE: "16",
+    },
+    mc1Phase3: {
+      RUN_TAG: "pilot20k_stratified_v2",
+      WINDOW_TEXT: BASE_WINDOW_TEXT,
+      CACHE_IN: "llm/framework_v1_mc1/cache_mc1_zs_structured_v2_pilot20k_stratified_v2_qwen35plus_api.jsonl",
+      BASELINE_CSV,
+      TAG_SUFFIX: "qwen35plusapi",
+      PHASE3_COMBO_LIMIT: "24",
+      PHASE3_EXTRACT_MODE: "zs",
+      PHASE3_PROMPT_PROFILE: "structured_v2",
+      PHASE3_DIM_KEYS: "compact9,compact14",
+    },
+  },
+  qwen35tp2eager: {
+    hddFull: {
+      RUN_TAG: "pilot20k_qwen35",
+      PHASE3_RUN_TAG: "pilot20k_qwen35",
+      PHASE3_TAG_SUFFIX: "qwen35p20k",
+      MODEL_PATH: "../models/Qwen/Qwen3.5-4B",
+      BACKEND: "vllm",
+      API_BASE_URL: "",
+      API_KEY_ENV: "OPENAI_API_KEY",
+    },
+    hddPhase2: {
+      RUN_TAG: "pilot20k_qwen35",
+      TARGET_KEYS: "",
+      MODEL_PATH: "../models/Qwen/Qwen3.5-4B",
+      BACKEND: "vllm",
+      API_BASE_URL: "",
+      API_KEY_ENV: "OPENAI_API_KEY",
+      BATCH_SIZE: "8",
+      VLLM_GPU_MEMORY_UTILIZATION: "0.80",
+      VLLM_MAX_MODEL_LEN: "3072",
+      VLLM_MAX_NUM_BATCHED_TOKENS: "1024",
+      MAX_NEW_TOKENS: "128",
+    },
+    hddPhase3: {
+      PHASE3_RUN_TAG: "pilot20k_qwen35",
+      PHASE3_TAG_SUFFIX: "qwen35p20k",
+      MAX_WINDOWS: "20000",
+    },
+    mc1Phase2: {
+      RUN_TAG: "pilot20k_stratified_v2_qwen35_tp2eager",
+      MODEL_PATH: "../models/Qwen/Qwen3.5-4B",
+      BACKEND: "vllm",
+      API_BASE_URL: "",
+      API_KEY_ENV: "OPENAI_API_KEY",
+      BATCH_SIZE: "4",
+      VLLM_TENSOR_PARALLEL_SIZE: "2",
+      VLLM_ENFORCE_EAGER: "1",
+      VLLM_GPU_MEM: "0.85",
+      VLLM_MAX_MODEL_LEN: "3072",
+      VLLM_MAX_NUM_BATCHED_TOKENS: "2048",
+      SKIP_WINDOW_BUILD: "1",
+      WINDOW_TEXT_IN: BASE_WINDOW_TEXT,
+      REFERENCE_IN: BASE_REFERENCE,
+    },
+    mc1Full: {
+      PHASE2_RUN_TAG: "pilot20k_stratified_v2_qwen35_tp2eager",
+      PHASE3_RUN_TAG: "pilot20k_stratified_v2",
+      PHASE3_TAG_SUFFIX: "qwen35tp2eager",
+      WINDOW_TEXT_IN: BASE_WINDOW_TEXT,
+      REFERENCE_IN: BASE_REFERENCE,
+      BASELINE_CSV,
+      MODEL_PATH: "../models/Qwen/Qwen3.5-4B",
+      BACKEND: "vllm",
+      API_BASE_URL: "",
+      API_KEY_ENV: "OPENAI_API_KEY",
+      BATCH_SIZE: "4",
+      VLLM_TENSOR_PARALLEL_SIZE: "2",
+      VLLM_ENFORCE_EAGER: "1",
+      VLLM_GPU_MEM: "0.85",
+      VLLM_MAX_MODEL_LEN: "3072",
+      VLLM_MAX_NUM_BATCHED_TOKENS: "2048",
+    },
+    mc1Phase3: {
+      RUN_TAG: "pilot20k_stratified_v2",
+      WINDOW_TEXT: BASE_WINDOW_TEXT,
+      CACHE_IN: "llm/framework_v1_mc1/cache_mc1_zs_structured_v2_pilot20k_stratified_v2_qwen35_tp2eager.jsonl",
+      BASELINE_CSV,
+      TAG_SUFFIX: "qwen35tp2eager",
+      PHASE3_COMBO_LIMIT: "24",
+      PHASE3_EXTRACT_MODE: "zs",
+      PHASE3_PROMPT_PROFILE: "structured_v2",
+      PHASE3_DIM_KEYS: "compact9,compact14",
+    },
+  },
+};
+
+const SCENARIOS = [
+  {
+    id: "hddFull",
+    category: "HDD",
+    title: "HDD 完整流程",
+    subtitle: "Phase2 + Phase3 一键串联",
+    workflowId: "llm.pilot20k.full-all12",
+    presetScope: "hddFull",
+    recommendedPreset: "qwen3instruct2507",
+    description: "一次启动 12 个 HDD 盘型的抽取和网格评估，适合新一轮统一对照实验。",
+    steps: ["检查模型与磁盘空间", "运行 HDD Phase2 抽取", "自动切到 HDD Phase3 评估", "查看 docs 和 logs 汇总"],
+    outputs: ["logs/framework_v1", "logs/framework_v1_phase3", "docs/tables", "docs/reports"],
+    primaryFields: [
+      ["RUN_TAG", "Phase2 运行标签"],
+      ["PHASE3_RUN_TAG", "Phase3 输入标签"],
+      ["PHASE3_TAG_SUFFIX", "Phase3 结果后缀"],
+      ["MODEL_PATH", "模型路径 / API 模型名"],
+      ["BACKEND", "后端"],
+      ["API_BASE_URL", "API Base URL"],
+      ["API_KEY_ENV", "API Key 环境变量"],
+    ],
+    advancedFields: [],
+  },
+  {
+    id: "hddPhase2",
+    category: "HDD",
+    title: "HDD 仅跑 Phase2",
+    subtitle: "先抽取，再决定是否继续 Phase3",
+    workflowId: "llm.pilot20k.phase2-all12",
+    presetScope: "hddPhase2",
+    recommendedPreset: "qwen3instruct2507",
+    description: "适合只补 cache 或先做模型抽取质量对比。",
+    steps: ["选择盘型范围", "启动批量抽取", "检查 cache 与 quality 输出"],
+    outputs: ["llm/framework_v1/cache_*.jsonl", "logs/framework_v1", "docs/extract_quality_*.csv"],
+    primaryFields: [
+      ["RUN_TAG", "运行标签"],
+      ["TARGET_KEYS", "盘型子集"],
+      ["MODEL_PATH", "模型路径 / API 模型名"],
+      ["BACKEND", "后端"],
+      ["API_BASE_URL", "API Base URL"],
+      ["API_KEY_ENV", "API Key 环境变量"],
+      ["BATCH_SIZE", "批大小"],
+    ],
+    advancedFields: [
+      ["VLLM_GPU_MEMORY_UTILIZATION", "GPU 利用率"],
+      ["VLLM_MAX_MODEL_LEN", "Max Model Len"],
+      ["VLLM_MAX_NUM_BATCHED_TOKENS", "Max Batched Tokens"],
+      ["MAX_NEW_TOKENS", "Max New Tokens"],
+    ],
+  },
+  {
+    id: "hddPhase3",
+    category: "HDD",
+    title: "HDD 仅跑 Phase3",
+    subtitle: "使用已有 cache 做 CPU/Java 网格",
+    workflowId: "llm.pilot20k.phase3-all12",
+    presetScope: "hddPhase3",
+    recommendedPreset: "qwen3instruct2507",
+    description: "适合 cache 已备好、只需要跑 Phase3 网格评估的场景。",
+    steps: ["检查 baseline 与 cache", "启动 Phase3 网格", "查看 docs 汇总和组合记录"],
+    outputs: ["logs/framework_v1_phase3", "logs/framework_v1_phase3_batch7", "docs/prearff_grid_*"],
+    primaryFields: [
+      ["PHASE3_RUN_TAG", "Phase3 输入标签"],
+      ["PHASE3_TAG_SUFFIX", "结果后缀"],
+      ["MAX_WINDOWS", "最大窗口数"],
+    ],
+    advancedFields: [],
+  },
+  {
+    id: "mc1Full",
+    category: "MC1",
+    title: "MC1 完整流程",
+    subtitle: "复用 stratified_v2 输入跑完整链路",
+    workflowId: "llm.mc1.full-stratified-v2",
+    presetScope: "mc1Full",
+    recommendedPreset: "qwen3instruct2507",
+    description: "直接复用已修正的 MC1 stratified_v2 输入，自动串联 Phase2 与 Phase3。",
+    steps: ["复用 stratified_v2 window_text/reference", "运行 MC1 Phase2", "运行 MC1 Phase3", "输出 docs 对照表"],
+    outputs: ["llm/framework_v1_mc1/cache_*.jsonl", "logs/framework_v1_phase2_mc1", "logs/framework_v1_phase3_mc1", "docs/prearff_grid_mc1_*"],
+    primaryFields: [
+      ["PHASE2_RUN_TAG", "Phase2 运行标签"],
+      ["PHASE3_RUN_TAG", "Phase3 输入标签"],
+      ["PHASE3_TAG_SUFFIX", "Phase3 结果后缀"],
+      ["MODEL_PATH", "模型路径 / API 模型名"],
+      ["BACKEND", "后端"],
+      ["WINDOW_TEXT_IN", "window_text 路径"],
+      ["REFERENCE_IN", "reference 路径"],
+      ["BASELINE_CSV", "baseline CSV"],
+      ["API_BASE_URL", "API Base URL"],
+      ["API_KEY_ENV", "API Key 环境变量"],
+    ],
+    advancedFields: [
+      ["BATCH_SIZE", "批大小"],
+      ["VLLM_TENSOR_PARALLEL_SIZE", "Tensor Parallel"],
+      ["VLLM_ENFORCE_EAGER", "Enforce Eager"],
+      ["VLLM_GPU_MEM", "GPU 利用率"],
+      ["VLLM_MAX_MODEL_LEN", "Max Model Len"],
+      ["VLLM_MAX_NUM_BATCHED_TOKENS", "Max Batched Tokens"],
+    ],
+  },
+  {
+    id: "mc1Phase2",
+    category: "MC1",
+    title: "MC1 仅跑 Phase2",
+    subtitle: "复用修正输入做模型抽取对比",
+    workflowId: "llm.mc1.phase2",
+    presetScope: "mc1Phase2",
+    recommendedPreset: "qwen3instruct2507",
+    description: "面向 MC1 的单模型抽取入口，默认不再重扫全年 SSD 数据。",
+    steps: ["检查 stratified_v2 输入", "启动 MC1 抽取", "查看 quality 与 cache 输出"],
+    outputs: ["llm/framework_v1_mc1/cache_*.jsonl", "logs/framework_v1_phase2_mc1", "docs/extract_quality_mc1_*"],
+    primaryFields: [
+      ["RUN_TAG", "运行标签"],
+      ["MODEL_PATH", "模型路径 / API 模型名"],
+      ["BACKEND", "后端"],
+      ["WINDOW_TEXT_IN", "window_text 路径"],
+      ["REFERENCE_IN", "reference 路径"],
+      ["SKIP_WINDOW_BUILD", "跳过 Phase1 重建"],
+      ["API_BASE_URL", "API Base URL"],
+      ["API_KEY_ENV", "API Key 环境变量"],
+      ["BATCH_SIZE", "批大小"],
+    ],
+    advancedFields: [
+      ["VLLM_TENSOR_PARALLEL_SIZE", "Tensor Parallel"],
+      ["VLLM_ENFORCE_EAGER", "Enforce Eager"],
+      ["VLLM_GPU_MEM", "GPU 利用率"],
+      ["VLLM_MAX_MODEL_LEN", "Max Model Len"],
+      ["VLLM_MAX_NUM_BATCHED_TOKENS", "Max Batched Tokens"],
+    ],
+  },
+  {
+    id: "mc1Phase3",
+    category: "MC1",
+    title: "MC1 仅跑 Phase3",
+    subtitle: "用已有 cache 做 24 组网格",
+    workflowId: "llm.mc1.phase3-grid",
+    presetScope: "mc1Phase3",
+    recommendedPreset: "qwen3instruct2507",
+    description: "适合 cache 已备好，只补 CPU/Java 侧的网格评估。",
+    steps: ["检查 cache、window_text、baseline", "启动 compact9/compact14 网格", "查看 docs 与 combo record"],
+    outputs: ["logs/framework_v1_phase3_mc1", "mc1_mlp/phase3_mc1_*.csv", "docs/prearff_grid_mc1_*"],
+    primaryFields: [
+      ["RUN_TAG", "运行标签"],
+      ["WINDOW_TEXT", "window_text 路径"],
+      ["CACHE_IN", "cache 路径"],
+      ["BASELINE_CSV", "baseline CSV"],
+      ["TAG_SUFFIX", "结果后缀"],
+      ["PHASE3_COMBO_LIMIT", "组合数"],
+    ],
+    advancedFields: [
+      ["PHASE3_EXTRACT_MODE", "抽取模式"],
+      ["PHASE3_PROMPT_PROFILE", "提示词配置"],
+      ["PHASE3_DIM_KEYS", "维度子集"],
+    ],
+  },
+];
+
+const state = {
+  workflows: [],
+  results: null,
+  storage: null,
+  preflight: null,
+  cleanupPreview: null,
+  jobs: [],
+  selectedJobId: null,
+  activeTab: "overview",
+  wizardScenarioId: "mc1Full",
+  wizardPresetId: "qwen3instruct2507",
+  wizardValues: {},
+  cleanupStatus: "",
+};
+
+const els = {
+  baseModelBadge: document.getElementById("baseModelBadge"),
+  modelPresetCards: document.getElementById("modelPresetCards"),
+  overviewHighlights: document.getElementById("overviewHighlights"),
+  recentJobsOverview: document.getElementById("recentJobsOverview"),
+  scenarioCards: document.getElementById("scenarioCards"),
+  preflightList: document.getElementById("preflightList"),
+  focusCards: document.getElementById("focusCards"),
+  wizardScenarioRail: document.getElementById("wizardScenarioRail"),
+  wizardPresetRail: document.getElementById("wizardPresetRail"),
+  wizardWorkflowBadge: document.getElementById("wizardWorkflowBadge"),
+  wizardHeader: document.getElementById("wizardHeader"),
+  wizardStepList: document.getElementById("wizardStepList"),
+  wizardRelevantChecks: document.getElementById("wizardRelevantChecks"),
+  wizardPrimaryFields: document.getElementById("wizardPrimaryFields"),
+  wizardAdvancedFields: document.getElementById("wizardAdvancedFields"),
+  wizardOutputs: document.getElementById("wizardOutputs"),
+  wizardPreview: document.getElementById("wizardPreview"),
+  wizardApplyPresetButton: document.getElementById("wizardApplyPresetButton"),
+  wizardRunButton: document.getElementById("wizardRunButton"),
+  resultsHighlights: document.getElementById("resultsHighlights"),
+  mc1Overview: document.getElementById("mc1Overview"),
+  hddOverview: document.getElementById("hddOverview"),
+  mc1Phase2Path: document.getElementById("mc1Phase2Path"),
+  mc1Phase2Table: document.getElementById("mc1Phase2Table"),
+  mc1Phase3Path: document.getElementById("mc1Phase3Path"),
+  mc1Phase3Table: document.getElementById("mc1Phase3Table"),
+  hddPath: document.getElementById("hddPath"),
+  hddSummaryTable: document.getElementById("hddSummaryTable"),
+  storageHeadline: document.getElementById("storageHeadline"),
+  cleanupSuggestions: document.getElementById("cleanupSuggestions"),
+  cleanupExperimentButton: document.getElementById("cleanupExperimentButton"),
+  cleanupStatus: document.getElementById("cleanupStatus"),
+  refreshPreflightButton: document.getElementById("refreshPreflightButton"),
+  jobList: document.getElementById("jobList"),
+  jobLog: document.getElementById("jobLog"),
+  jobArtifacts: document.getElementById("jobArtifacts"),
+  refreshJobsButton: document.getElementById("refreshJobsButton"),
+  stopJobButton: document.getElementById("stopJobButton"),
+  tabButtons: Array.from(document.querySelectorAll(".tab-button")),
+  tabPanels: Array.from(document.querySelectorAll(".tab-panel")),
+};
+
+async function fetchJson(url, options = {}) {
+  const response = await fetch(url, options);
+  if (!response.ok) {
+    const payload = await response.json().catch(() => ({ error: response.statusText }));
+    throw new Error(payload.error || response.statusText);
+  }
+  return response.json();
+}
+
+function workflowById(id) {
+  return state.workflows.find((item) => item.id === id) || null;
+}
+
+function scenarioById(id) {
+  return SCENARIOS.find((item) => item.id === id) || SCENARIOS[0];
+}
+
+function presetById(id) {
+  return (state.results?.model_presets || []).find((item) => item.id === id) || null;
+}
+
+function presetDefaults(presetId, scope) {
+  return { ...(MODEL_PRESET_DEFAULTS[presetId] || {})[scope] };
+}
+
+function setActiveTab(tabId) {
+  state.activeTab = tabId;
+  els.tabButtons.forEach((button) => {
+    button.classList.toggle("active", button.dataset.tab === tabId);
+  });
+  els.tabPanels.forEach((panel) => {
+    panel.classList.toggle("hidden", panel.id !== `tab-${tabId}`);
+  });
+}
+
+function setWizardScenario(scenarioId) {
+  const scenario = scenarioById(scenarioId);
+  state.wizardScenarioId = scenario.id;
+  state.wizardPresetId = scenario.recommendedPreset;
+  state.wizardValues = presetDefaults(state.wizardPresetId, scenario.presetScope);
+  renderWizard();
+  renderLaunchpad();
+}
+
+function setWizardPreset(presetId) {
+  const scenario = scenarioById(state.wizardScenarioId);
+  state.wizardPresetId = presetId;
+  state.wizardValues = presetDefaults(presetId, scenario.presetScope);
+  renderWizard();
+}
+
+function humanPercent(value) {
+  const num = Number(value);
+  if (Number.isNaN(num)) {
+    return "-";
+  }
+  return `${num.toFixed(2)}%`;
+}
+
+function metricCard(label, value, tone = "", helpText = "") {
+  const div = document.createElement("div");
+  div.className = `metric-card ${tone}`.trim();
+  div.innerHTML = `
+    <span>${label}</span>
+    <strong>${value}</strong>
+    ${helpText ? `<small>${helpText}</small>` : ""}
+  `;
+  return div;
+}
+
+function listItem(title, lines = [], classes = "") {
+  const div = document.createElement("div");
+  div.className = `list-item ${classes}`.trim();
+  div.innerHTML = `<strong>${title}</strong>${lines.map((line) => `<span>${line}</span>`).join("")}`;
+  return div;
+}
+
+function selectedScenario() {
+  return scenarioById(state.wizardScenarioId);
+}
+
+function selectedWorkflow() {
+  return workflowById(selectedScenario().workflowId);
+}
+
+function runningJobsCount() {
+  return state.jobs.filter((job) => job.status === "running").length;
+}
+
+function renderModelPresets() {
+  const presets = state.results?.model_presets || [];
+  els.modelPresetCards.innerHTML = "";
+  presets.forEach((preset) => {
+    const card = document.createElement("div");
+    card.className = `preset-card ${preset.recommended ? "recommended" : ""}`;
+    card.innerHTML = `
+      <div class="preset-topline">
+        <strong>${preset.name}</strong>
+        <span class="pill ${preset.recommended ? "" : "muted"}">${preset.role}</span>
+      </div>
+      <p class="preset-family">${preset.family} · ${preset.kind === "local" ? "本地模型" : "API 模型"}</p>
+      <p class="preset-description">${preset.description}</p>
+      <code>${preset.model_path || "-"}</code>
+    `;
+    els.modelPresetCards.appendChild(card);
+  });
+}
+
+function renderOverviewHighlights() {
+  const hddModels = state.results?.hdd?.models || [];
+  const mc1Phase3Rows = state.results?.mc1_phase3?.rows || [];
+  const disk = state.storage?.disk;
+  const bestMc1 = mc1Phase3Rows.reduce((best, row) => {
+    if (!best) {
+      return row;
+    }
+    return Number(row.delta_recall_vs_nollm) > Number(best.delta_recall_vs_nollm) ? row : best;
+  }, null);
+  const bestHddCoverage = hddModels.reduce((best, row) => {
+    if (!best) {
+      return row;
+    }
+    return Number(row.enabled_count) > Number(best.enabled_count) ? row : best;
+  }, null);
+
+  els.baseModelBadge.textContent = "Qwen3-4B-Instruct-2507";
+  els.overviewHighlights.innerHTML = "";
+  els.overviewHighlights.appendChild(metricCard("默认本地基线", "Qwen3-4B-Instruct-2507", "accent", "当前仓库默认推荐"));
+  els.overviewHighlights.appendChild(metricCard("运行中作业", String(runningJobsCount()), runningJobsCount() > 0 ? "accent" : ""));
+  els.overviewHighlights.appendChild(
+    metricCard(
+      "MC1 最佳 ΔRecall",
+      bestMc1 ? Number(bestMc1.delta_recall_vs_nollm).toFixed(4) : "-",
+      "success",
+      bestMc1 ? bestMc1.model : "尚无结果"
+    )
+  );
+  els.overviewHighlights.appendChild(
+    metricCard(
+      "HDD 覆盖最多模型",
+      bestHddCoverage ? `${bestHddCoverage.label} · ${bestHddCoverage.enabled_count}` : "-",
+      "",
+      "可启用盘型数"
+    )
+  );
+  els.overviewHighlights.appendChild(
+    metricCard("磁盘可用空间", disk ? disk.free_human : "-", disk && disk.free_bytes > 50 * 1024 ** 3 ? "success" : "")
+  );
+}
+
+function launchScenarioCard(scenarioId, presetId) {
+  const scenario = scenarioById(scenarioId);
+  const env = presetDefaults(presetId, scenario.presetScope);
+  return fetchJson("/api/run_custom", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ workflow_id: scenario.workflowId, env }),
+  });
+}
+
+function renderLaunchpad() {
+  els.scenarioCards.innerHTML = "";
+  SCENARIOS.forEach((scenario) => {
+    const preset = presetById(scenario.recommendedPreset);
+    const card = document.createElement("div");
+    card.className = "scenario-card";
+    card.innerHTML = `
+      <div class="scenario-topline">
+        <strong>${scenario.title}</strong>
+        <span class="pill">${scenario.category}</span>
+      </div>
+      <p class="scenario-subtitle">${scenario.subtitle}</p>
+      <p class="preset-description">${scenario.description}</p>
+      <span class="scenario-hint">推荐模型：${preset ? preset.name : scenario.recommendedPreset}</span>
+      <div class="button-row">
+        <button class="ghost-button" type="button" data-role="open">进入向导</button>
+        <button class="primary-button" type="button" data-role="run">快速启动默认配置</button>
+      </div>
+    `;
+    card.querySelector('[data-role="open"]').addEventListener("click", () => {
+      setWizardScenario(scenario.id);
+      setActiveTab("wizard");
+    });
+    card.querySelector('[data-role="run"]').addEventListener("click", async () => {
+      try {
+        const payload = await launchScenarioCard(scenario.id, scenario.recommendedPreset);
+        state.selectedJobId = payload.job.job_id;
+        setActiveTab("jobs");
+        await refreshJobs();
+        await refreshLog();
+      } catch (error) {
+        window.alert(`启动失败: ${error.message}`);
+      }
+    });
+    els.scenarioCards.appendChild(card);
+  });
+}
+
+function renderPreflight() {
+  const checks = state.preflight?.checks || [];
+  els.preflightList.innerHTML = "";
+  checks.forEach((check) => {
+    const scopeLabel = check.scope === "global" ? "全局" : check.scope.toUpperCase();
+    const item = listItem(check.label, [`${scopeLabel} · ${check.ok ? "通过" : "缺失/异常"}`, check.detail], check.ok ? "" : "preflight-fail");
+    els.preflightList.appendChild(item);
+  });
+}
+
+function renderFocusCards() {
+  const mc1Phase2 = state.results?.mc1_phase2?.rows || [];
+  const hddModels = state.results?.hdd?.models || [];
+  const bestPhase2 = mc1Phase2.reduce((best, row) => {
+    if (!best) {
+      return row;
+    }
+    return Number(row.non_unknown_pct) > Number(best.non_unknown_pct) ? row : best;
+  }, null);
+  const bestHddAvg = hddModels.reduce((best, row) => {
+    if (!best) {
+      return row;
+    }
+    return Number(row.avg_enabled_delta_recall || -9999) > Number(best.avg_enabled_delta_recall || -9999) ? row : best;
+  }, null);
+  const suggestions = [
+    {
+      title: "MC1 默认推荐",
+      lines: bestPhase2
+        ? [`优先模型：${bestPhase2.model}`, `non-unknown ${bestPhase2.non_unknown_pct}% · q_score ${bestPhase2.avg_llm_q_score}`]
+        : ["MC1 结果尚未载入"],
+    },
+    {
+      title: "HDD 默认推荐",
+      lines: bestHddAvg
+        ? [`平均增益最高：${bestHddAvg.label}`, `平均 ΔRecall ${Number(bestHddAvg.avg_enabled_delta_recall).toFixed(4)}`]
+        : ["HDD 结果尚未载入"],
+    },
+    {
+      title: "流程建议",
+      lines: ["先走实验向导，再进结果看板复核", "MC1 建议优先使用 stratified_v2 路线"],
+    },
+  ];
+  els.focusCards.innerHTML = "";
+  suggestions.forEach((item) => {
+    els.focusCards.appendChild(listItem(item.title, item.lines));
+  });
+}
+
+function renderRecentJobsOverview() {
+  els.recentJobsOverview.innerHTML = "";
+  const jobs = state.jobs.slice(0, 4);
+  if (!jobs.length) {
+    els.recentJobsOverview.appendChild(listItem("暂无作业", ["还没有通过 UI 启动的任务"]));
+    return;
+  }
+  jobs.forEach((job) => {
+    els.recentJobsOverview.appendChild(
+      listItem(job.workflow_name, [`${job.status} · ${job.started_at}`, job.log_path])
+    );
+  });
+}
+
+function renderOverview() {
+  renderOverviewHighlights();
+  renderLaunchpad();
+  renderPreflight();
+  renderModelPresets();
+  renderFocusCards();
+  renderRecentJobsOverview();
+}
+
+function renderSelectorCard(container, options, selectedId, onSelect, formatter) {
+  container.innerHTML = "";
+  options.forEach((option) => {
+    const card = document.createElement("button");
+    card.type = "button";
+    card.className = `selector-card ${option.id === selectedId ? "active" : ""}`;
+    card.innerHTML = formatter(option);
+    card.addEventListener("click", () => onSelect(option.id));
+    container.appendChild(card);
+  });
+}
+
+function renderWizardScenarioRail() {
+  renderSelectorCard(
+    els.wizardScenarioRail,
+    SCENARIOS,
+    state.wizardScenarioId,
+    setWizardScenario,
+    (scenario) => `
+      <strong>${scenario.title}</strong>
+      <span>${scenario.subtitle}</span>
+      <small>${scenario.category}</small>
+    `
+  );
+}
+
+function renderWizardPresetRail() {
+  const presets = state.results?.model_presets || [];
+  renderSelectorCard(
+    els.wizardPresetRail,
+    presets,
+    state.wizardPresetId,
+    setWizardPreset,
+    (preset) => `
+      <strong>${preset.name}</strong>
+      <span>${preset.role}</span>
+      <small>${preset.kind === "local" ? "本地" : "API"} · ${preset.family}</small>
+    `
+  );
+}
+
+function renderWizardFields(container, fields) {
+  container.innerHTML = "";
+  fields.forEach(([name, label]) => {
+    const value = state.wizardValues[name] ?? "";
+    const field = document.createElement("label");
+    field.className = "field";
+    field.innerHTML = `
+      <span>${label}</span>
+      <input data-env-name="${name}" type="text" value="${value}" />
+    `;
+    field.querySelector("input").addEventListener("input", (event) => {
+      state.wizardValues[name] = event.target.value;
+      updateWizardPreview();
+    });
+    container.appendChild(field);
+  });
+}
+
+function relevantChecksForScenario(scenario) {
+  const checks = state.preflight?.checks || [];
+  return checks.filter((check) => check.scope === "global" || check.scope === "models" || check.scope === scenario.category.toLowerCase());
+}
+
+function renderWizard() {
+  const scenario = selectedScenario();
+  const workflow = selectedWorkflow();
+  const preset = presetById(state.wizardPresetId);
+
+  renderWizardScenarioRail();
+  renderWizardPresetRail();
+
+  els.wizardWorkflowBadge.textContent = workflow ? workflow.display_name : scenario.workflowId;
+  els.wizardHeader.innerHTML = `
+    <div class="wizard-hero">
+      <strong>${scenario.title}</strong>
+      <span>${scenario.description}</span>
+      <small>当前模型：${preset ? preset.name : state.wizardPresetId}</small>
+    </div>
+  `;
+
+  els.wizardStepList.innerHTML = "";
+  scenario.steps.forEach((step, index) => {
+    els.wizardStepList.appendChild(listItem(`步骤 ${index + 1}`, [step]));
+  });
+
+  els.wizardRelevantChecks.innerHTML = "";
+  relevantChecksForScenario(scenario).forEach((check) => {
+    els.wizardRelevantChecks.appendChild(
+      listItem(check.label, [check.ok ? "通过" : "缺失/异常", check.detail], check.ok ? "" : "preflight-fail")
+    );
+  });
+
+  renderWizardFields(els.wizardPrimaryFields, scenario.primaryFields);
+  renderWizardFields(els.wizardAdvancedFields, scenario.advancedFields);
+
+  els.wizardOutputs.innerHTML = "";
+  scenario.outputs.forEach((line) => {
+    els.wizardOutputs.appendChild(listItem(line, ["运行完成后优先检查这里"], "output-item"));
+  });
+
+  updateWizardPreview();
+}
+
+function updateWizardPreview() {
+  const workflow = selectedWorkflow();
+  const envLines = Object.entries(state.wizardValues)
+    .filter(([, value]) => String(value).trim() !== "")
+    .map(([key, value]) => `${key}=${value}`);
+  const command = workflow ? workflow.command_preview : selectedScenario().workflowId;
+  els.wizardPreview.textContent = `${envLines.join("\n")}\n${command}`.trim();
+}
+
+async function runWizard() {
+  try {
+    const payload = await fetchJson("/api/run_custom", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ workflow_id: selectedScenario().workflowId, env: state.wizardValues }),
+    });
+    state.selectedJobId = payload.job.job_id;
+    setActiveTab("jobs");
+    await refreshJobs();
+    await refreshLog();
+  } catch (error) {
+    window.alert(`启动失败: ${error.message}`);
+  }
+}
+
+function renderTable(table, columns, rows) {
+  table.innerHTML = "";
+  const thead = document.createElement("thead");
+  const headRow = document.createElement("tr");
+  columns.forEach((col) => {
+    const th = document.createElement("th");
+    th.textContent = col.label;
+    headRow.appendChild(th);
+  });
+  thead.appendChild(headRow);
+  table.appendChild(thead);
+
+  const tbody = document.createElement("tbody");
+  rows.forEach((row) => {
+    const tr = document.createElement("tr");
+    columns.forEach((col) => {
+      const td = document.createElement("td");
+      td.textContent = row[col.key] ?? "";
+      tr.appendChild(td);
+    });
+    tbody.appendChild(tr);
+  });
+  table.appendChild(tbody);
+}
+
+function renderResultsHighlights() {
+  const mc1Phase2 = state.results?.mc1_phase2?.rows || [];
+  const mc1Phase3 = state.results?.mc1_phase3?.rows || [];
+  const hddModels = state.results?.hdd?.models || [];
+  const bestMc1Phase2 = mc1Phase2.reduce((best, row) => {
+    if (!best) {
+      return row;
+    }
+    return Number(row.non_unknown_pct) > Number(best.non_unknown_pct) ? row : best;
+  }, null);
+  const bestMc1Phase3 = mc1Phase3.reduce((best, row) => {
+    if (!best) {
+      return row;
+    }
+    return Number(row.delta_recall_vs_nollm) > Number(best.delta_recall_vs_nollm) ? row : best;
+  }, null);
+  const bestHdd = hddModels.reduce((best, row) => {
+    if (!best) {
+      return row;
+    }
+    return Number(row.avg_enabled_delta_recall || -9999) > Number(best.avg_enabled_delta_recall || -9999) ? row : best;
+  }, null);
+  els.resultsHighlights.innerHTML = "";
+  els.resultsHighlights.appendChild(
+    metricCard("MC1 Phase2 最强", bestMc1Phase2 ? bestMc1Phase2.model : "-", "accent", bestMc1Phase2 ? `non-unknown ${bestMc1Phase2.non_unknown_pct}%` : "")
+  );
+  els.resultsHighlights.appendChild(
+    metricCard("MC1 Phase3 最优", bestMc1Phase3 ? bestMc1Phase3.model : "-", "success", bestMc1Phase3 ? `ΔRecall ${Number(bestMc1Phase3.delta_recall_vs_nollm).toFixed(4)}` : "")
+  );
+  els.resultsHighlights.appendChild(
+    metricCard("HDD 平均增益最高", bestHdd ? bestHdd.label : "-", "", bestHdd ? `${Number(bestHdd.avg_enabled_delta_recall).toFixed(4)}` : "")
+  );
+}
+
+function renderResultsNarrative() {
+  const mc1Phase2 = state.results?.mc1_phase2?.rows || [];
+  const hddModels = state.results?.hdd?.models || [];
+  els.mc1Overview.innerHTML = "";
+  mc1Phase2.forEach((row) => {
+    els.mc1Overview.appendChild(
+      listItem(row.model, [
+        `non-unknown ${row.non_unknown_pct}% · mapped_event ${row.mapped_event_ratio_pct}%`,
+        `confidence ${row.avg_confidence} · q_score ${row.avg_llm_q_score}`,
+      ])
+    );
+  });
+  els.hddOverview.innerHTML = "";
+  hddModels.forEach((row) => {
+    els.hddOverview.appendChild(
+      listItem(row.label, [
+        `可启用盘型 ${row.enabled_count} · 平均 ΔRecall ${row.avg_enabled_delta_recall ?? "-"}`,
+        `最佳 ${row.best_model_key} · 最差 ${row.worst_model_key}`,
+      ])
+    );
+  });
+}
+
+function renderResults() {
+  const mc1Phase2 = state.results?.mc1_phase2 || { rows: [] };
+  const mc1Phase3 = state.results?.mc1_phase3 || { rows: [] };
+  const hdd = state.results?.hdd || { models: [] };
+
+  renderResultsHighlights();
+  renderResultsNarrative();
+
+  els.mc1Phase2Path.textContent = mc1Phase2.path || "";
+  renderTable(
+    els.mc1Phase2Table,
+    [
+      { key: "model", label: "模型" },
+      { key: "unknown_pct", label: "unknown%" },
+      { key: "non_unknown_pct", label: "非unknown%" },
+      { key: "mapped_event_ratio_pct", label: "映射事件%" },
+      { key: "avg_confidence", label: "平均置信度" },
+      { key: "avg_llm_q_score", label: "平均Q分数" },
+    ],
+    mc1Phase2.rows || []
+  );
+
+  els.mc1Phase3Path.textContent = mc1Phase3.path || "";
+  renderTable(
+    els.mc1Phase3Table,
+    [
+      { key: "model", label: "模型" },
+      { key: "status_counts", label: "状态计数" },
+      { key: "best_dim_key", label: "最佳维度" },
+      { key: "best_q_gate", label: "q_gate" },
+      { key: "best_sev_sum_gate", label: "sev_gate" },
+      { key: "delta_recall_vs_nollm", label: "ΔRecall" },
+      { key: "delta_acc_vs_nollm", label: "ΔACC" },
+      { key: "notes", label: "说明" },
+    ],
+    mc1Phase3.rows || []
+  );
+
+  els.hddPath.textContent = hdd.path || "";
+  renderTable(
+    els.hddSummaryTable,
+    [
+      { key: "label", label: "模型" },
+      { key: "enabled_count", label: "可启用盘型数" },
+      { key: "avg_enabled_delta_recall", label: "平均ΔRecall" },
+      { key: "best_model_key", label: "最佳盘型" },
+      { key: "best_delta_recall", label: "最佳增益" },
+      { key: "worst_model_key", label: "最差盘型" },
+      { key: "worst_delta_recall", label: "最差增益" },
+    ],
+    hdd.models || []
+  );
+}
+
+function cleanupSuggestions() {
+  const targets = state.cleanupPreview?.targets || [];
+  return [
+    {
+      title: "按钮会清理这些中间产物",
+      lines: targets.length ? targets : ["save_model/*.pickle", "pyloader/phase3_train_*", "pyloader/phase3_test_*"],
+    },
+    {
+      title: "不会清理这些结果",
+      lines: ["docs 下的 csv / md 汇总", "mc1_mlp 和 hi7_example 中的最终结果 CSV", "phase2 cache 与 window_text/reference"],
+    },
+    {
+      title: "安全限制",
+      lines: ["如果当前有运行中的作业，按钮会拒绝执行", "清理后无法从中间状态续跑，只保留最终结果"],
+    },
+  ];
+}
+
+function renderStorage() {
+  const storage = state.storage;
+  if (!storage) {
+    return;
+  }
+  els.storageHeadline.innerHTML = "";
+  els.storageHeadline.appendChild(metricCard("总容量", storage.disk.total_human, "accent"));
+  els.storageHeadline.appendChild(metricCard("已使用", storage.disk.used_human));
+  els.storageHeadline.appendChild(metricCard("可用空间", storage.disk.free_human, storage.disk.free_bytes > 50 * 1024 ** 3 ? "success" : ""));
+
+  els.cleanupSuggestions.innerHTML = "";
+  cleanupSuggestions().forEach((item) => {
+    els.cleanupSuggestions.appendChild(listItem(item.title, item.lines, item.tone || ""));
+  });
+  els.cleanupStatus.textContent = state.cleanupStatus || "尚未执行清理。";
+}
+
+function renderJobs(jobs) {
+  els.jobList.innerHTML = "";
+  jobs.forEach((job) => {
+    const card = document.createElement("button");
+    card.type = "button";
+    card.className = `job-card ${job.job_id === state.selectedJobId ? "active" : ""}`;
+    card.addEventListener("click", async () => {
+      state.selectedJobId = job.job_id;
+      renderStopButton(job);
+      renderJobArtifacts(job);
+      await refreshLog();
+      renderJobs(jobs);
+    });
+    card.innerHTML = `
+      <div class="job-topline">
+        <strong>${job.workflow_name}</strong>
+        <span class="status ${job.status}">${job.status}</span>
+      </div>
+      <p>${job.job_id} · ${job.started_at}</p>
+      <code>${job.log_path}</code>
+    `;
+    els.jobList.appendChild(card);
+  });
+}
+
+function renderJobArtifacts(job) {
+  els.jobArtifacts.innerHTML = "";
+  if (!job) {
+    els.jobArtifacts.appendChild(listItem("未选择作业", ["选中左侧作业后，这里会显示对应产物路径。"]));
+    return;
+  }
+  const artifacts = job.artifacts || [];
+  if (!artifacts.length) {
+    els.jobArtifacts.appendChild(listItem("暂无推断产物", ["这个流程没有定义专门的结果路径。"]));
+    return;
+  }
+  artifacts.forEach((item) => {
+    const status = item.exists ? "已生成" : "待生成";
+    els.jobArtifacts.appendChild(listItem(item.label, [`${status} · ${item.path}`], item.exists ? "" : "preflight-fail"));
+  });
+}
+
+function renderStopButton(job) {
+  if (job && job.status === "running") {
+    els.stopJobButton.classList.remove("hidden");
+  } else {
+    els.stopJobButton.classList.add("hidden");
+  }
+}
+
+async function refreshJobs() {
+  const previous = new Map(state.jobs.map((job) => [job.job_id, job.status]));
+  const payload = await fetchJson("/api/jobs");
+  state.jobs = payload.jobs || [];
+  if (!state.selectedJobId && state.jobs.length) {
+    state.selectedJobId = state.jobs[0].job_id;
+  }
+  renderJobs(state.jobs);
+  renderRecentJobsOverview();
+  renderOverviewHighlights();
+  const selected = state.jobs.find((job) => job.job_id === state.selectedJobId);
+  renderStopButton(selected);
+  renderJobArtifacts(selected);
+  if (!selected) {
+    els.jobLog.textContent = "";
+  }
+  const shouldRefreshResults = state.jobs.some((job) => previous.get(job.job_id) === "running" && job.status !== "running");
+  if (shouldRefreshResults) {
+    await refreshResultsAndStorage();
+  }
+}
+
+async function refreshLog() {
+  if (!state.selectedJobId) {
+    els.jobLog.textContent = "";
+    return;
+  }
+  const payload = await fetchJson(`/api/jobs/${state.selectedJobId}/log?lines=160`);
+  els.jobLog.textContent = payload.log || "";
+}
+
+async function refreshResultsAndStorage() {
+  state.results = await fetchJson("/api/results/summary");
+  state.preflight = await fetchJson("/api/preflight");
+  state.storage = await fetchJson("/api/storage");
+  state.cleanupPreview = await fetchJson("/api/cleanup-preview");
+  renderOverview();
+  renderWizard();
+  renderResults();
+  renderStorage();
+}
+
+async function bootstrap() {
+  const workflowPayload = await fetchJson("/api/workflows");
+  state.workflows = workflowPayload.workflows || [];
+  state.wizardValues = presetDefaults(state.wizardPresetId, selectedScenario().presetScope);
+  await refreshResultsAndStorage();
+  await refreshJobs();
+  setInterval(async () => {
+    await refreshJobs();
+    await refreshLog();
+  }, 3000);
+}
+
+els.tabButtons.forEach((button) => {
+  button.addEventListener("click", () => setActiveTab(button.dataset.tab));
+});
+
+els.cleanupExperimentButton.addEventListener("click", async () => {
+  try {
+    const payload = await fetchJson("/api/cleanup/experiment-artifacts", { method: "POST" });
+    state.cleanupStatus = `已清理 ${payload.removed_count} 项，释放 ${payload.reclaimed_human}`;
+    state.storage = await fetchJson("/api/storage");
+    renderStorage();
+    renderOverviewHighlights();
+  } catch (error) {
+    window.alert(`清理失败: ${error.message}`);
+  }
+});
+
+els.refreshPreflightButton.addEventListener("click", async () => {
+  try {
+    state.preflight = await fetchJson("/api/preflight");
+    renderPreflight();
+    renderWizard();
+  } catch (error) {
+    window.alert(`刷新检查失败: ${error.message}`);
+  }
+});
+
+els.refreshJobsButton.addEventListener("click", async () => {
+  await refreshJobs();
+  await refreshLog();
+});
+
+els.stopJobButton.addEventListener("click", async () => {
+  if (!state.selectedJobId) {
+    return;
+  }
+  await fetchJson(`/api/jobs/${state.selectedJobId}/stop`, { method: "POST" });
+  await refreshJobs();
+  await refreshLog();
+});
+
+els.wizardApplyPresetButton.addEventListener("click", () => {
+  state.wizardValues = presetDefaults(state.wizardPresetId, selectedScenario().presetScope);
+  renderWizard();
+});
+
+els.wizardRunButton.addEventListener("click", async () => {
+  await runWizard();
+});
+
+bootstrap().catch((error) => {
+  console.error(error);
+  window.alert(`加载工作台失败: ${error.message}`);
+});
+
+</script>
+
+  </body>
+</html>
