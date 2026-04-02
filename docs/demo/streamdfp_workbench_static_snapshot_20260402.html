@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<!-- saved from url=(0022)http://127.0.0.1:8765/ -->
+<html lang="zh-CN"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>StreamDFP 实验工作台</title>
+    <link rel="stylesheet" href="./StreamDFP 实验工作台_files/styles.css">
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">本地实验工作台</p>
+          <h1>StreamDFP 实验中控台</h1>
+          <p class="subtitle">
+            不再直接暴露底层脚本列表，改成围绕 HDD 主链、MC1 修正链、结果复核和存储清理的端到端入口。
+          </p>
+        </div>
+        <div class="topbar-meta">
+          <div class="topbar-card">
+            <div class="topbar-kv">
+              <span>启动命令</span>
+              <code>./run_workbench.sh</code>
+            </div>
+            <div class="topbar-kv">
+              <span>默认本地基线</span>
+              <span id="baseModelBadge">Qwen3-4B-Instruct-2507</span>
+            </div>
+            <div class="topbar-kv">
+              <span>工作台地址</span>
+              <span>127.0.0.1:8765</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <nav class="tabbar">
+        <button class="tab-button active" data-tab="overview" type="button">总览</button>
+        <button class="tab-button" data-tab="wizard" type="button">实验向导</button>
+        <button class="tab-button" data-tab="results" type="button">结果看板</button>
+        <button class="tab-button" data-tab="storage" type="button">存储清理</button>
+        <button class="tab-button" data-tab="jobs" type="button">作业监控</button>
+      </nav>
+
+      <main class="tab-shell">
+        <section id="tab-overview" class="tab-panel">
+          <div class="cards-grid">
+            <div class="panel wide-panel">
+              <div class="panel-head">
+                <h2>全局状态</h2>
+                <span class="pill">当前实验总览</span>
+              </div>
+              <div id="overviewHighlights" class="metric-grid"><div class="metric-card accent">
+    <span>默认本地基线</span>
+    <strong>Qwen3-4B-Instruct-2507</strong>
+    <small>当前仓库默认推荐</small>
+  </div><div class="metric-card">
+    <span>运行中作业</span>
+    <strong>0</strong>
+    
+  </div><div class="metric-card success">
+    <span>MC1 最佳 ΔRecall</span>
+    <strong>2.2296</strong>
+    <small>Qwen3.5-4B (tp2+eager)</small>
+  </div><div class="metric-card">
+    <span>HDD 覆盖最多模型</span>
+    <strong>Qwen3-4B-Instruct-2507 · 9</strong>
+    <small>可启用盘型数</small>
+  </div><div class="metric-card success">
+    <span>磁盘可用空间</span>
+    <strong>155.40 GB</strong>
+    
+  </div></div>
+            </div>
+            <div class="panel">
+              <div class="panel-head">
+                <h2>最近作业</h2>
+              </div>
+              <div id="recentJobsOverview" class="list-grid"><div class="list-item"><strong>暂无作业</strong><span>还没有通过 UI 启动的任务</span></div></div>
+            </div>
+          </div>
+
+          <div class="cards-grid">
+            <div class="panel">
+              <div class="panel-head">
+                <h2>实验入口</h2>
+              </div>
+              <div id="scenarioCards" class="cards-grid compact-grid"><div class="scenario-card">
+      <div class="scenario-topline">
+        <strong>HDD 完整流程</strong>
+        <span class="pill">HDD</span>
+      </div>
+      <p class="scenario-subtitle">Phase2 + Phase3 一键串联</p>
+      <p class="preset-description">一次启动 12 个 HDD 盘型的抽取和网格评估，适合新一轮统一对照实验。</p>
+      <span class="scenario-hint">推荐模型：Qwen3-4B-Instruct-2507</span>
+      <div class="button-row">
+        <button class="ghost-button" type="button" data-role="open">进入向导</button>
+        <button class="primary-button" type="button" data-role="run">快速启动默认配置</button>
+      </div>
+    </div><div class="scenario-card">
+      <div class="scenario-topline">
+        <strong>HDD 仅跑 Phase2</strong>
+        <span class="pill">HDD</span>
+      </div>
+      <p class="scenario-subtitle">先抽取，再决定是否继续 Phase3</p>
+      <p class="preset-description">适合只补 cache 或先做模型抽取质量对比。</p>
+      <span class="scenario-hint">推荐模型：Qwen3-4B-Instruct-2507</span>
+      <div class="button-row">
+        <button class="ghost-button" type="button" data-role="open">进入向导</button>
+        <button class="primary-button" type="button" data-role="run">快速启动默认配置</button>
+      </div>
+    </div><div class="scenario-card">
+      <div class="scenario-topline">
+        <strong>HDD 仅跑 Phase3</strong>
+        <span class="pill">HDD</span>
+      </div>
+      <p class="scenario-subtitle">使用已有 cache 做 CPU/Java 网格</p>
+      <p class="preset-description">适合 cache 已备好、只需要跑 Phase3 网格评估的场景。</p>
+      <span class="scenario-hint">推荐模型：Qwen3-4B-Instruct-2507</span>
+      <div class="button-row">
+        <button class="ghost-button" type="button" data-role="open">进入向导</button>
+        <button class="primary-button" type="button" data-role="run">快速启动默认配置</button>
+      </div>
+    </div><div class="scenario-card">
+      <div class="scenario-topline">
+        <strong>MC1 完整流程</strong>
+        <span class="pill">MC1</span>
+      </div>
+      <p class="scenario-subtitle">复用 stratified_v2 输入跑完整链路</p>
+      <p class="preset-description">直接复用已修正的 MC1 stratified_v2 输入，自动串联 Phase2 与 Phase3。</p>
+      <span class="scenario-hint">推荐模型：Qwen3-4B-Instruct-2507</span>
+      <div class="button-row">
+        <button class="ghost-button" type="button" data-role="open">进入向导</button>
+        <button class="primary-button" type="button" data-role="run">快速启动默认配置</button>
+      </div>
+    </div><div class="scenario-card">
+      <div class="scenario-topline">
+        <strong>MC1 仅跑 Phase2</strong>
+        <span class="pill">MC1</span>
+      </div>
+      <p class="scenario-subtitle">复用修正输入做模型抽取对比</p>
+      <p class="preset-description">面向 MC1 的单模型抽取入口，默认不再重扫全年 SSD 数据。</p>
+      <span class="scenario-hint">推荐模型：Qwen3-4B-Instruct-2507</span>
+      <div class="button-row">
+        <button class="ghost-button" type="button" data-role="open">进入向导</button>
+        <button class="primary-button" type="button" data-role="run">快速启动默认配置</button>
+      </div>
+    </div><div class="scenario-card">
+      <div class="scenario-topline">
+        <strong>MC1 仅跑 Phase3</strong>
+        <span class="pill">MC1</span>
+      </div>
+      <p class="scenario-subtitle">用已有 cache 做 24 组网格</p>
+      <p class="preset-description">适合 cache 已备好，只补 CPU/Java 侧的网格评估。</p>
+      <span class="scenario-hint">推荐模型：Qwen3-4B-Instruct-2507</span>
+      <div class="button-row">
+        <button class="ghost-button" type="button" data-role="open">进入向导</button>
+        <button class="primary-button" type="button" data-role="run">快速启动默认配置</button>
+      </div>
+    </div></div>
+            </div>
+            <div class="panel">
+              <div class="panel-head">
+                <h2>前置检查</h2>
+                <button id="refreshPreflightButton" class="ghost-button" type="button">刷新检查</button>
+              </div>
+              <div id="preflightList" class="list-grid"><div class="list-item"><strong>Java simulate jar</strong><span>全局 · 通过</span><span>/root/autodl-tmp/StreamDFP/simulate/target/simulate-2019.01.0-SNAPSHOT.jar</span></div><div class="list-item"><strong>MOA jar</strong><span>全局 · 通过</span><span>/root/autodl-tmp/StreamDFP/moa/target/moa-2019.01.0-SNAPSHOT.jar</span></div><div class="list-item"><strong>可用磁盘空间 &gt; 50GB</strong><span>全局 · 通过</span><span>155.40 GB</span></div><div class="list-item"><strong>Qwen3-4B-Instruct-2507 本地模型目录</strong><span>MODELS · 通过</span><span>/root/autodl-tmp/models/Qwen/Qwen3-4B-Instruct-2507</span></div><div class="list-item"><strong>Qwen3.5-Plus API 配置</strong><span>MODELS · 通过</span><span>https://dashscope.aliyuncs.com/compatible-mode/v1</span></div><div class="list-item"><strong>Qwen3.5-4B 本地模型目录</strong><span>MODELS · 通过</span><span>/root/autodl-tmp/models/Qwen/Qwen3.5-4B</span></div><div class="list-item"><strong>MC1 stratified_v2 window_text</strong><span>MC1 · 通过</span><span>/root/autodl-tmp/StreamDFP/llm/framework_v1_mc1/window_text_mc1_pilot20k_stratified_v2.jsonl</span></div><div class="list-item"><strong>MC1 stratified_v2 reference</strong><span>MC1 · 通过</span><span>/root/autodl-tmp/StreamDFP/llm/framework_v1_mc1/reference_mc1_pilot20k_stratified_v2.json</span></div><div class="list-item"><strong>MC1 baseline CSV</strong><span>MC1 · 通过</span><span>/root/autodl-tmp/StreamDFP/mc1_mlp/example_mc1_nollm_20180103_20180313_compare_aligned_i10.csv</span></div><div class="list-item"><strong>HDD framework_v1 目录</strong><span>HDD · 通过</span><span>/root/autodl-tmp/StreamDFP/llm/framework_v1</span></div></div>
+            </div>
+          </div>
+
+          <div class="cards-grid">
+            <div class="panel">
+              <div class="panel-head">
+                <h2>模型基线</h2>
+              </div>
+              <div id="modelPresetCards" class="cards-grid compact-grid"><div class="preset-card recommended">
+      <div class="preset-topline">
+        <strong>Qwen3-4B-Instruct-2507</strong>
+        <span class="pill ">默认本地 base model</span>
+      </div>
+      <p class="preset-family">Qwen3 · 本地模型</p>
+      <p class="preset-description">当前仓库默认的本地基线模型。MC1 修正输入上 Phase2 最强，Phase3 最优结果与另外两个模型一致。</p>
+      <code>../models/Qwen/Qwen3-4B-Instruct-2507</code>
+    </div><div class="preset-card ">
+      <div class="preset-topline">
+        <strong>Qwen3.5-Plus</strong>
+        <span class="pill muted">API 对照模型</span>
+      </div>
+      <p class="preset-family">Qwen3.5 · API 模型</p>
+      <p class="preset-description">API 侧稳定对照方案。HDD 和 MC1 都有完整结果，工程上最省本地 GPU。</p>
+      <code>qwen3.5-plus</code>
+    </div><div class="preset-card ">
+      <div class="preset-topline">
+        <strong>Qwen3.5-4B</strong>
+        <span class="pill muted">双卡实验模型</span>
+      </div>
+      <p class="preset-family">Qwen3.5 · 本地模型</p>
+      <p class="preset-description">在 MC1 长提示词场景下需要 TP=2 + eager 才能稳定跑通，本地工程成本最高。</p>
+      <code>../models/Qwen/Qwen3.5-4B</code>
+    </div></div>
+            </div>
+            <div class="panel">
+              <div class="panel-head">
+                <h2>当前建议</h2>
+              </div>
+              <div id="focusCards" class="list-grid"><div class="list-item"><strong>MC1 默认推荐</strong><span>优先模型：Qwen3-4B-Instruct-2507</span><span>non-unknown 8.4450% · q_score 0.450343</span></div><div class="list-item"><strong>HDD 默认推荐</strong><span>平均增益最高：Qwen3.5-Plus</span><span>平均 ΔRecall 17.6330</span></div><div class="list-item"><strong>流程建议</strong><span>先走实验向导，再进结果看板复核</span><span>MC1 建议优先使用 stratified_v2 路线</span></div></div>
+            </div>
+          </div>
+        </section>
+
+        <section id="tab-wizard" class="tab-panel hidden">
+          <div class="wizard-grid">
+            <div class="panel wizard-sidebar">
+              <div class="panel-head">
+                <h2>步骤 1 · 选择场景</h2>
+              </div>
+              <div id="wizardScenarioRail" class="selector-grid"><button type="button" class="selector-card ">
+      <strong>HDD 完整流程</strong>
+      <span>Phase2 + Phase3 一键串联</span>
+      <small>HDD</small>
+    </button><button type="button" class="selector-card ">
+      <strong>HDD 仅跑 Phase2</strong>
+      <span>先抽取，再决定是否继续 Phase3</span>
+      <small>HDD</small>
+    </button><button type="button" class="selector-card ">
+      <strong>HDD 仅跑 Phase3</strong>
+      <span>使用已有 cache 做 CPU/Java 网格</span>
+      <small>HDD</small>
+    </button><button type="button" class="selector-card active">
+      <strong>MC1 完整流程</strong>
+      <span>复用 stratified_v2 输入跑完整链路</span>
+      <small>MC1</small>
+    </button><button type="button" class="selector-card ">
+      <strong>MC1 仅跑 Phase2</strong>
+      <span>复用修正输入做模型抽取对比</span>
+      <small>MC1</small>
+    </button><button type="button" class="selector-card ">
+      <strong>MC1 仅跑 Phase3</strong>
+      <span>用已有 cache 做 24 组网格</span>
+      <small>MC1</small>
+    </button></div>
+
+              <div class="panel-head section-divider">
+                <h2>步骤 2 · 选择模型</h2>
+              </div>
+              <div id="wizardPresetRail" class="selector-grid"><button type="button" class="selector-card active">
+      <strong>Qwen3-4B-Instruct-2507</strong>
+      <span>默认本地 base model</span>
+      <small>本地 · Qwen3</small>
+    </button><button type="button" class="selector-card ">
+      <strong>Qwen3.5-Plus</strong>
+      <span>API 对照模型</span>
+      <small>API · Qwen3.5</small>
+    </button><button type="button" class="selector-card ">
+      <strong>Qwen3.5-4B</strong>
+      <span>双卡实验模型</span>
+      <small>本地 · Qwen3.5</small>
+    </button></div>
+            </div>
+
+            <div class="panel wizard-main">
+              <div class="panel-head">
+                <h2>步骤 3 · 配置并启动</h2>
+                <span id="wizardWorkflowBadge" class="pill muted">LLM / MC1 / Full Flow Stratified_v2</span>
+              </div>
+
+              <div id="wizardHeader" class="wizard-header">
+    <div class="wizard-hero">
+      <strong>MC1 完整流程</strong>
+      <span>直接复用已修正的 MC1 stratified_v2 输入，自动串联 Phase2 与 Phase3。</span>
+      <small>当前模型：Qwen3-4B-Instruct-2507</small>
+    </div>
+  </div>
+
+              <div class="cards-grid wizard-meta-grid">
+                <div class="subpanel">
+                  <div class="panel-head">
+                    <h3>流程步骤</h3>
+                  </div>
+                  <div id="wizardStepList" class="list-grid"><div class="list-item"><strong>步骤 1</strong><span>复用 stratified_v2 window_text/reference</span></div><div class="list-item"><strong>步骤 2</strong><span>运行 MC1 Phase2</span></div><div class="list-item"><strong>步骤 3</strong><span>运行 MC1 Phase3</span></div><div class="list-item"><strong>步骤 4</strong><span>输出 docs 对照表</span></div></div>
+                </div>
+                <div class="subpanel">
+                  <div class="panel-head">
+                    <h3>前置条件</h3>
+                  </div>
+                  <div id="wizardRelevantChecks" class="list-grid"><div class="list-item"><strong>Java simulate jar</strong><span>通过</span><span>/root/autodl-tmp/StreamDFP/simulate/target/simulate-2019.01.0-SNAPSHOT.jar</span></div><div class="list-item"><strong>MOA jar</strong><span>通过</span><span>/root/autodl-tmp/StreamDFP/moa/target/moa-2019.01.0-SNAPSHOT.jar</span></div><div class="list-item"><strong>可用磁盘空间 &gt; 50GB</strong><span>通过</span><span>155.40 GB</span></div><div class="list-item"><strong>Qwen3-4B-Instruct-2507 本地模型目录</strong><span>通过</span><span>/root/autodl-tmp/models/Qwen/Qwen3-4B-Instruct-2507</span></div><div class="list-item"><strong>Qwen3.5-Plus API 配置</strong><span>通过</span><span>https://dashscope.aliyuncs.com/compatible-mode/v1</span></div><div class="list-item"><strong>Qwen3.5-4B 本地模型目录</strong><span>通过</span><span>/root/autodl-tmp/models/Qwen/Qwen3.5-4B</span></div><div class="list-item"><strong>MC1 stratified_v2 window_text</strong><span>通过</span><span>/root/autodl-tmp/StreamDFP/llm/framework_v1_mc1/window_text_mc1_pilot20k_stratified_v2.jsonl</span></div><div class="list-item"><strong>MC1 stratified_v2 reference</strong><span>通过</span><span>/root/autodl-tmp/StreamDFP/llm/framework_v1_mc1/reference_mc1_pilot20k_stratified_v2.json</span></div><div class="list-item"><strong>MC1 baseline CSV</strong><span>通过</span><span>/root/autodl-tmp/StreamDFP/mc1_mlp/example_mc1_nollm_20180103_20180313_compare_aligned_i10.csv</span></div></div>
+                </div>
+              </div>
+
+              <div class="subpanel">
+                <div class="panel-head">
+                  <h3>核心参数</h3>
+                </div>
+                <div id="wizardPrimaryFields" class="env-grid"><label class="field">
+      <span>Phase2 运行标签</span>
+      <input data-env-name="PHASE2_RUN_TAG" type="text" value="pilot20k_stratified_v2_qwen3instruct2507">
+    </label><label class="field">
+      <span>Phase3 输入标签</span>
+      <input data-env-name="PHASE3_RUN_TAG" type="text" value="pilot20k_stratified_v2">
+    </label><label class="field">
+      <span>Phase3 结果后缀</span>
+      <input data-env-name="PHASE3_TAG_SUFFIX" type="text" value="qwen3instruct2507">
+    </label><label class="field">
+      <span>模型路径 / API 模型名</span>
+      <input data-env-name="MODEL_PATH" type="text" value="../models/Qwen/Qwen3-4B-Instruct-2507">
+    </label><label class="field">
+      <span>后端</span>
+      <input data-env-name="BACKEND" type="text" value="vllm">
+    </label><label class="field">
+      <span>window_text 路径</span>
+      <input data-env-name="WINDOW_TEXT_IN" type="text" value="llm/framework_v1_mc1/window_text_mc1_pilot20k_stratified_v2.jsonl">
+    </label><label class="field">
+      <span>reference 路径</span>
+      <input data-env-name="REFERENCE_IN" type="text" value="llm/framework_v1_mc1/reference_mc1_pilot20k_stratified_v2.json">
+    </label><label class="field">
+      <span>baseline CSV</span>
+      <input data-env-name="BASELINE_CSV" type="text" value="mc1_mlp/example_mc1_nollm_20180103_20180313_compare_aligned_i10.csv">
+    </label><label class="field">
+      <span>API Base URL</span>
+      <input data-env-name="API_BASE_URL" type="text" value="">
+    </label><label class="field">
+      <span>API Key 环境变量</span>
+      <input data-env-name="API_KEY_ENV" type="text" value="OPENAI_API_KEY">
+    </label></div>
+              </div>
+
+              <details class="advanced-box">
+                <summary>高级参数</summary>
+                <div id="wizardAdvancedFields" class="env-grid"><label class="field">
+      <span>批大小</span>
+      <input data-env-name="BATCH_SIZE" type="text" value="64">
+    </label><label class="field">
+      <span>Tensor Parallel</span>
+      <input data-env-name="VLLM_TENSOR_PARALLEL_SIZE" type="text" value="1">
+    </label><label class="field">
+      <span>Enforce Eager</span>
+      <input data-env-name="VLLM_ENFORCE_EAGER" type="text" value="0">
+    </label><label class="field">
+      <span>GPU 利用率</span>
+      <input data-env-name="VLLM_GPU_MEM" type="text" value="0.90">
+    </label><label class="field">
+      <span>Max Model Len</span>
+      <input data-env-name="VLLM_MAX_MODEL_LEN" type="text" value="8192">
+    </label><label class="field">
+      <span>Max Batched Tokens</span>
+      <input data-env-name="VLLM_MAX_NUM_BATCHED_TOKENS" type="text" value="8192">
+    </label></div>
+              </details>
+
+              <div class="cards-grid wizard-meta-grid">
+                <div class="subpanel">
+                  <div class="panel-head">
+                    <h3>输出位置</h3>
+                  </div>
+                  <div id="wizardOutputs" class="list-grid"><div class="list-item output-item"><strong>llm/framework_v1_mc1/cache_*.jsonl</strong><span>运行完成后优先检查这里</span></div><div class="list-item output-item"><strong>logs/framework_v1_phase2_mc1</strong><span>运行完成后优先检查这里</span></div><div class="list-item output-item"><strong>logs/framework_v1_phase3_mc1</strong><span>运行完成后优先检查这里</span></div><div class="list-item output-item"><strong>docs/prearff_grid_mc1_*</strong><span>运行完成后优先检查这里</span></div></div>
+                </div>
+                <div class="subpanel">
+                  <div class="panel-head">
+                    <h3>启动预览</h3>
+                  </div>
+                  <pre id="wizardPreview" class="code-block small">PHASE2_RUN_TAG=pilot20k_stratified_v2_qwen3instruct2507
+PHASE3_RUN_TAG=pilot20k_stratified_v2
+PHASE3_TAG_SUFFIX=qwen3instruct2507
+WINDOW_TEXT_IN=llm/framework_v1_mc1/window_text_mc1_pilot20k_stratified_v2.jsonl
+REFERENCE_IN=llm/framework_v1_mc1/reference_mc1_pilot20k_stratified_v2.json
+BASELINE_CSV=mc1_mlp/example_mc1_nollm_20180103_20180313_compare_aligned_i10.csv
+MODEL_PATH=../models/Qwen/Qwen3-4B-Instruct-2507
+BACKEND=vllm
+API_KEY_ENV=OPENAI_API_KEY
+BATCH_SIZE=64
+VLLM_TENSOR_PARALLEL_SIZE=1
+VLLM_ENFORCE_EAGER=0
+VLLM_GPU_MEM=0.90
+VLLM_MAX_MODEL_LEN=8192
+VLLM_MAX_NUM_BATCHED_TOKENS=8192
+bash workflows/llm/mc1-full-stratified-v2.sh</pre>
+                </div>
+              </div>
+
+              <div class="button-row">
+                <button id="wizardApplyPresetButton" class="ghost-button" type="button">恢复预设</button>
+                <button id="wizardRunButton" class="primary-button" type="button">启动当前场景</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="tab-results" class="tab-panel hidden">
+          <div id="resultsHighlights" class="metric-grid"><div class="metric-card accent">
+    <span>MC1 Phase2 最强</span>
+    <strong>Qwen3-4B-Instruct-2507</strong>
+    <small>non-unknown 8.4450%</small>
+  </div><div class="metric-card success">
+    <span>MC1 Phase3 最优</span>
+    <strong>Qwen3.5-4B (tp2+eager)</strong>
+    <small>ΔRecall 2.2296</small>
+  </div><div class="metric-card">
+    <span>HDD 平均增益最高</span>
+    <strong>Qwen3.5-Plus</strong>
+    <small>17.6330</small>
+  </div></div>
+
+          <div class="cards-grid">
+            <div class="panel">
+              <div class="panel-head">
+                <h2>MC1 Phase2 结论</h2>
+              </div>
+              <div id="mc1Overview" class="list-grid"><div class="list-item"><strong>Qwen3.5-4B (tp2+eager)</strong><span>non-unknown 7.5550% · mapped_event 77.4600%</span><span>confidence 0.224724 · q_score 0.247004</span></div><div class="list-item"><strong>Qwen3.5-Plus</strong><span>non-unknown 7.6750% · mapped_event 90.1950%</span><span>confidence 0.372721 · q_score 0.297431</span></div><div class="list-item"><strong>Qwen3-4B-Instruct-2507</strong><span>non-unknown 8.4450% · mapped_event 90.7750%</span><span>confidence 0.854688 · q_score 0.450343</span></div></div>
+            </div>
+            <div class="panel">
+              <div class="panel-head">
+                <h2>HDD 三模型结论</h2>
+              </div>
+              <div id="hddOverview" class="list-grid"><div class="list-item"><strong>Qwen3-4B-Instruct-2507</strong><span>可启用盘型 9 · 平均 ΔRecall 16.328</span><span>最佳 hds723030ala640 · 最差 wdcwd10eads</span></div><div class="list-item"><strong>Qwen3.5-4B</strong><span>可启用盘型 8 · 平均 ΔRecall 16.8071</span><span>最佳 hds723030ala640 · 最差 wdcwd10eads</span></div><div class="list-item"><strong>Qwen3.5-Plus</strong><span>可启用盘型 8 · 平均 ΔRecall 17.633</span><span>最佳 hds723030ala640 · 最差 wdcwd10eads</span></div></div>
+            </div>
+          </div>
+
+          <div class="cards-grid">
+            <div class="panel">
+              <div class="panel-head">
+                <h2>MC1 Phase2 质量对照</h2>
+                <span id="mc1Phase2Path" class="pill muted">docs/tables/mc1_phase2_quality_comparison_stratified_v2_20260319.csv</span>
+              </div>
+              <div class="table-wrap">
+                <table id="mc1Phase2Table" class="result-table"><thead><tr><th>模型</th><th>unknown%</th><th>非unknown%</th><th>映射事件%</th><th>平均置信度</th><th>平均Q分数</th></tr></thead><tbody><tr><td>Qwen3.5-4B (tp2+eager)</td><td>92.4450</td><td>7.5550</td><td>77.4600</td><td>0.224724</td><td>0.247004</td></tr><tr><td>Qwen3.5-Plus</td><td>92.3250</td><td>7.6750</td><td>90.1950</td><td>0.372721</td><td>0.297431</td></tr><tr><td>Qwen3-4B-Instruct-2507</td><td>91.5550</td><td>8.4450</td><td>90.7750</td><td>0.854688</td><td>0.450343</td></tr></tbody></table>
+              </div>
+            </div>
+            <div class="panel">
+              <div class="panel-head">
+                <h2>MC1 Phase3 对照</h2>
+                <span id="mc1Phase3Path" class="pill muted">docs/tables/mc1_phase3_comparison_stratified_v2_20260323.csv</span>
+              </div>
+              <div class="table-wrap">
+                <table id="mc1Phase3Table" class="result-table"><thead><tr><th>模型</th><th>状态计数</th><th>最佳维度</th><th>q_gate</th><th>sev_gate</th><th>ΔRecall</th><th>ΔACC</th><th>说明</th></tr></thead><tbody><tr><td>Qwen3.5-4B (tp2+eager)</td><td>existing=5;ok=17;degenerate_skip=2</td><td>compact14</td><td>0.0</td><td>0.0</td><td>2.2295631199999946</td><td>0.0532313459999898</td><td>Best result matches other models, but runtime cost is highest and phase3 contains degenerate skips.</td></tr><tr><td>Qwen3.5-Plus</td><td>ok=24</td><td>compact14</td><td>0.0</td><td>0.0</td><td>2.2295631199999946</td><td>0.0532313459999898</td><td>Best result matches other models and all 24 combinations complete normally.</td></tr><tr><td>Qwen3-4B-Instruct-2507</td><td>existing=3;ok=21</td><td>compact14</td><td>0.0</td><td>0.0</td><td>2.2295631199999946</td><td>0.0532313459999898</td><td>Strongest phase2 extractor and same best phase3 result on corrected input.</td></tr></tbody></table>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head">
+              <h2>HDD 三模型摘要</h2>
+              <span id="hddPath" class="pill muted">docs/tables/qwen3_instruct_vs_qwen35_4b_vs_qwen35_plus_comparison_20260315.csv</span>
+            </div>
+            <div class="table-wrap">
+              <table id="hddSummaryTable" class="result-table"><thead><tr><th>模型</th><th>可启用盘型数</th><th>平均ΔRecall</th><th>最佳盘型</th><th>最佳增益</th><th>最差盘型</th><th>最差增益</th></tr></thead><tbody><tr><td>Qwen3-4B-Instruct-2507</td><td>9</td><td>16.328</td><td>hds723030ala640</td><td>70</td><td>wdcwd10eads</td><td>-90</td></tr><tr><td>Qwen3.5-4B</td><td>8</td><td>16.8071</td><td>hds723030ala640</td><td>70</td><td>wdcwd10eads</td><td>-90</td></tr><tr><td>Qwen3.5-Plus</td><td>8</td><td>17.633</td><td>hds723030ala640</td><td>70</td><td>wdcwd10eads</td><td>-90</td></tr></tbody></table>
+            </div>
+          </div>
+        </section>
+
+        <section id="tab-storage" class="tab-panel hidden">
+          <div class="panel">
+            <div class="panel-head">
+              <h2>实验产物清理</h2>
+            </div>
+            <div id="storageHeadline" class="metric-grid"><div class="metric-card accent">
+    <span>总容量</span>
+    <strong>310.00 GB</strong>
+    
+  </div><div class="metric-card">
+    <span>已使用</span>
+    <strong>154.60 GB</strong>
+    
+  </div><div class="metric-card success">
+    <span>可用空间</span>
+    <strong>155.40 GB</strong>
+    
+  </div></div>
+            <div class="action-center-row">
+              <button id="cleanupExperimentButton" class="primary-button" type="button">清理实验中间产物</button>
+            </div>
+            <div class="panel-head section-divider">
+              <h3>清理范围</h3>
+            </div>
+            <div id="cleanupSuggestions" class="list-grid"><div class="list-item"><strong>按钮会清理这些中间产物</strong><span>save_model/*.pickle</span><span>pyloader/phase3_train_*</span><span>pyloader/phase3_test_*</span><span>pyloader/phase3b7_train_*</span><span>pyloader/phase3b7_test_*</span><span>llm/framework_v1/phase3_variants/*.jsonl</span><span>llm/framework_v1/phase3_variants_batch7/*.jsonl</span><span>llm/framework_v1_mc1/phase3_variants/*.jsonl</span></div><div class="list-item"><strong>不会清理这些结果</strong><span>docs 下的 csv / md 汇总</span><span>mc1_mlp 和 hi7_example 中的最终结果 CSV</span><span>phase2 cache 与 window_text/reference</span></div><div class="list-item"><strong>安全限制</strong><span>如果当前有运行中的作业，按钮会拒绝执行</span><span>清理后无法从中间状态续跑，只保留最终结果</span></div></div>
+            <pre id="cleanupStatus" class="code-block small">尚未执行清理。</pre>
+          </div>
+        </section>
+
+        <section id="tab-jobs" class="tab-panel hidden">
+          <div class="cards-grid jobs-grid">
+            <div class="panel">
+              <div class="panel-head">
+                <h2>运行中的作业</h2>
+                <button id="refreshJobsButton" class="ghost-button" type="button">刷新</button>
+              </div>
+              <div id="jobList" class="job-list"></div>
+            </div>
+            <div class="panel">
+              <div class="panel-head">
+                <h2>作业日志</h2>
+                <button id="stopJobButton" class="ghost-button hidden" type="button">停止作业</button>
+              </div>
+              <div id="jobArtifacts" class="list-grid"><div class="list-item"><strong>未选择作业</strong><span>选中左侧作业后，这里会显示对应产物路径。</span></div></div>
+              <pre id="jobLog" class="code-block tall"></pre>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+    <script src="./StreamDFP 实验工作台_files/app.js.下载"></script>
+  
+
+</body></html>

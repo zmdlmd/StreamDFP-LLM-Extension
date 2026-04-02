@@ -11,6 +11,7 @@ Current local base model recommendation: `Qwen3-4B-Instruct-2507`.
 - [reports/README.md](reports/README.md): retained public summaries, policy notes, and merged reports
 - [diagnostics/README.md](diagnostics/README.md): kept model-specific diagnosis records
 - [tables/README.md](tables/README.md): generated result tables still kept at `docs/` root for script compatibility
+- [demo/README.md](demo/README.md): retained static demo snapshots such as the workbench export page
 
 ## Key Documents
 
