@@ -1,0 +1,147 @@
+<svg xmlns="http://www.w3.org/2000/svg" id="fig-architecture" viewBox="0 0 1400 800" role="img" aria-label="Overall architecture of the StreamDFP-LLM extension" style="font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;"><rect x="0" y="0" width="1400" height="800" fill="#ffffff"/>
+          <defs>
+            <marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#375a7f"/>
+            </marker>
+            <marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#c97b2a"/>
+            </marker>
+            <marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#2d936c"/>
+            </marker>
+          </defs>
+
+          <rect x="28" y="28" width="400" height="744" rx="28" fill="#e8eff6"/>
+          <rect x="500" y="28" width="400" height="744" rx="28" fill="#f8ecdd"/>
+          <rect x="972" y="28" width="400" height="744" rx="28" fill="#e6f3ee"/>
+
+          <text x="228" y="72" text-anchor="middle" font-size="27" font-weight="700" fill="#163043">
+            <tspan x="228" dy="0">Classic StreamDFP</tspan>
+            <tspan x="228" dy="30">Baseline</tspan>
+          </text>
+          <text x="700" y="72" text-anchor="middle" font-size="27" font-weight="700" fill="#163043">
+            <tspan x="700" dy="0">LLM Enhancement</tspan>
+            <tspan x="700" dy="30">Layer</tspan>
+          </text>
+          <text x="1172" y="72" text-anchor="middle" font-size="25" font-weight="700" fill="#163043">
+            <tspan x="1172" dy="0">Orchestration</tspan>
+            <tspan x="1172" dy="28">and Operability</tspan>
+          </text>
+
+          <g>
+            <rect x="70" y="116" width="320" height="92" rx="20" fill="#ffffff" stroke="#375a7f" stroke-width="2.5"/>
+            <text x="230" y="152" text-anchor="middle" font-size="22" font-weight="700" fill="#163043">Daily SMART CSV</text>
+            <text x="230" y="176" text-anchor="middle" font-size="16" fill="#5d6f7f">
+              <tspan x="230" dy="0">Raw device telemetry</tspan>
+              <tspan x="230" dy="20">and time windows</tspan>
+            </text>
+
+            <rect x="70" y="254" width="320" height="92" rx="20" fill="#ffffff" stroke="#375a7f" stroke-width="2.5"/>
+            <text x="230" y="292" text-anchor="middle" font-size="22" font-weight="700" fill="#163043">pyloader/</text>
+            <text x="230" y="317" text-anchor="middle" font-size="16" fill="#5d6f7f">
+              <tspan x="230" dy="0">Preprocessing, sampling,</tspan>
+              <tspan x="230" dy="20">train/test generation</tspan>
+            </text>
+
+            <rect x="70" y="392" width="320" height="92" rx="20" fill="#ffffff" stroke="#375a7f" stroke-width="2.5"/>
+            <text x="230" y="430" text-anchor="middle" font-size="22" font-weight="700" fill="#163043">simulate/ + MOA</text>
+            <text x="230" y="455" text-anchor="middle" font-size="16" fill="#5d6f7f">
+              <tspan x="230" dy="0">Streaming evaluation</tspan>
+              <tspan x="230" dy="20">and prediction runtime</tspan>
+            </text>
+
+            <rect x="70" y="530" width="320" height="92" rx="20" fill="#ffffff" stroke="#375a7f" stroke-width="2.5"/>
+            <text x="230" y="568" text-anchor="middle" font-size="22" font-weight="700" fill="#163043">parse.py</text>
+            <text x="230" y="593" text-anchor="middle" font-size="16" fill="#5d6f7f">
+              <tspan x="230" dy="0">Recall, ACC, and</tspan>
+              <tspan x="230" dy="20">compare-table summaries</tspan>
+            </text>
+
+            <line x1="230" y1="208" x2="230" y2="254" stroke="#375a7f" stroke-width="4" marker-end="url(#arrow-blue)"/>
+            <line x1="230" y1="346" x2="230" y2="392" stroke="#375a7f" stroke-width="4" marker-end="url(#arrow-blue)"/>
+            <line x1="230" y1="484" x2="230" y2="530" stroke="#375a7f" stroke-width="4" marker-end="url(#arrow-blue)"/>
+          </g>
+
+          <g>
+            <rect x="542" y="116" width="320" height="92" rx="20" fill="#ffffff" stroke="#c97b2a" stroke-width="2.5"/>
+            <text x="702" y="152" text-anchor="middle" font-size="22" font-weight="700" fill="#163043">window_to_text.py</text>
+            <text x="702" y="176" text-anchor="middle" font-size="16" fill="#5d6f7f">
+              <tspan x="702" dy="0">Structured SMART summaries</tspan>
+              <tspan x="702" dy="20">and references</tspan>
+            </text>
+
+            <rect x="542" y="254" width="320" height="92" rx="20" fill="#ffffff" stroke="#c97b2a" stroke-width="2.5"/>
+            <text x="702" y="292" text-anchor="middle" font-size="22" font-weight="700" fill="#163043">llm_offline_extract.py</text>
+            <text x="702" y="317" text-anchor="middle" font-size="16" fill="#5d6f7f">
+              <tspan x="702" dy="0">Root cause, events,</tspan>
+              <tspan x="702" dy="20">confidence, risk hints</tspan>
+            </text>
+
+            <rect x="542" y="392" width="320" height="92" rx="20" fill="#ffffff" stroke="#c97b2a" stroke-width="2.5"/>
+            <text x="702" y="430" text-anchor="middle" font-size="22" font-weight="700" fill="#163043">Semantic Cache</text>
+            <text x="702" y="455" text-anchor="middle" font-size="16" fill="#5d6f7f">
+              <tspan x="702" dy="0">Vectorized semantic features</tspan>
+              <tspan x="702" dy="20">and cache artifacts</tspan>
+            </text>
+
+            <rect x="542" y="530" width="320" height="116" rx="20" fill="#ffffff" stroke="#c97b2a" stroke-width="2.5"/>
+            <text x="702" y="566" text-anchor="middle" font-size="22" font-weight="700" fill="#163043">Profiles + Gates</text>
+            <text x="702" y="591" text-anchor="middle" font-size="16" fill="#5d6f7f">compact9 / compact14 / full70</text>
+            <text x="702" y="610" text-anchor="middle" font-size="16" fill="#5d6f7f">
+              <tspan x="702" dy="0">Quality, severity, and</tspan>
+              <tspan x="702" dy="20">rule-match controls</tspan>
+            </text>
+
+            <line x1="702" y1="208" x2="702" y2="254" stroke="#c97b2a" stroke-width="4" marker-end="url(#arrow-orange)"/>
+            <line x1="702" y1="346" x2="702" y2="392" stroke="#c97b2a" stroke-width="4" marker-end="url(#arrow-orange)"/>
+            <line x1="702" y1="484" x2="702" y2="530" stroke="#c97b2a" stroke-width="4" marker-end="url(#arrow-orange)"/>
+          </g>
+
+          <g>
+            <rect x="1014" y="116" width="316" height="92" rx="20" fill="#ffffff" stroke="#2d936c" stroke-width="2.5"/>
+            <text x="1172" y="152" text-anchor="middle" font-size="21" font-weight="700" fill="#163043">workflows/ + scripts/</text>
+            <text x="1172" y="177" text-anchor="middle" font-size="16" fill="#5d6f7f">
+              <tspan x="1172" dy="0">Normalized experiment</tspan>
+              <tspan x="1172" dy="20">entry points</tspan>
+            </text>
+
+            <rect x="1014" y="254" width="316" height="92" rx="20" fill="#ffffff" stroke="#2d936c" stroke-width="2.5"/>
+            <text x="1172" y="292" text-anchor="middle" font-size="22" font-weight="700" fill="#163043">Policy Registry</text>
+            <text x="1172" y="317" text-anchor="middle" font-size="16" fill="#5d6f7f">llm_enabled vs fallback decisions</text>
+
+            <rect x="1014" y="392" width="316" height="92" rx="20" fill="#ffffff" stroke="#2d936c" stroke-width="2.5"/>
+            <text x="1172" y="430" text-anchor="middle" font-size="22" font-weight="700" fill="#163043">Workbench UI</text>
+            <text x="1172" y="455" text-anchor="middle" font-size="16" fill="#5d6f7f">
+              <tspan x="1172" dy="0">Monitoring, summaries,</tspan>
+              <tspan x="1172" dy="20">cleanup, operation</tspan>
+            </text>
+
+            <rect x="1014" y="530" width="316" height="92" rx="20" fill="#ffffff" stroke="#2d936c" stroke-width="2.5"/>
+            <text x="1172" y="566" text-anchor="middle" font-size="21" font-weight="700" fill="#163043">New-Model Onboarding</text>
+            <text x="1172" y="590" text-anchor="middle" font-size="16" fill="#5d6f7f">
+              <tspan x="1172" dy="0">Pilot calibration and</tspan>
+              <tspan x="1172" dy="20">policy registration</tspan>
+            </text>
+          </g>
+
+          <path d="M 390 300 C 448 300, 478 162, 542 162" fill="none" stroke="#375a7f" stroke-width="4" stroke-dasharray="10 8" marker-end="url(#arrow-blue)"/>
+          <rect x="378" y="146" width="160" height="34" rx="14" fill="#ffffff" opacity="0.95" stroke="#d9e0e7"/>
+          <text x="458" y="168" text-anchor="middle" font-size="15" fill="#5d6f7f">Windowed records</text>
+
+          <path d="M 862 588 C 914 588, 944 438, 1014 438" fill="none" stroke="#2d936c" stroke-width="4" marker-end="url(#arrow-green)"/>
+          <rect x="852" y="500" width="178" height="34" rx="14" fill="#ffffff" opacity="0.95" stroke="#d9e0e7"/>
+          <text x="941" y="522" text-anchor="middle" font-size="15" fill="#5d6f7f">Policy and monitoring</text>
+
+          <path d="M 542 588 C 470 668, 408 640, 390 438" fill="none" stroke="#c97b2a" stroke-width="5" marker-end="url(#arrow-orange)"/>
+          <rect x="294" y="640" width="242" height="50" rx="18" fill="#ffffff" opacity="0.96" stroke="#ecd7bd"/>
+          <text x="415" y="661" text-anchor="middle" font-size="16" fill="#c97b2a" font-weight="700">
+            <tspan x="415" dy="0">Semantic reinjection</tspan>
+            <tspan x="415" dy="20">into predictor</tspan>
+          </text>
+
+          <rect x="420" y="706" width="560" height="58" rx="18" fill="#ffffff" stroke="#d4dce4"/>
+          <text x="700" y="728" text-anchor="middle" font-size="18" font-weight="700" fill="#163043">
+            <tspan x="700" dy="0">Key idea: the LLM augments the existing</tspan>
+            <tspan x="700" dy="22">pipeline instead of replacing it.</tspan>
+          </text>
+        </svg>

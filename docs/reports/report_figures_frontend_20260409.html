@@ -1,0 +1,1336 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>StreamDFP Report Figures</title>
+  <style>
+    :root {
+      --bg: #f3f5f7;
+      --card: #ffffff;
+      --ink: #163043;
+      --muted: #4b6174;
+      --border: #d9e0e7;
+      --blue: #375a7f;
+      --blue-soft: #e8eff6;
+      --orange: #c97b2a;
+      --orange-soft: #f8ecdd;
+      --green: #2d936c;
+      --green-soft: #e6f3ee;
+      --red: #bc4b51;
+      --red-soft: #f9e4e6;
+      --grey: #8d99a6;
+      --shadow: 0 12px 32px rgba(17, 38, 57, 0.08);
+      --radius: 22px;
+      --font: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: linear-gradient(180deg, #edf2f7 0%, #f7f9fb 100%);
+      color: var(--ink);
+      font-family: var(--font);
+    }
+
+    .page {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 32px 24px 72px;
+    }
+
+    .masthead {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+
+    .masthead h1 {
+      margin: 0;
+      font-size: 34px;
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+    }
+
+    .masthead p {
+      margin: 8px 0 0;
+      max-width: 760px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+
+    .tool-pill {
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.8);
+      color: var(--muted);
+      padding: 10px 14px;
+      font-size: 13px;
+    }
+
+    .figure-sheet {
+      background: var(--card);
+      border: 1px solid rgba(217, 224, 231, 0.9);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 22px 22px 18px;
+      margin-bottom: 24px;
+      break-inside: avoid;
+    }
+
+    .figure-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 14px;
+    }
+
+    .figure-head h2 {
+      margin: 0;
+      font-size: 21px;
+      letter-spacing: -0.02em;
+    }
+
+    .figure-head p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    button {
+      appearance: none;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: #fff;
+      color: var(--ink);
+      padding: 10px 14px;
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      border-color: #b8c4d1;
+      background: #fbfcfd;
+    }
+
+    .figure-body {
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 12px;
+      background:
+        radial-gradient(circle at top right, rgba(55, 90, 127, 0.04), transparent 22%),
+        linear-gradient(180deg, #ffffff 0%, #fdfefe 100%);
+      overflow: hidden;
+    }
+
+    svg {
+      width: 100%;
+      height: auto;
+      display: block;
+      background: #fff;
+      border-radius: 14px;
+    }
+
+    .caption {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .caption strong {
+      color: var(--ink);
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 16px;
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .legend-swatch {
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
+      flex: 0 0 auto;
+    }
+
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.95em;
+    }
+
+    @media print {
+      body {
+        background: #fff;
+      }
+
+      .page {
+        max-width: none;
+        padding: 0;
+      }
+
+      .toolbar,
+      .actions {
+        display: none;
+      }
+
+      .figure-sheet {
+        box-shadow: none;
+        border: 0;
+        border-radius: 0;
+        padding: 0;
+        margin: 0 0 18px;
+        page-break-inside: avoid;
+      }
+
+      .figure-body {
+        border: 0;
+        padding: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="masthead">
+      <div>
+        <h1>StreamDFP Report Figures</h1>
+        <p>Flow diagrams are drawn with inline <code>SVG</code>. Data figures are rendered by vanilla <code>JavaScript</code> into <code>SVG</code>, using the retained CSV summaries already cited in the report.</p>
+      </div>
+    </div>
+
+    <div class="toolbar">
+      <span class="tool-pill">Open this file in a browser</span>
+      <span class="tool-pill">Use “Download SVG” for vector export</span>
+      <span class="tool-pill">Or print this page to PDF and crop per figure</span>
+    </div>
+
+    <section class="figure-sheet">
+      <div class="figure-head">
+        <div>
+          <h2>Figure 1. Overall Architecture of the StreamDFP-LLM Extension</h2>
+          <p>Three-layer view: the classic baseline, the LLM enhancement layer, and the orchestration and operability layer.</p>
+        </div>
+        <div class="actions">
+          <button data-download-svg="fig-architecture">Download SVG</button>
+        </div>
+      </div>
+      <div class="figure-body">
+        <svg id="fig-architecture" viewBox="0 0 1400 800" role="img" aria-label="Overall architecture of the StreamDFP-LLM extension">
+          <defs>
+            <marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#375a7f"></path>
+            </marker>
+            <marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#c97b2a"></path>
+            </marker>
+            <marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#2d936c"></path>
+            </marker>
+          </defs>
+
+          <rect x="28" y="28" width="400" height="744" rx="28" fill="#e8eff6"></rect>
+          <rect x="500" y="28" width="400" height="744" rx="28" fill="#f8ecdd"></rect>
+          <rect x="972" y="28" width="400" height="744" rx="28" fill="#e6f3ee"></rect>
+
+          <text x="228" y="72" text-anchor="middle" font-size="27" font-weight="700" fill="#163043">
+            <tspan x="228" dy="0">Classic StreamDFP</tspan>
+            <tspan x="228" dy="30">Baseline</tspan>
+          </text>
+          <text x="700" y="72" text-anchor="middle" font-size="27" font-weight="700" fill="#163043">
+            <tspan x="700" dy="0">LLM Enhancement</tspan>
+            <tspan x="700" dy="30">Layer</tspan>
+          </text>
+          <text x="1172" y="72" text-anchor="middle" font-size="25" font-weight="700" fill="#163043">
+            <tspan x="1172" dy="0">Orchestration</tspan>
+            <tspan x="1172" dy="28">and Operability</tspan>
+          </text>
+
+          <g>
+            <rect x="70" y="116" width="320" height="92" rx="20" fill="#ffffff" stroke="#375a7f" stroke-width="2.5"></rect>
+            <text x="230" y="152" text-anchor="middle" font-size="22" font-weight="700" fill="#163043">Daily SMART CSV</text>
+            <text x="230" y="176" text-anchor="middle" font-size="16" fill="#5d6f7f">
+              <tspan x="230" dy="0">Raw device telemetry</tspan>
+              <tspan x="230" dy="20">and time windows</tspan>
+            </text>
+
+            <rect x="70" y="254" width="320" height="92" rx="20" fill="#ffffff" stroke="#375a7f" stroke-width="2.5"></rect>
+            <text x="230" y="292" text-anchor="middle" font-size="22" font-weight="700" fill="#163043">pyloader/</text>
+            <text x="230" y="317" text-anchor="middle" font-size="16" fill="#5d6f7f">
+              <tspan x="230" dy="0">Preprocessing, sampling,</tspan>
+              <tspan x="230" dy="20">train/test generation</tspan>
+            </text>
+
+            <rect x="70" y="392" width="320" height="92" rx="20" fill="#ffffff" stroke="#375a7f" stroke-width="2.5"></rect>
+            <text x="230" y="430" text-anchor="middle" font-size="22" font-weight="700" fill="#163043">simulate/ + MOA</text>
+            <text x="230" y="455" text-anchor="middle" font-size="16" fill="#5d6f7f">
+              <tspan x="230" dy="0">Streaming evaluation</tspan>
+              <tspan x="230" dy="20">and prediction runtime</tspan>
+            </text>
+
+            <rect x="70" y="530" width="320" height="92" rx="20" fill="#ffffff" stroke="#375a7f" stroke-width="2.5"></rect>
+            <text x="230" y="568" text-anchor="middle" font-size="22" font-weight="700" fill="#163043">parse.py</text>
+            <text x="230" y="593" text-anchor="middle" font-size="16" fill="#5d6f7f">
+              <tspan x="230" dy="0">Recall, ACC, and</tspan>
+              <tspan x="230" dy="20">compare-table summaries</tspan>
+            </text>
+
+            <line x1="230" y1="208" x2="230" y2="254" stroke="#375a7f" stroke-width="4" marker-end="url(#arrow-blue)"></line>
+            <line x1="230" y1="346" x2="230" y2="392" stroke="#375a7f" stroke-width="4" marker-end="url(#arrow-blue)"></line>
+            <line x1="230" y1="484" x2="230" y2="530" stroke="#375a7f" stroke-width="4" marker-end="url(#arrow-blue)"></line>
+          </g>
+
+          <g>
+            <rect x="542" y="116" width="320" height="92" rx="20" fill="#ffffff" stroke="#c97b2a" stroke-width="2.5"></rect>
+            <text x="702" y="152" text-anchor="middle" font-size="22" font-weight="700" fill="#163043">window_to_text.py</text>
+            <text x="702" y="176" text-anchor="middle" font-size="16" fill="#5d6f7f">
+              <tspan x="702" dy="0">Structured SMART summaries</tspan>
+              <tspan x="702" dy="20">and references</tspan>
+            </text>
+
+            <rect x="542" y="254" width="320" height="92" rx="20" fill="#ffffff" stroke="#c97b2a" stroke-width="2.5"></rect>
+            <text x="702" y="292" text-anchor="middle" font-size="22" font-weight="700" fill="#163043">llm_offline_extract.py</text>
+            <text x="702" y="317" text-anchor="middle" font-size="16" fill="#5d6f7f">
+              <tspan x="702" dy="0">Root cause, events,</tspan>
+              <tspan x="702" dy="20">confidence, risk hints</tspan>
+            </text>
+
+            <rect x="542" y="392" width="320" height="92" rx="20" fill="#ffffff" stroke="#c97b2a" stroke-width="2.5"></rect>
+            <text x="702" y="430" text-anchor="middle" font-size="22" font-weight="700" fill="#163043">Semantic Cache</text>
+            <text x="702" y="455" text-anchor="middle" font-size="16" fill="#5d6f7f">
+              <tspan x="702" dy="0">Vectorized semantic features</tspan>
+              <tspan x="702" dy="20">and cache artifacts</tspan>
+            </text>
+
+            <rect x="542" y="530" width="320" height="116" rx="20" fill="#ffffff" stroke="#c97b2a" stroke-width="2.5"></rect>
+            <text x="702" y="566" text-anchor="middle" font-size="22" font-weight="700" fill="#163043">Profiles + Gates</text>
+            <text x="702" y="591" text-anchor="middle" font-size="16" fill="#5d6f7f">compact9 / compact14 / full70</text>
+            <text x="702" y="610" text-anchor="middle" font-size="16" fill="#5d6f7f">
+              <tspan x="702" dy="0">Quality, severity, and</tspan>
+              <tspan x="702" dy="20">rule-match controls</tspan>
+            </text>
+
+            <line x1="702" y1="208" x2="702" y2="254" stroke="#c97b2a" stroke-width="4" marker-end="url(#arrow-orange)"></line>
+            <line x1="702" y1="346" x2="702" y2="392" stroke="#c97b2a" stroke-width="4" marker-end="url(#arrow-orange)"></line>
+            <line x1="702" y1="484" x2="702" y2="530" stroke="#c97b2a" stroke-width="4" marker-end="url(#arrow-orange)"></line>
+          </g>
+
+          <g>
+            <rect x="1014" y="116" width="316" height="92" rx="20" fill="#ffffff" stroke="#2d936c" stroke-width="2.5"></rect>
+            <text x="1172" y="152" text-anchor="middle" font-size="21" font-weight="700" fill="#163043">workflows/ + scripts/</text>
+            <text x="1172" y="177" text-anchor="middle" font-size="16" fill="#5d6f7f">
+              <tspan x="1172" dy="0">Normalized experiment</tspan>
+              <tspan x="1172" dy="20">entry points</tspan>
+            </text>
+
+            <rect x="1014" y="254" width="316" height="92" rx="20" fill="#ffffff" stroke="#2d936c" stroke-width="2.5"></rect>
+            <text x="1172" y="292" text-anchor="middle" font-size="22" font-weight="700" fill="#163043">Policy Registry</text>
+            <text x="1172" y="317" text-anchor="middle" font-size="16" fill="#5d6f7f">llm_enabled vs fallback decisions</text>
+
+            <rect x="1014" y="392" width="316" height="92" rx="20" fill="#ffffff" stroke="#2d936c" stroke-width="2.5"></rect>
+            <text x="1172" y="430" text-anchor="middle" font-size="22" font-weight="700" fill="#163043">Workbench UI</text>
+            <text x="1172" y="455" text-anchor="middle" font-size="16" fill="#5d6f7f">
+              <tspan x="1172" dy="0">Monitoring, summaries,</tspan>
+              <tspan x="1172" dy="20">cleanup, operation</tspan>
+            </text>
+
+            <rect x="1014" y="530" width="316" height="92" rx="20" fill="#ffffff" stroke="#2d936c" stroke-width="2.5"></rect>
+            <text x="1172" y="566" text-anchor="middle" font-size="21" font-weight="700" fill="#163043">New-Model Onboarding</text>
+            <text x="1172" y="590" text-anchor="middle" font-size="16" fill="#5d6f7f">
+              <tspan x="1172" dy="0">Pilot calibration and</tspan>
+              <tspan x="1172" dy="20">policy registration</tspan>
+            </text>
+          </g>
+
+          <path d="M 390 300 C 448 300, 478 162, 542 162" fill="none" stroke="#375a7f" stroke-width="4" stroke-dasharray="10 8" marker-end="url(#arrow-blue)"></path>
+          <rect x="378" y="146" width="160" height="34" rx="14" fill="#ffffff" opacity="0.95" stroke="#d9e0e7"></rect>
+          <text x="458" y="168" text-anchor="middle" font-size="15" fill="#5d6f7f">Windowed records</text>
+
+          <path d="M 862 588 C 914 588, 944 438, 1014 438" fill="none" stroke="#2d936c" stroke-width="4" marker-end="url(#arrow-green)"></path>
+          <rect x="852" y="500" width="178" height="34" rx="14" fill="#ffffff" opacity="0.95" stroke="#d9e0e7"></rect>
+          <text x="941" y="522" text-anchor="middle" font-size="15" fill="#5d6f7f">Policy and monitoring</text>
+
+          <path d="M 542 588 C 470 668, 408 640, 390 438" fill="none" stroke="#c97b2a" stroke-width="5" marker-end="url(#arrow-orange)"></path>
+          <rect x="294" y="640" width="242" height="50" rx="18" fill="#ffffff" opacity="0.96" stroke="#ecd7bd"></rect>
+          <text x="415" y="661" text-anchor="middle" font-size="16" fill="#c97b2a" font-weight="700">
+            <tspan x="415" dy="0">Semantic reinjection</tspan>
+            <tspan x="415" dy="20">into predictor</tspan>
+          </text>
+
+          <rect x="420" y="706" width="560" height="58" rx="18" fill="#ffffff" stroke="#d4dce4"></rect>
+          <text x="700" y="728" text-anchor="middle" font-size="18" font-weight="700" fill="#163043">
+            <tspan x="700" dy="0">Key idea: the LLM augments the existing</tspan>
+            <tspan x="700" dy="22">pipeline instead of replacing it.</tspan>
+          </text>
+        </svg>
+      </div>
+      <p class="caption"><strong>Use in report:</strong> place this in Section 3.1. If you want slightly more whitespace for the PDF, crop the top and bottom margins after export.</p>
+    </section>
+
+    <section class="figure-sheet">
+      <div class="figure-head">
+        <div>
+          <h2>Figure 2. Dataflow of the Phase 1 - Phase 2 - Phase 3 Pipeline</h2>
+          <p>The three-phase enhancement path keeps the original downstream predictor and adds explicit intermediate artifacts.</p>
+        </div>
+        <div class="actions">
+          <button data-download-svg="fig-phase-flow">Download SVG</button>
+        </div>
+      </div>
+      <div class="figure-body">
+        <svg id="fig-phase-flow" viewBox="0 0 1400 800" role="img" aria-label="Phase 1 to Phase 3 dataflow">
+          <defs>
+            <marker id="arrow-flow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#163043"></path>
+            </marker>
+            <marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#bc4b51"></path>
+            </marker>
+          </defs>
+
+          <rect x="34" y="130" width="190" height="448" rx="28" fill="#e8eff6"></rect>
+          <rect x="252" y="70" width="252" height="576" rx="30" fill="#f8ecdd"></rect>
+          <rect x="548" y="70" width="252" height="576" rx="30" fill="#f8ecdd"></rect>
+          <rect x="844" y="70" width="252" height="576" rx="30" fill="#f8ecdd"></rect>
+          <rect x="1134" y="130" width="224" height="448" rx="28" fill="#e6f3ee"></rect>
+
+          <text x="129" y="178" text-anchor="middle" font-size="26" font-weight="700" fill="#163043">Input</text>
+          <text x="378" y="116" text-anchor="middle" font-size="26" font-weight="700" fill="#163043">Phase 1</text>
+          <text x="674" y="116" text-anchor="middle" font-size="26" font-weight="700" fill="#163043">Phase 2</text>
+          <text x="970" y="116" text-anchor="middle" font-size="26" font-weight="700" fill="#163043">Phase 3</text>
+          <text x="1246" y="178" text-anchor="middle" font-size="26" font-weight="700" fill="#163043">Decision</text>
+
+          <rect x="60" y="224" width="138" height="154" rx="22" fill="#fff" stroke="#375a7f" stroke-width="2.5"></rect>
+          <text x="129" y="282" text-anchor="middle" font-size="19" font-weight="700" fill="#163043">
+            <tspan x="129" dy="0">Windowed</tspan>
+            <tspan x="129" dy="28">SMART</tspan>
+            <tspan x="129" dy="28">records</tspan>
+          </text>
+
+          <rect x="286" y="164" width="184" height="126" rx="24" fill="#fff" stroke="#c97b2a" stroke-width="2.5"></rect>
+          <text x="378" y="214" text-anchor="middle" font-size="21" font-weight="700" fill="#163043">
+            <tspan x="378" dy="0">Structured</tspan>
+            <tspan x="378" dy="30">summarization</tspan>
+          </text>
+          <text x="378" y="272" text-anchor="middle" font-size="16" fill="#4b6174">summary_text</text>
+
+          <rect x="286" y="352" width="184" height="140" rx="24" fill="#fff" stroke="#c97b2a" stroke-width="2.5"></rect>
+          <text x="378" y="402" text-anchor="middle" font-size="22" font-weight="700" fill="#163043">Artifacts</text>
+          <text x="378" y="434" text-anchor="middle" font-size="18" fill="#4b6174">summary_text</text>
+          <text x="378" y="462" text-anchor="middle" font-size="18" fill="#4b6174">reference_pool</text>
+
+          <rect x="582" y="164" width="184" height="138" rx="24" fill="#fff" stroke="#c97b2a" stroke-width="2.5"></rect>
+          <text x="674" y="214" text-anchor="middle" font-size="21" font-weight="700" fill="#163043">
+            <tspan x="674" dy="0">Offline LLM</tspan>
+            <tspan x="674" dy="30">extraction</tspan>
+          </text>
+          <text x="674" y="264" text-anchor="middle" font-size="15" fill="#4b6174">
+            <tspan x="674" dy="0">cause, events,</tspan>
+            <tspan x="674" dy="17">confidence</tspan>
+          </text>
+
+          <rect x="582" y="352" width="184" height="176" rx="24" fill="#fff" stroke="#c97b2a" stroke-width="2.5"></rect>
+          <text x="674" y="400" text-anchor="middle" font-size="22" font-weight="700" fill="#163043">Semantic cache</text>
+          <text x="674" y="434" text-anchor="middle" font-size="18" fill="#4b6174">cache_*.jsonl</text>
+          <text x="674" y="462" text-anchor="middle" font-size="18" fill="#4b6174">z_llm_*</text>
+          <text x="674" y="490" text-anchor="middle" font-size="18" fill="#4b6174">llm_q_score</text>
+
+          <rect x="878" y="164" width="184" height="138" rx="24" fill="#fff" stroke="#c97b2a" stroke-width="2.5"></rect>
+          <text x="970" y="214" text-anchor="middle" font-size="21" font-weight="700" fill="#163043">
+            <tspan x="970" dy="0">Gating and</tspan>
+            <tspan x="970" dy="30">selection</tspan>
+          </text>
+          <text x="970" y="264" text-anchor="middle" font-size="15" fill="#4b6174">
+            <tspan x="970" dy="0">quality / severity /</tspan>
+            <tspan x="970" dy="17">rule match</tspan>
+          </text>
+
+          <rect x="878" y="352" width="184" height="176" rx="24" fill="#fff" stroke="#c97b2a" stroke-width="2.5"></rect>
+          <text x="970" y="400" text-anchor="middle" font-size="22" font-weight="700" fill="#163043">Profiles</text>
+          <text x="970" y="434" text-anchor="middle" font-size="18" fill="#4b6174">compact9</text>
+          <text x="970" y="462" text-anchor="middle" font-size="18" fill="#4b6174">compact14</text>
+          <text x="970" y="490" text-anchor="middle" font-size="18" fill="#4b6174">full70</text>
+
+          <rect x="1170" y="224" width="152" height="118" rx="22" fill="#fff" stroke="#2d936c" stroke-width="2.5"></rect>
+          <text x="1246" y="272" text-anchor="middle" font-size="20" font-weight="700" fill="#163043">
+            <tspan x="1246" dy="0">Final</tspan>
+            <tspan x="1246" dy="28">evaluation</tspan>
+          </text>
+          <text x="1246" y="328" text-anchor="middle" font-size="16" fill="#4b6174">Recall / ACC</text>
+
+          <rect x="1170" y="390" width="152" height="138" rx="22" fill="#fff" stroke="#2d936c" stroke-width="2.5"></rect>
+          <text x="1246" y="438" text-anchor="middle" font-size="21" font-weight="700" fill="#163043">Policy</text>
+          <text x="1246" y="468" text-anchor="middle" font-size="18" fill="#2d936c">llm_enabled</text>
+          <text x="1246" y="498" text-anchor="middle" font-size="18" fill="#4b6174">or fallback</text>
+
+          <line x1="198" y1="301" x2="286" y2="301" stroke="#163043" stroke-width="4.5" marker-end="url(#arrow-flow)"></line>
+          <line x1="470" y1="301" x2="582" y2="301" stroke="#163043" stroke-width="4.5" marker-end="url(#arrow-flow)"></line>
+          <line x1="766" y1="301" x2="878" y2="301" stroke="#163043" stroke-width="4.5" marker-end="url(#arrow-flow)"></line>
+          <line x1="1062" y1="301" x2="1170" y2="301" stroke="#163043" stroke-width="4.5" marker-end="url(#arrow-flow)"></line>
+          <line x1="1246" y1="342" x2="1246" y2="390" stroke="#2d936c" stroke-width="4.5" marker-end="url(#arrow-flow)"></line>
+
+          <path d="M 970 528 C 970 616, 674 656, 382 656 C 270 656, 172 632, 110 576" fill="none" stroke="#375a7f" stroke-width="4" stroke-dasharray="10 8" marker-end="url(#arrow-flow)"></path>
+          <rect x="446" y="700" width="456" height="56" rx="18" fill="#ffffff" opacity="0.96" stroke="#d9e0e7"></rect>
+          <text x="674" y="724" text-anchor="middle" font-size="18" fill="#375a7f" font-weight="700">
+            <tspan x="674" dy="0">Same downstream predictor as the</tspan>
+            <tspan x="674" dy="22">no-LLM baseline</tspan>
+          </text>
+
+          <rect x="258" y="558" width="238" height="108" rx="20" fill="#f9e4e6" stroke="#bc4b51" stroke-width="2.5"></rect>
+          <text x="377" y="596" text-anchor="middle" font-size="22" font-weight="700" fill="#bc4b51">mc1 diagnosis</text>
+          <text x="377" y="620" text-anchor="middle" font-size="16" fill="#7f3840">
+            <tspan x="377" dy="0">Failure traced to faulty</tspan>
+            <tspan x="377" dy="18">input sampling</tspan>
+          </text>
+          <path d="M 377 558 C 377 522, 377 506, 377 492" fill="none" stroke="#bc4b51" stroke-width="4" marker-end="url(#arrow-red)"></path>
+        </svg>
+      </div>
+      <p class="caption"><strong>Use in report:</strong> place this in Section 3.3. This figure is the clearest place to emphasize that the LLM is an extraction stage, not a free-form end-to-end predictor.</p>
+    </section>
+
+    <section class="figure-sheet">
+      <div class="figure-head">
+        <div>
+          <h2>Figure 3. HDD Cross-Model Summary</h2>
+          <p>JavaScript-rendered bar charts based on <code>qwen3_instruct_vs_qwen35_4b_vs_qwen35_plus_comparison_20260315.csv</code>.</p>
+        </div>
+        <div class="actions">
+          <button data-download-svg="fig-hdd-summary">Download SVG</button>
+        </div>
+      </div>
+      <div class="figure-body">
+        <svg id="fig-hdd-summary" viewBox="0 0 1200 640" role="img" aria-label="HDD cross model summary"></svg>
+      </div>
+      <div class="legend" id="legend-hdd-summary"></div>
+    </section>
+
+    <section class="figure-sheet">
+      <div class="figure-head">
+        <div>
+          <h2>Figure 4. HDD Delta Recall by Disk Model</h2>
+          <p>Grouped JavaScript-rendered SVG bars across the retained 12 HDD disk models.</p>
+        </div>
+        <div class="actions">
+          <button data-download-svg="fig-hdd-delta">Download SVG</button>
+        </div>
+      </div>
+      <div class="figure-body">
+        <svg id="fig-hdd-delta" viewBox="0 0 1400 780" role="img" aria-label="HDD delta recall by disk model"></svg>
+      </div>
+      <div class="legend" id="legend-hdd-delta"></div>
+    </section>
+
+    <section class="figure-sheet">
+      <div class="figure-head">
+        <div>
+          <h2>Figure 5. MC1 Phase 2 Quality Comparison</h2>
+          <p>Coverage and scalar quality metrics rendered from <code>mc1_phase2_quality_comparison_stratified_v2_20260319.csv</code>.</p>
+        </div>
+        <div class="actions">
+          <button data-download-svg="fig-mc1-phase2">Download SVG</button>
+        </div>
+      </div>
+      <div class="figure-body">
+        <svg id="fig-mc1-phase2" viewBox="0 0 1200 700" role="img" aria-label="MC1 phase 2 quality comparison"></svg>
+      </div>
+      <div class="legend" id="legend-mc1-phase2"></div>
+    </section>
+
+    <section class="figure-sheet">
+      <div class="figure-head">
+        <div>
+          <h2>Figure 6. MC1 Phase 3 Improvement and Execution Status</h2>
+          <p>Improvement over the no-LLM baseline plus the execution-status mix per model.</p>
+        </div>
+        <div class="actions">
+          <button data-download-svg="fig-mc1-phase3">Download SVG</button>
+        </div>
+      </div>
+      <div class="figure-body">
+        <svg id="fig-mc1-phase3" viewBox="0 0 1200 700" role="img" aria-label="MC1 phase 3 summary"></svg>
+      </div>
+      <div class="legend" id="legend-mc1-phase3"></div>
+    </section>
+  </div>
+
+  <script>
+    const palette = {
+      ink: '#163043',
+      muted: '#4b6174',
+      grid: '#d9e0e7',
+      blue: '#375a7f',
+      orange: '#c97b2a',
+      green: '#2d936c',
+      red: '#bc4b51',
+      grey: '#adb5bd',
+      purple: '#7b5ea7',
+      blueSoft: '#e8eff6',
+      orangeSoft: '#f8ecdd',
+      greenSoft: '#e6f3ee'
+    };
+
+    const hddSummary = [
+      { label: 'Qwen3-Instruct', enabledCount: 8, avgDeltaRecall: 18.0903, color: palette.blue },
+      { label: 'Qwen3.5-4B', enabledCount: 7, avgDeltaRecall: 19.2081, color: palette.orange },
+      { label: 'Qwen3.5-Plus', enabledCount: 7, avgDeltaRecall: 20.1520, color: palette.green }
+    ];
+
+    const hddPerModel = [
+      { label: 'hds5c3030', qwen3: -30.0, qwen35_4b: -30.0, qwen35_plus: -30.0 },
+      { label: 'hds723030', qwen3: 70.0, qwen35_4b: 70.0, qwen35_plus: 70.0 },
+      { label: 'hgst-hms', qwen3: 0.6548, qwen35_4b: 0.6548, qwen35_plus: 0.6548 },
+      { label: 'hi7', qwen3: 2.8571, qwen35_4b: 2.8571, qwen35_plus: 6.1905 },
+      { label: 'hitachi-hds', qwen3: 0.0, qwen35_4b: 0.0, qwen35_plus: 0.0 },
+      { label: 'hms5c4040', qwen3: -23.3333, qwen35_4b: -23.3333, qwen35_plus: -23.3333 },
+      { label: 'st3000', qwen3: 28.0157, qwen35_4b: 29.2784, qwen35_plus: 26.3619 },
+      { label: 'st315003', qwen3: 1.6667, qwen35_4b: 1.6667, qwen35_plus: 7.8571 },
+      { label: 'st315005', qwen3: 11.5278, qwen35_4b: -7.3611, qwen35_plus: -7.3611 },
+      { label: 'st4000', qwen3: -3.8043, qwen35_4b: -3.8043, qwen35_plus: -3.8043 },
+      { label: 'wd10eads', qwen3: -90.0, qwen35_4b: -90.0, qwen35_plus: -90.0 },
+      { label: 'wd30efrx', qwen3: 30.0, qwen35_4b: 30.0, qwen35_plus: 30.0 }
+    ];
+
+    const mc1Phase2 = [
+      { label: 'Qwen3-Instruct', nonUnknown: 8.4450, mappedEvent: 90.7750, confidence: 0.854688, riskHint: 0.713300, qScore: 0.450343, color: palette.blue },
+      { label: 'Qwen3.5-4B', nonUnknown: 7.5550, mappedEvent: 77.4600, confidence: 0.224724, riskHint: 0.210495, qScore: 0.247004, color: palette.orange },
+      { label: 'Qwen3.5-Plus', nonUnknown: 7.6750, mappedEvent: 90.1950, confidence: 0.372721, riskHint: 0.277886, qScore: 0.297431, color: palette.green }
+    ];
+
+    const mc1Phase3 = [
+      { label: 'Qwen3-Instruct', deltaRecall: 2.22956312, deltaAcc: 0.053231346, existing: 3, ok: 21, degenerate: 0, color: palette.blue },
+      { label: 'Qwen3.5-4B', deltaRecall: 2.22956312, deltaAcc: 0.053231346, existing: 5, ok: 17, degenerate: 2, color: palette.orange },
+      { label: 'Qwen3.5-Plus', deltaRecall: 2.22956312, deltaAcc: 0.053231346, existing: 0, ok: 24, degenerate: 0, color: palette.green }
+    ];
+
+    const svgNS = 'http://www.w3.org/2000/svg';
+
+    function svgEl(name, attrs = {}, text) {
+      const el = document.createElementNS(svgNS, name);
+      Object.entries(attrs).forEach(([key, value]) => el.setAttribute(key, value));
+      if (text !== undefined) el.textContent = text;
+      return el;
+    }
+
+    function append(parent, name, attrs = {}, text) {
+      const el = svgEl(name, attrs, text);
+      parent.appendChild(el);
+      return el;
+    }
+
+    function drawMultilineText(svg, x, y, lines, attrs = {}, lineHeight = 18) {
+      const mergedAttrs = { x, y, ...attrs };
+      const text = append(svg, 'text', mergedAttrs);
+      lines.forEach((line, index) => {
+        const tspan = svgEl('tspan', { x, dy: index === 0 ? 0 : lineHeight }, line);
+        text.appendChild(tspan);
+      });
+      return text;
+    }
+
+    function splitLabel(label, maxChars = 12) {
+      if (Array.isArray(label)) return label;
+      if (label.length <= maxChars) return [label];
+      if (label.includes(' ')) {
+        const words = label.split(/\s+/);
+        const lines = [];
+        let current = '';
+        words.forEach((word) => {
+          const candidate = current ? `${current} ${word}` : word;
+          if (candidate.length <= maxChars || !current) {
+            current = candidate;
+          } else {
+            lines.push(current);
+            current = word;
+          }
+        });
+        if (current) lines.push(current);
+        return lines;
+      }
+      if (label.includes('_')) {
+        const chunks = label.split('_');
+        if (chunks.length === 2) return chunks;
+      }
+      if (label.includes('-')) {
+        const chunks = label.split('-');
+        if (chunks.length === 2) return chunks;
+        const lines = [];
+        let current = '';
+        chunks.forEach((chunk) => {
+          const candidate = current ? `${current}-${chunk}` : chunk;
+          if (candidate.length <= maxChars) {
+            current = candidate;
+          } else {
+            if (current) lines.push(current);
+            current = chunk;
+          }
+        });
+        if (current) lines.push(current);
+        return lines;
+      }
+      if (label.length <= maxChars * 2) {
+        const midpoint = Math.ceil(label.length / 2);
+        return [label.slice(0, midpoint), label.slice(midpoint)];
+      }
+      return [label.slice(0, maxChars), label.slice(maxChars)];
+    }
+
+    function getSvgViewBox(svg) {
+      return (svg.getAttribute('viewBox') || '0 0 1200 600').split(/\s+/).map(Number);
+    }
+
+    function drawRoundedPanel(svg, x, y, width, height, title, subtitle, options = {}) {
+      const titleLines = splitLabel(title, options.titleMaxChars ?? 30);
+      const subtitleLines = subtitle ? splitLabel(subtitle, options.subtitleMaxChars ?? 38) : [];
+      const titleLineHeight = options.titleLineHeight ?? 28;
+      const subtitleLineHeight = options.subtitleLineHeight ?? 20;
+      const headerTop = y + (options.headerTopPadding ?? 34);
+      const headerGap = options.headerGap ?? 18;
+
+      append(svg, 'rect', { x, y, width, height, rx: 22, fill: '#ffffff', stroke: palette.grid, 'stroke-width': 1.5 });
+      drawMultilineText(
+        svg,
+        x + (options.textInset ?? 24),
+        headerTop,
+        titleLines,
+        { 'font-size': options.titleSize ?? 24, 'font-weight': 700, fill: palette.ink },
+        titleLineHeight
+      );
+      const titleBottom = headerTop + titleLines.length * titleLineHeight;
+      let contentTop = titleBottom + headerGap;
+      if (subtitleLines.length) {
+        drawMultilineText(
+          svg,
+          x + (options.textInset ?? 24),
+          contentTop,
+          subtitleLines,
+          { 'font-size': options.subtitleSize ?? 15, fill: palette.muted },
+          subtitleLineHeight
+        );
+        contentTop += subtitleLines.length * subtitleLineHeight + (options.subtitleBottomGap ?? 34);
+      } else {
+        contentTop += options.titleBottomGap ?? 24;
+      }
+      return { contentTop };
+    }
+
+    function drawChartFrame(svg, x, y, width, height, chartTitle, subtitle, options = {}) {
+      const panel = drawRoundedPanel(svg, x, y, width, height, chartTitle, subtitle, options);
+      return {
+        x: x + (options.leftPadding ?? 60),
+        y: panel.contentTop + (options.plotTopGap ?? 14),
+        width: width - (options.leftPadding ?? 60) - (options.rightPadding ?? 32),
+        height: height - (panel.contentTop - y) - (options.plotTopGap ?? 14) - (options.bottomPadding ?? 80)
+      };
+    }
+
+    function createTitle(svg, text) {
+      const viewBox = getSvgViewBox(svg);
+      const width = viewBox[2] || 1200;
+      append(svg, 'text', { x: width / 2, y: 36, 'text-anchor': 'middle', 'font-size': 28, 'font-weight': 700, fill: palette.ink }, text);
+    }
+
+    function legendRowWidth(title, items, options = {}) {
+      const titleWidth = title ? (options.titleGap ?? 72) : 0;
+      return titleWidth + items.length * (options.itemWidth ?? 146);
+    }
+
+    function drawCenteredLegendRow(svg, y, title, items, options = {}) {
+      const viewBox = getSvgViewBox(svg);
+      const width = viewBox[2] || 1200;
+      const rowWidth = legendRowWidth(title, items, options);
+      const startX = Math.max(24, (width - rowWidth) / 2);
+      drawLegendRow(svg, startX, y, title, items, options);
+    }
+
+    function drawLegendSwatch(svg, x, y, color, label, options = {}) {
+      const sw = options.swatchWidth ?? 18;
+      const sh = options.swatchHeight ?? 12;
+      append(svg, 'rect', { x, y: y - sh + 2, width: sw, height: sh, rx: 4, fill: color });
+      append(svg, 'text', {
+        x: x + sw + 10,
+        y,
+        'font-size': options.fontSize ?? 14,
+        'font-weight': options.fontWeight ?? 600,
+        fill: options.fill ?? palette.muted
+      }, label);
+    }
+
+    function drawLegendRow(svg, x, y, title, items, options = {}) {
+      let cursorX = x;
+      if (title) {
+        append(svg, 'text', {
+          x: cursorX,
+          y,
+          'font-size': options.titleSize ?? 14,
+          'font-weight': 700,
+          fill: palette.ink
+        }, title);
+        cursorX += options.titleGap ?? 72;
+      }
+      items.forEach((item) => {
+        drawLegendSwatch(svg, cursorX, y, item.color, item.label, options);
+        cursorX += options.itemWidth ?? 146;
+      });
+    }
+
+    function drawYAxis(svg, plot, min, max, tickCount, formatter) {
+      append(svg, 'line', {
+        x1: plot.x,
+        y1: plot.y,
+        x2: plot.x,
+        y2: plot.y + plot.height,
+        stroke: palette.ink,
+        'stroke-width': 1.6
+      });
+
+      for (let i = 0; i <= tickCount; i += 1) {
+        const value = min + ((max - min) * i) / tickCount;
+        const y = plot.y + plot.height - (plot.height * i) / tickCount;
+        append(svg, 'line', {
+          x1: plot.x,
+          y1: y,
+          x2: plot.x + plot.width,
+          y2: y,
+          stroke: palette.grid,
+          'stroke-width': 1
+        });
+        append(svg, 'text', {
+          x: plot.x - 12,
+          y: y + 5,
+          'text-anchor': 'end',
+          'font-size': 13,
+          fill: palette.muted
+        }, formatter(value));
+      }
+    }
+
+    function drawZeroLine(svg, plot, min, max) {
+      if (!(min < 0 && max > 0)) return null;
+      const zeroY = plot.y + plot.height - ((0 - min) / (max - min)) * plot.height;
+      append(svg, 'line', {
+        x1: plot.x,
+        y1: zeroY,
+        x2: plot.x + plot.width,
+        y2: zeroY,
+        stroke: palette.ink,
+        'stroke-width': 1.8
+      });
+      return zeroY;
+    }
+
+    function drawXAxisLabels(svg, plot, labels, positions, options = {}) {
+      const rotation = options.rotation ?? 0;
+      const fontSize = options.fontSize ?? 13;
+      const fontWeight = options.fontWeight ?? 400;
+      const offsetY = options.offsetY ?? 26;
+      const lineHeight = options.lineHeight ?? 16;
+      const letterSpacing = options.letterSpacing ?? 0;
+      positions.forEach((pos, index) => {
+        const y = plot.y + plot.height + offsetY;
+        if (rotation) {
+          const text = append(svg, 'text', {
+            x: pos,
+            y,
+            'text-anchor': 'end',
+            'font-size': fontSize,
+            'font-weight': fontWeight,
+            'letter-spacing': letterSpacing,
+            fill: palette.muted,
+            transform: `rotate(${rotation} ${pos} ${y})`
+          }, labels[index]);
+          text.setAttribute('dominant-baseline', 'hanging');
+        } else {
+          drawMultilineText(
+            svg,
+            pos,
+            y,
+            splitLabel(labels[index], options.maxChars ?? 12),
+            {
+              x: pos,
+              y,
+              'text-anchor': 'middle',
+              'font-size': fontSize,
+              'font-weight': fontWeight,
+              'letter-spacing': letterSpacing,
+              fill: palette.muted
+            },
+            lineHeight
+          );
+        }
+      });
+    }
+
+    function valueToY(plot, value, min, max) {
+      return plot.y + plot.height - ((value - min) / (max - min)) * plot.height;
+    }
+
+    function drawBars(svg, plot, values, colors, min, max, labels, options = {}) {
+      const count = values.length;
+      const gap = options.gap ?? 18;
+      const totalGap = gap * (count + 1);
+      const barWidth = (plot.width - totalGap) / count;
+      const positions = [];
+
+      values.forEach((value, i) => {
+        const x = plot.x + gap + i * (barWidth + gap);
+        const y = valueToY(plot, Math.max(value, min), min, max);
+        const zeroY = valueToY(plot, 0 < min ? min : 0, min, max);
+        const top = value >= 0 ? y : zeroY;
+        const height = Math.abs(zeroY - y);
+        append(svg, 'rect', {
+          x,
+          y: top,
+          width: barWidth,
+          height,
+          rx: 10,
+          fill: colors[i]
+        });
+        append(svg, 'text', {
+          x: x + barWidth / 2,
+          y: value >= 0 ? top - 10 : top + height + 18,
+          'text-anchor': 'middle',
+          'font-size': 14,
+          'font-weight': 700,
+          fill: colors[i]
+        }, options.labelFormatter ? options.labelFormatter(value) : String(value));
+        positions.push(x + barWidth / 2);
+      });
+
+      drawXAxisLabels(svg, plot, labels, positions, {
+        rotation: options.rotation ?? 0,
+        fontSize: options.fontSize ?? 13,
+        offsetY: options.offsetY ?? 26,
+        maxChars: options.maxChars ?? 12,
+        lineHeight: options.lineHeight ?? 16,
+        fontWeight: options.fontWeight ?? 400
+      });
+    }
+
+    function drawGroupedBarChart(svg, plot, dataset, series, min, max, opts = {}) {
+      const groupCount = dataset.length;
+      const groupWidth = plot.width / groupCount;
+      const barWidth = Math.min(22, groupWidth / (series.length + 2));
+      const positions = [];
+
+      dataset.forEach((row, groupIndex) => {
+        const groupX = plot.x + groupIndex * groupWidth;
+        const center = groupX + groupWidth / 2;
+        positions.push(center);
+        const totalWidth = barWidth * series.length + (series.length - 1) * 6;
+        let startX = center - totalWidth / 2;
+
+        series.forEach((item, seriesIndex) => {
+          const value = row[item.key];
+          const y = valueToY(plot, Math.max(value, min), min, max);
+          const zeroY = valueToY(plot, 0 < min ? min : 0, min, max);
+          const top = value >= 0 ? y : zeroY;
+          const height = Math.abs(zeroY - y);
+          append(svg, 'rect', {
+            x: startX,
+            y: top,
+            width: barWidth,
+            height,
+            rx: 6,
+            fill: item.color
+          });
+          const shouldAnnotate = opts.annotateAll || Math.abs(value) >= (opts.annotateThreshold ?? 20);
+          if (shouldAnnotate) {
+            const isSmall = Math.abs(value) < (opts.smallValueThreshold ?? 8);
+            const labelY = value >= 0
+              ? (isSmall ? zeroY - (8 + seriesIndex * 10) : top - 8)
+              : (isSmall ? zeroY + (16 + seriesIndex * 10) : top + height + 16);
+            append(svg, 'text', {
+              x: startX + barWidth / 2,
+              y: labelY,
+              'text-anchor': 'middle',
+              'font-size': opts.annotationFontSize ?? 10,
+              fill: item.color
+            }, value.toFixed(opts.annotationDigits ?? 1));
+          }
+          startX += barWidth + 6;
+        });
+      });
+
+      drawXAxisLabels(svg, plot, dataset.map((d) => d.label), positions, {
+        rotation: opts.rotation ?? 0,
+        fontSize: opts.fontSize ?? 13,
+        offsetY: opts.offsetY ?? 26,
+        maxChars: opts.maxChars ?? 12,
+        lineHeight: opts.lineHeight ?? 16,
+        fontWeight: opts.fontWeight ?? 400
+      });
+    }
+
+    function drawStackedBars(svg, plot, dataset, stacks, max) {
+      const count = dataset.length;
+      const gap = 40;
+      const barWidth = Math.min(58, (plot.width - gap * (count + 1)) / count);
+      const positions = [];
+
+      dataset.forEach((row, index) => {
+        const x = plot.x + gap + index * (barWidth + gap);
+        positions.push(x + barWidth / 2);
+        let currentTop = plot.y + plot.height;
+        stacks.forEach((stack) => {
+          const value = row[stack.key];
+          const height = (value / max) * plot.height;
+          currentTop -= height;
+          append(svg, 'rect', {
+            x,
+            y: currentTop,
+            width: barWidth,
+            height,
+            rx: 8,
+            fill: stack.color
+          });
+        });
+        append(svg, 'text', {
+          x: x + barWidth / 2,
+          y: plot.y - 10,
+          'text-anchor': 'middle',
+          'font-size': 13,
+          fill: palette.muted
+        }, row.existing + row.ok + row.degenerate);
+      });
+
+      drawXAxisLabels(svg, plot, dataset.map((d) => d.label), positions, {
+        rotation: 0,
+        fontSize: 12,
+        offsetY: 26,
+        maxChars: 9,
+        lineHeight: 16,
+        fontWeight: 700
+      });
+    }
+
+    function renderLegend(containerId, items) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = '';
+      items.forEach((item) => {
+        const wrapper = document.createElement('span');
+        wrapper.className = 'legend-item';
+        const swatch = document.createElement('span');
+        swatch.className = 'legend-swatch';
+        swatch.style.background = item.color;
+        const label = document.createElement('span');
+        label.textContent = item.label;
+        wrapper.appendChild(swatch);
+        wrapper.appendChild(label);
+        container.appendChild(wrapper);
+      });
+    }
+
+    function renderHddSummary() {
+      const svg = document.getElementById('fig-hdd-summary');
+      svg.innerHTML = '';
+      createTitle(svg, 'HDD Cross-Model Summary');
+      drawCenteredLegendRow(svg, 76, 'Models', [
+        { label: 'Qwen3-Instruct', color: palette.blue },
+        { label: 'Qwen3.5-4B', color: palette.orange },
+        { label: 'Qwen3.5-Plus', color: palette.green }
+      ], { itemWidth: 156, titleGap: 70 });
+
+      const left = drawChartFrame(svg, 26, 108, 560, 504, 'Enabled HDD Models', 'Count of accepted HDD models under the retained guard');
+      const right = drawChartFrame(svg, 614, 108, 560, 504, 'Average Delta Recall', 'Average Delta Recall on accepted HDD models');
+
+      drawYAxis(svg, left, 0, 10, 5, (v) => `${Math.round(v)}`);
+      drawYAxis(svg, right, 0, 24, 6, (v) => `${v.toFixed(0)}`);
+
+      drawBars(svg, left, hddSummary.map((d) => d.enabledCount), hddSummary.map((d) => d.color), 0, 10, hddSummary.map((d) => d.label), {
+        labelFormatter: (v) => `${v}`,
+        rotation: 0,
+        fontWeight: 700,
+        maxChars: 11,
+        lineHeight: 15,
+        offsetY: 28
+      });
+
+      drawBars(svg, right, hddSummary.map((d) => d.avgDeltaRecall), hddSummary.map((d) => d.color), 0, 24, hddSummary.map((d) => d.label), {
+        labelFormatter: (v) => v.toFixed(2),
+        rotation: 0,
+        fontWeight: 700,
+        maxChars: 11,
+        lineHeight: 15,
+        offsetY: 28
+      });
+
+      renderLegend('legend-hdd-summary', hddSummary.map((d) => ({ label: d.label, color: d.color })));
+    }
+
+    function renderHddPerModel() {
+      const svg = document.getElementById('fig-hdd-delta');
+      svg.innerHTML = '';
+      createTitle(svg, 'HDD Delta Recall by Disk Model');
+      drawCenteredLegendRow(svg, 76, 'Models', [
+        { label: 'Qwen3-Instruct', color: palette.blue },
+        { label: 'Qwen3.5-4B', color: palette.orange },
+        { label: 'Qwen3.5-Plus', color: palette.green }
+      ], { itemWidth: 156, titleGap: 70 });
+      const plot = drawChartFrame(
+        svg,
+        34,
+        108,
+        1332,
+        640,
+        'Disk-Model-Level Comparison',
+        'Each group shows Delta Recall across the three candidate models',
+        { titleMaxChars: 34, bottomPadding: 118, leftPadding: 58, rightPadding: 28 }
+      );
+      drawYAxis(svg, plot, -100, 80, 9, (v) => `${Math.round(v)}`);
+      drawZeroLine(svg, plot, -100, 80);
+
+      drawGroupedBarChart(svg, plot, hddPerModel, [
+        { key: 'qwen3', color: palette.blue, label: 'Qwen3-Instruct' },
+        { key: 'qwen35_4b', color: palette.orange, label: 'Qwen3.5-4B' },
+        { key: 'qwen35_plus', color: palette.green, label: 'Qwen3.5-Plus' }
+      ], -100, 80, {
+        annotateAll: true,
+        rotation: -22,
+        fontSize: 12,
+        fontWeight: 700,
+        offsetY: 22,
+        letterSpacing: 0.3,
+        annotationFontSize: 10,
+        annotationDigits: 1,
+        smallValueThreshold: 8
+      });
+
+      renderLegend('legend-hdd-delta', [
+        { label: 'Qwen3-Instruct', color: palette.blue },
+        { label: 'Qwen3.5-4B', color: palette.orange },
+        { label: 'Qwen3.5-Plus', color: palette.green }
+      ]);
+    }
+
+    function renderMc1Phase2() {
+      const svg = document.getElementById('fig-mc1-phase2');
+      svg.innerHTML = '';
+      createTitle(svg, 'MC1 Phase 2 Quality Comparison');
+      drawCenteredLegendRow(svg, 76, 'Models', [
+        { label: 'Qwen3-Instruct', color: palette.blue },
+        { label: 'Qwen3.5-4B', color: palette.orange },
+        { label: 'Qwen3.5-Plus', color: palette.green }
+      ], { itemWidth: 156, titleGap: 70 });
+
+      const left = drawChartFrame(svg, 26, 108, 560, 560, 'Coverage Quality', 'Coverage metrics across the three candidate models', {
+        titleMaxChars: 30,
+        bottomPadding: 84
+      });
+      const right = drawChartFrame(svg, 614, 108, 560, 560, 'Scalar Quality Scores', 'Confidence, risk hint, and llm_q_score', {
+        titleMaxChars: 30,
+        bottomPadding: 84
+      });
+
+      drawYAxis(svg, left, 0, 100, 5, (v) => `${Math.round(v)}`);
+      const leftMetrics = [
+        { key: 'nonUnknown', label: 'Non-unknown %' },
+        { key: 'mappedEvent', label: 'Mapped event %' }
+      ];
+      const leftGroupWidth = left.width / leftMetrics.length;
+      const leftBarWidth = 34;
+      leftMetrics.forEach((metric, idx) => {
+        const center = left.x + leftGroupWidth * idx + leftGroupWidth / 2;
+        let startX = center - ((mc1Phase2.length * leftBarWidth + (mc1Phase2.length - 1) * 10) / 2);
+        mc1Phase2.forEach((row) => {
+          const value = row[metric.key];
+          const y = valueToY(left, value, 0, 100);
+          const height = left.y + left.height - y;
+          append(svg, 'rect', { x: startX, y, width: leftBarWidth, height, rx: 8, fill: row.color });
+          append(svg, 'text', {
+            x: startX + leftBarWidth / 2,
+            y: y - 10,
+            'text-anchor': 'middle',
+            'font-size': 11,
+            fill: row.color
+          }, value.toFixed(1));
+          startX += leftBarWidth + 10;
+        });
+        drawMultilineText(svg, center, left.y + left.height + 28, splitLabel(metric.label, 14), {
+          x: center,
+          y: left.y + left.height + 28,
+          'text-anchor': 'middle',
+          'font-size': 13,
+          'font-weight': 700,
+          fill: palette.muted
+        }, 16);
+      });
+
+      drawYAxis(svg, right, 0, 1.0, 5, (v) => v.toFixed(1));
+      const metrics = [
+        { key: 'confidence', label: 'Confidence' },
+        { key: 'riskHint', label: 'Risk hint' },
+        { key: 'qScore', label: 'llm_q_score' }
+      ];
+      const plot = right;
+      const groupWidth = plot.width / metrics.length;
+      const barWidth = 34;
+      metrics.forEach((metric, idx) => {
+        const center = plot.x + groupWidth * idx + groupWidth / 2;
+        let startX = center - ((mc1Phase2.length * barWidth + (mc1Phase2.length - 1) * 8) / 2);
+        mc1Phase2.forEach((row) => {
+          const value = row[metric.key];
+          const y = valueToY(plot, value, 0, 1.0);
+          const height = plot.y + plot.height - y;
+          append(svg, 'rect', { x: startX, y, width: barWidth, height, rx: 6, fill: row.color });
+          append(svg, 'text', {
+            x: startX + barWidth / 2,
+            y: y - 8,
+            'text-anchor': 'middle',
+            'font-size': 11,
+            fill: row.color
+          }, value.toFixed(3));
+          startX += barWidth + 8;
+        });
+        append(svg, 'text', {
+          x: center,
+          y: plot.y + plot.height + 28,
+          'text-anchor': 'middle',
+          'font-size': 13,
+          'font-weight': 700,
+          fill: palette.muted
+        }, metric.label);
+      });
+
+      renderLegend('legend-mc1-phase2', [
+        { label: 'Qwen3.5-4B', color: palette.orange },
+        { label: 'Qwen3.5-Plus', color: palette.green },
+        { label: 'Qwen3-Instruct', color: palette.blue },
+        { label: 'Coverage metrics', color: palette.blueSoft }
+      ]);
+    }
+
+    function renderMc1Phase3() {
+      const svg = document.getElementById('fig-mc1-phase3');
+      svg.innerHTML = '';
+      createTitle(svg, 'MC1 Phase 3 Improvement and Execution Status');
+      drawCenteredLegendRow(svg, 72, 'Models', [
+        { label: 'Qwen3-Instruct', color: palette.blue },
+        { label: 'Qwen3.5-4B', color: palette.orange },
+        { label: 'Qwen3.5-Plus', color: palette.green }
+      ], { itemWidth: 156, titleGap: 70 });
+      drawCenteredLegendRow(svg, 98, 'Status', [
+        { label: 'Existing', color: palette.grey },
+        { label: 'OK', color: palette.green },
+        { label: 'Degenerate skip', color: palette.orange }
+      ], { itemWidth: 152, titleGap: 62, fontSize: 13 });
+
+      const left = drawChartFrame(svg, 26, 128, 560, 540, 'Improvement vs No-LLM Baseline', 'Delta Recall and Delta ACC of the best retained setting', {
+        titleMaxChars: 32,
+        bottomPadding: 86
+      });
+      const right = drawChartFrame(svg, 614, 128, 560, 540, 'Execution Status Mix', 'existing / ok / degenerate_skip combinations', {
+        titleMaxChars: 32,
+        bottomPadding: 86
+      });
+
+      drawYAxis(svg, left, 0, 2.6, 5, (v) => v.toFixed(1));
+      const improveMetrics = [
+        { key: 'deltaRecall', label: 'Delta Recall' },
+        { key: 'deltaAcc', label: 'Delta ACC' }
+      ];
+      const improveGroupWidth = left.width / improveMetrics.length;
+      const improveBarWidth = 46;
+      improveMetrics.forEach((metric, idx) => {
+        const center = left.x + improveGroupWidth * idx + improveGroupWidth / 2;
+        let startX = center - ((mc1Phase3.length * improveBarWidth + (mc1Phase3.length - 1) * 14) / 2);
+        mc1Phase3.forEach((row) => {
+          const value = row[metric.key];
+          const y = valueToY(left, value, 0, 2.6);
+          const height = left.y + left.height - y;
+          append(svg, 'rect', { x: startX, y, width: improveBarWidth, height, rx: 8, fill: row.color });
+          append(svg, 'text', {
+            x: startX + improveBarWidth / 2,
+            y: y - 10,
+            'text-anchor': 'middle',
+            'font-size': 12,
+            fill: row.color
+          }, value.toFixed(metric.key === 'deltaRecall' ? 1 : 2));
+          startX += improveBarWidth + 14;
+        });
+        drawMultilineText(svg, center, left.y + left.height + 28, splitLabel(metric.label, 14), {
+          x: center,
+          y: left.y + left.height + 28,
+          'text-anchor': 'middle',
+          'font-size': 13,
+          'font-weight': 700,
+          fill: palette.muted
+        }, 16);
+      });
+
+      drawYAxis(svg, right, 0, 24, 6, (v) => `${Math.round(v)}`);
+      drawStackedBars(svg, right, mc1Phase3, [
+        { key: 'existing', color: palette.grey },
+        { key: 'ok', color: palette.green },
+        { key: 'degenerate', color: palette.orange }
+      ], 24);
+
+      renderLegend('legend-mc1-phase3', [
+        { label: 'Delta Recall', color: palette.green },
+        { label: 'Delta ACC', color: palette.blue },
+        { label: 'Existing', color: palette.grey },
+        { label: 'OK', color: palette.green },
+        { label: 'Degenerate skip', color: palette.orange }
+      ]);
+    }
+
+    function downloadSvg(svgId) {
+      const svg = document.getElementById(svgId);
+      const serializer = new XMLSerializer();
+      const source = serializer.serializeToString(svg);
+      const blob = new Blob([source], { type: 'image/svg+xml;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${svgId}.svg`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+
+    function bindDownloadButtons() {
+      document.querySelectorAll('[data-download-svg]').forEach((button) => {
+        button.addEventListener('click', () => downloadSvg(button.dataset.downloadSvg));
+      });
+    }
+
+    renderHddSummary();
+    renderHddPerModel();
+    renderMc1Phase2();
+    renderMc1Phase3();
+    bindDownloadButtons();
+  </script>
+</body>
+</html>

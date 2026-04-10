@@ -1,0 +1,26 @@
+[
+  {
+    "svg": "/root/autodl-tmp/StreamDFP/docs/reports/frontend_exports/figure1_overall_architecture.svg",
+    "stem": "figure1_overall_architecture"
+  },
+  {
+    "svg": "/root/autodl-tmp/StreamDFP/docs/reports/frontend_exports/figure2_phase123_pipeline.svg",
+    "stem": "figure2_phase123_pipeline"
+  },
+  {
+    "svg": "/root/autodl-tmp/StreamDFP/docs/reports/frontend_exports/figure3_hdd_cross_model_summary.svg",
+    "stem": "figure3_hdd_cross_model_summary"
+  },
+  {
+    "svg": "/root/autodl-tmp/StreamDFP/docs/reports/frontend_exports/figure4_hdd_delta_by_disk_model.svg",
+    "stem": "figure4_hdd_delta_by_disk_model"
+  },
+  {
+    "svg": "/root/autodl-tmp/StreamDFP/docs/reports/frontend_exports/figure5_mc1_phase2_quality.svg",
+    "stem": "figure5_mc1_phase2_quality"
+  },
+  {
+    "svg": "/root/autodl-tmp/StreamDFP/docs/reports/frontend_exports/figure6_mc1_phase3_summary.svg",
+    "stem": "figure6_mc1_phase3_summary"
+  }
+]
