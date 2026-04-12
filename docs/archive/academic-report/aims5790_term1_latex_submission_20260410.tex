@@ -111,6 +111,7 @@
 \usepackage{caption}
 \usepackage{float}
 \usepackage{fancyhdr}
+\usepackage{pdfpages}
 \usepackage{titlesec}
 \usepackage{enumitem}
 \captionsetup{font=small,labelfont=bf,skip=4pt}
@@ -146,27 +147,7 @@ AIMS5790 Artificial Intelligence Project I}
 
 \begin{document}
 \hypersetup{pageanchor=false}
-\begin{titlepage}
-\thispagestyle{empty}
-\centering
-\vspace*{1.2cm}
-{\Large AIMS5790 Artificial Intelligence Project I\par}
-\vspace{0.8cm}
-{\large Master of Science in Artificial Intelligence\par}
-\vspace{1.1cm}
-{\Huge \bfseries LLM-Enhanced Disk Failure Prediction on Top of StreamDFP\par}
-\vspace{0.25cm}
-{\Large \bfseries System Design, Evaluation, and First-Term Progress\par}
-\vfill
-{\large Student Name: Daoyang LIU\par}
-\vspace{0.2cm}
-{\large Student ID: 1155244610\par}
-\vspace{0.8cm}
-{\large Faculty of Engineering\par}
-{\large The Chinese University of Hong Kong\par}
-\vspace{0.8cm}
-{\large April 2026\par}
-\end{titlepage}
+\includepdf[pages=1,fitpaper=true,pagecommand={\thispagestyle{empty}}]{AIMS5790_Cover Sheet for Final Report.pdf}
 
 \hypersetup{pageanchor=true}
 \pagenumbering{roman}
@@ -838,7 +819,7 @@ registration
 
 \begin{figure}
 \centering
-\includegraphics[width=0.72\textwidth,height=\textheight]{../write_report/New-Model Onboarding Workflow.png}
+\includegraphics[width=0.72\textwidth,height=\textheight]{../source-assets/New-Model Onboarding Workflow.png}
 \caption{New-model onboarding workflow used in the current calibration
 and policy-registration branch.}
 \end{figure}
@@ -860,10 +841,18 @@ workflow. The same design logic is reflected in the operability layer:
 
 The implementation associated with this report is maintained in the
 GitHub repository StreamDFP-LLM-Extension:
-https://github.com/zmdlmd/StreamDFP-LLM-Extension. The repository
+\url{https://github.com/zmdlmd/StreamDFP-LLM-Extension}. The repository
 records the current hybrid extension branch, workflow wrappers,
 figure-generation assets, and retained experiment artifacts used in this
 report.
+
+Unless otherwise noted, the figures in this report were produced through
+AI-assisted workflows. The conceptual diagrams were created with AI
+collaboration and then manually curated for layout and labeling, while
+the quantitative figures were rendered programmatically from retained
+experiment outputs with AI assistance in the scripting and formatting
+process. The workbench snapshot in the Appendix is an actual interface
+capture rather than an AI-generated image.
 
 The workbench is not merely a launcher. It also summarizes results,
 monitors jobs, and manages experiment artifacts. For a research system
@@ -1023,7 +1012,7 @@ substantially improved the validity of the experiment.
 
 \begin{figure}
 \centering
-\includegraphics[width=0.72\textwidth,height=\textheight]{../write_report/mc1 Failure-and-Repair Storyline.png}
+\includegraphics[width=0.72\textwidth,height=\textheight]{../source-assets/mc1 Failure-and-Repair Storyline.png}
 \caption{Failure diagnosis and repair path for the mc1 evaluation
 pipeline.}
 \end{figure}
@@ -1431,6 +1420,9 @@ experiment monitoring.
 \caption{Workbench overview used for workflow selection, preflight
 checking, and experiment monitoring.}
 \end{figure}
+
+The corresponding repository is available at
+\url{https://github.com/zmdlmd/StreamDFP-LLM-Extension}.
 
 \textbf{B. Representative Code Excerpts}
 

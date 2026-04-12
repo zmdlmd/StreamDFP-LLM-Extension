@@ -189,7 +189,7 @@ The system also defines an onboarding path for new disk models:
 
 `new model -> no-LLM baseline -> pilot20k Phase 1/Phase 2/Phase 3 -> guard check -> policy registration`
 
-![New-model onboarding workflow used in the current calibration and policy-registration branch.](../write_report/New-Model Onboarding Workflow.png){ width=72% }
+![New-model onboarding workflow used in the current calibration and policy-registration branch.](../source-assets/New-Model Onboarding Workflow.png){ width=72% }
 
 This branch is methodologically important because it turns the project from a collection of one-off experiments into a repeatable research workflow. The same design logic is reflected in the operability layer:
 
@@ -252,7 +252,7 @@ The `mc1` SSD case is methodologically important because it initially appeared t
 
 The repaired version, `pilot20k_stratified_v2`, rebuilt the input with a `stratified_day_disk` sampling strategy over a broader time range and reconstructed the reference pool accordingly. This correction substantially improved the validity of the experiment.
 
-![Failure diagnosis and repair path for the `mc1` evaluation pipeline.](../write_report/mc1 Failure-and-Repair Storyline.png){ width=72% }
+![Failure diagnosis and repair path for the `mc1` evaluation pipeline.](../source-assets/mc1 Failure-and-Repair Storyline.png){ width=72% }
 
 The principal result is that the best retained Phase 3 configuration is identical for all three compared models:
 

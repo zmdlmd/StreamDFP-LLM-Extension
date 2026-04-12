@@ -83,14 +83,14 @@ StreamDFP/
 ├── ui/                # Local Web UI, workflow registry, and static workbench assets
 ├── workflows/         # Canonical wrapper entrypoints with normalized names
 ├── scripts/           # Phase2/Phase3 orchestration, watchers, probes, reproducibility helpers
-├── docs/              # Experiment notes, summaries, comparison tables, metric reports
+├── docs/              # Public guides, retained summaries/tables, and archived research notes
 ├── parse.py           # Parse simulation outputs into metric tables
 ├── run_workbench.sh   # Stable launcher for the local workbench UI
 └── run_*.sh           # Legacy example launchers for baseline experiments
 ```
 
 Detailed directory notes are in [docs/guides/REPOSITORY_LAYOUT.md](docs/guides/REPOSITORY_LAYOUT.md).
-Documentation entry points are indexed in [docs/README.md](docs/README.md).
+Documentation entry points are indexed in [docs/README.md](docs/README.md). Historical experiment notes and academic-report materials are kept under [docs/archive/README.md](docs/archive/README.md).
 
 ## Workbench UI
 
@@ -162,8 +162,10 @@ Relevant file:
 - [docs/guides/PUBLIC_REPRODUCIBILITY.md](docs/guides/PUBLIC_REPRODUCIBILITY.md): environment setup and end-to-end reproduction steps
 - [docs/reports/cross_model_llm_framework_v1_final.md](docs/reports/cross_model_llm_framework_v1_final.md): main write-up for the LLM-enhanced pipeline
 - [docs/reports/cross_model_policy_registry_v1_all12.md](docs/reports/cross_model_policy_registry_v1_all12.md): merged all12 model-level policy table
-- [docs/reports/llm_recent_experiments_qwen35_pilot20k_summary_20260310.md](docs/reports/llm_recent_experiments_qwen35_pilot20k_summary_20260310.md): Qwen3.5 pilot20k result summary
-- [docs/reports/qwen3_4b_vs_qwen35_4b_hdd_comparison_20260310.md](docs/reports/qwen3_4b_vs_qwen35_4b_hdd_comparison_20260310.md): 4B vs 4B comparison note
+- [docs/reports/llm_robust_eval_report_v4_merged_all12.md](docs/reports/llm_robust_eval_report_v4_merged_all12.md): merged policy guard report
+- [docs/reports/llm_vs_nollm_metrics_all12_summary.md](docs/reports/llm_vs_nollm_metrics_all12_summary.md): retained model-level metric summary
+- [docs/tables/README.md](docs/tables/README.md): public CSV tables retained with the repository
+- [docs/archive/README.md](docs/archive/README.md): archived experiment notes and academic-report assets
 
 ## Environment
 

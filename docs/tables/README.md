@@ -1,13 +1,17 @@
 # Tables
 
-Generated result tables are still kept at the `docs/` root because several existing scripts write to those filenames directly.
+This directory keeps the retained public CSV tables referenced by the main summaries. One-off grid outputs, calibration sweeps, and intermediate experimental tables have been moved to `../archive/experiments/`.
 
-Representative retained tables include:
+## Included
 
-- [../prearff_grid_2models_pilot20k_qwen35_v1.md](../prearff_grid_2models_pilot20k_qwen35_v1.md)
-- [../prearff_grid_batch7_zs_pilot20k_qwen35_v1.md](../prearff_grid_batch7_zs_pilot20k_qwen35_v1.md)
-- [../prearff_grid_2models_pilot20k_qwen35_st315_sg050_v1.md](../prearff_grid_2models_pilot20k_qwen35_st315_sg050_v1.md)
-- [../prearff_grid_2models_pilot20k_qwen35_9b_st315_v1.md](../prearff_grid_2models_pilot20k_qwen35_9b_st315_v1.md)
-- [../reports/llm_robust_eval_report_v4_merged_all12.md](../reports/llm_robust_eval_report_v4_merged_all12.md)
-- [../reports/llm_vs_nollm_metrics_all12_summary.md](../reports/llm_vs_nollm_metrics_all12_summary.md)
-- [../framework_v1_baseline_lock.csv](../framework_v1_baseline_lock.csv)
+- [framework_v1_baseline_lock.csv](framework_v1_baseline_lock.csv): baseline lock reference used by policy selection
+- [llm_robust_eval_report_v4_merged_all12.csv](llm_robust_eval_report_v4_merged_all12.csv): retained merged guard report in CSV form
+- [llm_vs_nollm_metrics_all12_summary.csv](llm_vs_nollm_metrics_all12_summary.csv): retained model-level metric summary in CSV form
+- [qwen3_instruct_vs_qwen35_4b_vs_qwen35_plus_comparison_20260315.csv](qwen3_instruct_vs_qwen35_4b_vs_qwen35_plus_comparison_20260315.csv): HDD cross-model comparison table
+- [mc1_phase2_quality_comparison_stratified_v2_20260319.csv](mc1_phase2_quality_comparison_stratified_v2_20260319.csv): repaired `mc1` Phase 2 quality table
+- [mc1_phase3_comparison_stratified_v2_20260323.csv](mc1_phase3_comparison_stratified_v2_20260323.csv): repaired `mc1` Phase 3 comparison table
+
+## Notes
+
+- The matching narrative summaries live under `../reports/`.
+- Historical per-run grids and ad hoc calibration tables were intentionally moved out of the public docs surface.

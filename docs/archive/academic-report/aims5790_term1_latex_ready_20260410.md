@@ -191,7 +191,7 @@ The system also defines an onboarding path for new disk models:
 
 new model -> no-LLM baseline -> pilot20k Phase 1/Phase 2/Phase 3 -> guard check -> policy registration
 
-![New-model onboarding workflow used in the current calibration and policy-registration branch.](../write_report/New-Model Onboarding Workflow.png){ width=72% }
+![New-model onboarding workflow used in the current calibration and policy-registration branch.](../source-assets/New-Model Onboarding Workflow.png){ width=72% }
 
 This branch is methodologically important because it turns the project from a collection of one-off experiments into a repeatable research workflow. The same design logic is reflected in the operability layer:
 
@@ -199,7 +199,9 @@ This branch is methodologically important because it turns the project from a co
 - `workflows/` provides normalized wrapper names
 - `ui/server.py` and `run_workbench.sh` expose a lightweight local workbench
 
-The implementation associated with this report is maintained in the GitHub repository StreamDFP-LLM-Extension: https://github.com/zmdlmd/StreamDFP-LLM-Extension. The repository records the current hybrid extension branch, workflow wrappers, figure-generation assets, and retained experiment artifacts used in this report.
+The implementation associated with this report is maintained in the GitHub repository StreamDFP-LLM-Extension: \url{https://github.com/zmdlmd/StreamDFP-LLM-Extension}. The repository records the current hybrid extension branch, workflow wrappers, figure-generation assets, and retained experiment artifacts used in this report.
+
+Unless otherwise noted, the figures in this report were produced through AI-assisted workflows. The conceptual diagrams were created with AI collaboration and then manually curated for layout and labeling, while the quantitative figures were rendered programmatically from retained experiment outputs with AI assistance in the scripting and formatting process. The workbench snapshot in the Appendix is an actual interface capture rather than an AI-generated image.
 
 The workbench is not merely a launcher. It also summarizes results, monitors jobs, and manages experiment artifacts. For a research system that combines Python, Java, local LLM inference, API inference, and many cached artifacts, this layer should be regarded as part of the methodology rather than as a cosmetic add-on. A representative interface snapshot is provided in the Appendix.
 
@@ -256,7 +258,7 @@ The mc1 SSD case is methodologically important because it initially appeared to 
 
 The repaired version, pilot20k_stratified_v2, rebuilt the input with a stratified_day_disk sampling strategy over a broader time range and reconstructed the reference pool accordingly. This correction substantially improved the validity of the experiment.
 
-![Failure diagnosis and repair path for the mc1 evaluation pipeline.](../write_report/mc1 Failure-and-Repair Storyline.png){ width=72% }
+![Failure diagnosis and repair path for the mc1 evaluation pipeline.](../source-assets/mc1 Failure-and-Repair Storyline.png){ width=72% }
 
 The principal result is that the best retained Phase 3 configuration is identical for all three compared models:
 
@@ -399,6 +401,8 @@ The mitigation strategy is to retain the cache-based design, prioritize stable m
 This appendix first provides a representative snapshot of the local workbench used for workflow selection, preflight checking, and experiment monitoring.
 
 ![Workbench overview used for workflow selection, preflight checking, and experiment monitoring.](figures/fig_workbench_ui_overview_tall_20260410.png){ width=78% }
+
+The corresponding repository is available at \url{https://github.com/zmdlmd/StreamDFP-LLM-Extension}.
 
 **B. Representative Code Excerpts**
 

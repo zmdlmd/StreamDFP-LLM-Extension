@@ -5,6 +5,7 @@
 *~
 *.bak
 .DS_Store
+node_modules/
 
 # Python
 __pycache__/
@@ -111,3 +112,18 @@ docs/llm_vs_nollm_metrics_all12_summary*.md
 
 llm/auto_shutdown_when_done.sh
 scripts/controller_hooks/README.md
+
+# Academic report and local document-generation clutter
+docs/reports/*.docx
+docs/reports/*.aux
+docs/reports/*.log
+docs/reports/*.toc
+docs/reports/pdf_page_checks/
+docs/reports/project_modules/
+docs/reports/AIMS5790_Cover Sheet for Final Report.pdf
+docs/reports/AI_agent_*.md
+docs/write_report/
+docs/archive/academic-report/*.docx
+docs/archive/academic-report/*.aux
+docs/archive/academic-report/*.log
+docs/archive/academic-report/*.toc

@@ -1,64 +1,32 @@
-# Docs Index
+# Docs
 
-This directory holds the public-facing experiment narrative, policy summaries, result tables, and a small amount of retained diagnosis material.
-
-Current local base model recommendation: `Qwen3-4B-Instruct-2507`.
+This directory contains the public documentation for the repository. Most users only need the guides, retained summaries, and public tables. Historical experiment notes and academic-report materials have been moved under `archive/`.
 
 ## Start Here
 
 - [../README.md](../README.md): repository overview and main entry points
-- [guides/README.md](guides/README.md): reproducibility, UI usage, repository layout, and workflow guides
-- [reports/README.md](reports/README.md): retained public summaries, policy notes, and merged reports
-- [diagnostics/README.md](diagnostics/README.md): kept model-specific diagnosis records
-- [tables/README.md](tables/README.md): generated result tables still kept at `docs/` root for script compatibility
-- [demo/README.md](demo/README.md): retained static demo snapshots such as the workbench export page
+- [guides/README.md](guides/README.md): setup, layout, workflow, and schema documentation
+- [reports/README.md](reports/README.md): curated public summaries and policy-facing write-ups
+- [tables/README.md](tables/README.md): retained public CSV tables
+- [diagnostics/README.md](diagnostics/README.md): selected failure-case diagnostics
+- [archive/README.md](archive/README.md): archived experiment notes and academic-report assets
 
-## Key Documents
+## Public Docs
 
 - [guides/PUBLIC_REPRODUCIBILITY.md](guides/PUBLIC_REPRODUCIBILITY.md): environment setup and end-to-end reproduction steps
-- [guides/REPOSITORY_LAYOUT.md](guides/REPOSITORY_LAYOUT.md): what each top-level directory is for
-- [guides/WORKBENCH_UI.md](guides/WORKBENCH_UI.md): local Web UI entrypoint, workflow registry model, and naming strategy
-- [guides/WORKFLOW_ALIASES.md](guides/WORKFLOW_ALIASES.md): normalized `workflows/` CLI aliases and the naming convention they follow
-- [reports/cross_model_llm_framework_v1_final.md](reports/cross_model_llm_framework_v1_final.md): main write-up for the LLM-enhanced `framework_v1`
-- [guides/cross_model_execution_checklist_v1_final.md](guides/cross_model_execution_checklist_v1_final.md): execution checklist for the cross-model pipeline
-- [reports/cross_model_policy_registry_v1_all12.md](reports/cross_model_policy_registry_v1_all12.md): merged model-level policy table covering 12 HDD models plus MC1 pilot
-- [reports/cross_model_llm_framework_v1_batch7_zs_final.md](reports/cross_model_llm_framework_v1_batch7_zs_final.md): final write-up for the batch7 ZS expansion
+- [guides/REPOSITORY_LAYOUT.md](guides/REPOSITORY_LAYOUT.md): top-level repository structure
+- [guides/WORKBENCH_UI.md](guides/WORKBENCH_UI.md): local Web UI overview and usage
+- [guides/WORKFLOW_ALIASES.md](guides/WORKFLOW_ALIASES.md): normalized `workflows/` wrapper naming model
+- [guides/framework_v1_metric_contract.md](guides/framework_v1_metric_contract.md): metric and acceptance contract
+- [guides/summary_schema_structured_v2.md](guides/summary_schema_structured_v2.md): structured Phase 1 summary schema
+- [reports/cross_model_llm_framework_v1_final.md](reports/cross_model_llm_framework_v1_final.md): main public write-up for the LLM-enhanced pipeline
+- [reports/cross_model_policy_registry_v1_all12.md](reports/cross_model_policy_registry_v1_all12.md): retained model-level policy registry
+- [reports/llm_robust_eval_report_v4_merged_all12.md](reports/llm_robust_eval_report_v4_merged_all12.md): merged guard report across retained models
+- [reports/llm_vs_nollm_metrics_all12_summary.md](reports/llm_vs_nollm_metrics_all12_summary.md): retained model-level metric summary
 
-## Summaries
+## Notes
 
-- [reports/llm_recent_experiments_master_summary_20260305.md](reports/llm_recent_experiments_master_summary_20260305.md): baseline lock and merged model-level conclusions before the Qwen3.5 refresh
-- [reports/llm_recent_experiments_qwen35_pilot20k_summary_20260310.md](reports/llm_recent_experiments_qwen35_pilot20k_summary_20260310.md): Qwen3.5-4B `pilot20k` results across 12 HDD models
-- [reports/qwen3_4b_vs_qwen35_4b_hdd_comparison_20260310.md](reports/qwen3_4b_vs_qwen35_4b_hdd_comparison_20260310.md): side-by-side comparison between `Qwen3-4B-Instruct-2507` and `Qwen3.5-4B`
-- [reports/llm_robust_eval_report_v4_merged_all12.md](reports/llm_robust_eval_report_v4_merged_all12.md): merged policy guard table across all 12 HDD models plus MC1 pilot
-- [reports/mc1_stratified_v2_final_summary_20260323.md](reports/mc1_stratified_v2_final_summary_20260323.md): final `mc1` summary after replacing the broken sequential `pilot20k` input with `stratified_v2`
-
-## Model-Specific Diagnosis
-
-- [diagnostics/st31500541as_ab_same_subset_20260310.md](diagnostics/st31500541as_ab_same_subset_20260310.md): same-subset A/B comparison for `st31500541as`
-- [diagnostics/st31500541as_regression_windows_20260310.md](diagnostics/st31500541as_regression_windows_20260310.md): regression window tracing for the `st31500541as` degradation case
-- [diagnostics/st31500541as_media_gate_validation_20260310.md](diagnostics/st31500541as_media_gate_validation_20260310.md): validation of `three_stage` soft-gate behavior on `media -> unknown`
-- [reports/mc1_抽取失败原因与修复进展_20260320.md](reports/mc1_抽取失败原因与修复进展_20260320.md): failure analysis for old `mc1` input and the subsequent `stratified_v2` fix
-
-## Result Tables
-
-- [prearff_grid_2models_pilot20k_qwen35_v1.md](prearff_grid_2models_pilot20k_qwen35_v1.md): Qwen3.5-4B pilot20k Phase3 summary for the core 5 HDD models
-- [prearff_grid_batch7_zs_pilot20k_qwen35_v1.md](prearff_grid_batch7_zs_pilot20k_qwen35_v1.md): Qwen3.5-4B pilot20k Phase3 summary for the batch7 HDD models
-- [prearff_grid_2models_pilot20k_qwen35_st315_sg050_v1.md](prearff_grid_2models_pilot20k_qwen35_st315_sg050_v1.md): `st31500541as` soft-gate calibration result
-- [prearff_grid_2models_pilot20k_qwen35_9b_st315_v1.md](prearff_grid_2models_pilot20k_qwen35_9b_st315_v1.md): `st31500541as` `Qwen3.5-9B` validation result
-- [llm_robust_eval_report_v4_merged_all12.md](llm_robust_eval_report_v4_merged_all12.md): merged evaluation report used by the all12 policy registry
-- [llm_vs_nollm_metrics_all12_summary.md](llm_vs_nollm_metrics_all12_summary.md): model-level metric comparison with NA explanations handled separately
-- [framework_v1_baseline_lock.csv](framework_v1_baseline_lock.csv): baseline lock reference used by policy selection
-
-## Directory Conventions
-
-- `guides/`: usage, reproducibility, schema, and workflow documentation
-- `reports/`: retained public experiment write-ups and merged summaries
-- `diagnostics/`: selected deep-dive diagnosis records
-- `tables/`: index page for generated result tables that still live at `docs/` root
-- `*.md`: narrative summaries and decisions
-- `*.csv`: metric tables for plotting or spreadsheet review
-- `*.json|*.jsonl`: raw probes, audit snapshots, or intermediate reports
-
-## Versioning Note
-
-The repository root `.gitignore` keeps runtime outputs out of normal version control, while `docs/` stays tracked because it holds the experiment narrative and final summary tables.
+- `guides/` is the main documentation surface for normal repository use.
+- `reports/` now keeps only polished summaries that are still useful to public readers.
+- `tables/` keeps retained public CSV outputs referenced by the summaries.
+- `archive/` is kept for provenance and should not be treated as the main documentation path.
