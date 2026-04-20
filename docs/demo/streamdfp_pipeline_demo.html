@@ -1,0 +1,1257 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>StreamDFP-LLM Pipeline Demo</title>
+  <style>
+    :root {
+      --ink: #102a43;
+      --heading-blue: #0b2f5b;
+      --text: #243b53;
+      --muted: #627d98;
+      --line: #d9e2ec;
+      --card: rgba(255, 255, 255, 0.86);
+      --blue: #2563eb;
+      --cyan: #0891b2;
+      --green: #16a34a;
+      --orange: #f59e0b;
+      --red: #dc2626;
+      --violet: #6d28d9;
+      --slate: #0f172a;
+      --soft: #eef6ff;
+      --paper: #f8fafc;
+      --shadow: 0 18px 50px rgba(15, 23, 42, 0.12);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      color: var(--text);
+      font-family: "Aptos", "Trebuchet MS", "Segoe UI Variable", "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 80% 4%, rgba(37, 99, 235, 0.15), transparent 34rem),
+        radial-gradient(circle at 10% 24%, rgba(8, 145, 178, 0.12), transparent 28rem),
+        linear-gradient(135deg, #f8fafc 0%, #edf4ff 55%, #f7fbff 100%);
+      min-height: 100vh;
+    }
+
+    .page {
+      width: min(1480px, calc(100% - 44px));
+      margin: 0 auto;
+      padding: 34px 0 58px;
+    }
+
+    header.hero {
+      display: grid;
+      grid-template-columns: 1.25fr 0.75fr;
+      gap: 22px;
+      align-items: stretch;
+      margin-bottom: 22px;
+    }
+
+    .hero-card {
+      position: relative;
+      overflow: hidden;
+      padding: 34px;
+      border: 1px solid rgba(217, 226, 236, 0.85);
+      border-radius: 28px;
+      background: rgba(255, 255, 255, 0.78);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+    }
+
+    .hero-card::after {
+      content: "";
+      position: absolute;
+      width: 280px;
+      height: 280px;
+      right: -96px;
+      top: -120px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.18), rgba(22, 163, 74, 0.12));
+    }
+
+    .eyebrow {
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--blue);
+      font-weight: 800;
+      font-size: 12px;
+    }
+
+    h1 {
+      margin: 12px 0 12px;
+      color: var(--ink);
+      font-size: clamp(34px, 4.6vw, 66px);
+      line-height: 0.98;
+      letter-spacing: -0.055em;
+    }
+
+    .hero p {
+      max-width: 880px;
+      margin: 0;
+      font-size: 18px;
+      line-height: 1.65;
+      color: var(--muted);
+      font-weight: 650;
+    }
+
+    .case-panel {
+      padding: 28px;
+      border: 1px solid rgba(217, 226, 236, 0.9);
+      border-radius: 28px;
+      background: rgba(16, 42, 67, 0.94);
+      box-shadow: var(--shadow);
+      color: #eaf4ff;
+    }
+
+    .case-panel h2 {
+      margin: 0 0 18px;
+      font-size: 20px;
+      color: #ffffff;
+    }
+
+    .facts {
+      display: grid;
+      gap: 12px;
+    }
+
+    .fact {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .fact span:first-child {
+      color: #bfdbfe;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 800;
+    }
+
+    .fact span:last-child {
+      color: #ffffff;
+      text-align: right;
+      font-weight: 800;
+    }
+
+    .pipeline {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(110px, 1fr));
+      gap: 10px;
+      margin: 22px 0;
+    }
+
+    .step-btn {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 15px 14px;
+      background: rgba(255, 255, 255, 0.75);
+      color: var(--ink);
+      text-align: left;
+      cursor: pointer;
+      box-shadow: 0 8px 22px rgba(15, 23, 42, 0.07);
+      transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
+    }
+
+    .step-btn:hover {
+      transform: translateY(-2px);
+      border-color: rgba(37, 99, 235, 0.55);
+      background: #ffffff;
+    }
+
+    .step-btn.active {
+      color: #ffffff;
+      background: linear-gradient(135deg, var(--blue), var(--cyan));
+      border-color: transparent;
+    }
+
+    .step-num {
+      display: inline-flex;
+      width: 28px;
+      height: 28px;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      margin-bottom: 10px;
+      color: var(--blue);
+      background: #e0ecff;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .step-btn.active .step-num {
+      background: rgba(255, 255, 255, 0.18);
+      color: #ffffff;
+    }
+
+    .step-title {
+      display: block;
+      font-weight: 900;
+      font-size: 14px;
+      line-height: 1.25;
+    }
+
+    .step-sub {
+      display: block;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1.35;
+    }
+
+    .step-btn.active .step-sub {
+      color: #dbeafe;
+    }
+
+    .focus {
+      display: grid;
+      grid-template-columns: 0.82fr 1.18fr;
+      gap: 22px;
+      margin-bottom: 22px;
+    }
+
+    .panel {
+      border: 1px solid rgba(217, 226, 236, 0.9);
+      border-radius: 24px;
+      background: var(--card);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .panel-head {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.72);
+    }
+
+    .panel-head h2 {
+      margin: 0;
+      color: var(--heading-blue);
+      font-size: 24px;
+      letter-spacing: -0.02em;
+    }
+
+    .panel-head p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-weight: 700;
+      line-height: 1.5;
+    }
+
+    .panel-body {
+      padding: 22px 24px 24px;
+    }
+
+    .triplet {
+      display: grid;
+      gap: 14px;
+    }
+
+    .mini {
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(248, 250, 252, 0.82);
+    }
+
+    .mini b {
+      display: block;
+      margin-bottom: 7px;
+      color: var(--ink);
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .mini span {
+      color: var(--text);
+      font-weight: 700;
+      line-height: 1.55;
+    }
+
+    pre {
+      margin: 0;
+      padding: 18px;
+      border-radius: 18px;
+      background: #0b1220;
+      color: #dbeafe;
+      font-family: "Cascadia Code", "SFMono-Regular", "Consolas", monospace;
+      font-size: 12px;
+      line-height: 1.58;
+      white-space: pre-wrap;
+      word-break: break-word;
+      max-height: 520px;
+      overflow: auto;
+    }
+
+    .architecture-card {
+      display: grid;
+      grid-template-columns: 86px 1fr;
+      gap: 18px;
+      align-items: start;
+      padding: 20px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, rgba(219, 234, 254, 0.82), rgba(255, 255, 255, 0.92));
+      border: 1px solid rgba(37, 99, 235, 0.2);
+    }
+
+    .architecture-icon {
+      width: 74px;
+      height: 74px;
+      border-radius: 24px;
+      display: grid;
+      place-items: center;
+      color: #ffffff;
+      font-size: 30px;
+      font-weight: 950;
+      background: linear-gradient(135deg, var(--blue), var(--cyan));
+      box-shadow: 0 14px 26px rgba(37, 99, 235, 0.24);
+    }
+
+    .architecture-card h3 {
+      margin: 0 0 8px;
+      color: var(--heading-blue);
+      font-size: 22px;
+      letter-spacing: -0.02em;
+    }
+
+    .architecture-card p {
+      margin: 0;
+      color: var(--text);
+      font-weight: 720;
+      line-height: 1.62;
+    }
+
+    .architecture-links {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .architecture-links div {
+      padding: 14px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.76);
+      border: 1px solid var(--line);
+    }
+
+    .architecture-links b {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--heading-blue);
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .architecture-links span {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 760;
+      line-height: 1.45;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 18px;
+      margin-top: 22px;
+    }
+
+    .wide { grid-column: span 8; }
+    .narrow { grid-column: span 4; }
+    .half { grid-column: span 6; }
+
+    .detail-panel {
+      display: none;
+    }
+
+    .detail-panel.active {
+      display: block;
+      animation: riseIn 180ms ease-out;
+    }
+
+    @keyframes riseIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    th {
+      padding: 11px 10px;
+      text-align: left;
+      color: #ffffff;
+      background: var(--ink);
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 10px;
+      border-bottom: 1px solid var(--line);
+      color: var(--text);
+      white-space: nowrap;
+    }
+
+    tr:nth-child(even) td {
+      background: rgba(241, 245, 249, 0.72);
+    }
+
+    .wrap-table th,
+    .wrap-table td {
+      white-space: normal;
+      vertical-align: top;
+      line-height: 1.45;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.03em;
+    }
+
+    .pass { color: #166534; background: #dcfce7; }
+    .warn { color: #92400e; background: #fef3c7; }
+    .info { color: #1d4ed8; background: #dbeafe; }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+
+    .metric {
+      padding: 16px;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.72);
+    }
+
+    .metric .value {
+      display: block;
+      color: var(--blue);
+      font-size: 28px;
+      font-weight: 950;
+      letter-spacing: -0.04em;
+    }
+
+    .metric .label {
+      display: block;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .rule-explain {
+      display: grid;
+      gap: 14px;
+    }
+
+    .formula {
+      padding: 14px 16px;
+      border-radius: 16px;
+      border: 1px solid rgba(37, 99, 235, 0.18);
+      background: linear-gradient(135deg, rgba(219, 234, 254, 0.7), rgba(255, 255, 255, 0.86));
+      color: var(--text);
+      font-family: "Cascadia Code", "Consolas", monospace;
+      font-size: 12px;
+      font-weight: 800;
+      line-height: 1.55;
+    }
+
+    .rule-score-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .rule-score-row {
+      display: grid;
+      grid-template-columns: 104px 1fr 54px;
+      gap: 12px;
+      align-items: center;
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 850;
+    }
+
+    .score-track {
+      height: 12px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: #e5edf7;
+      border: 1px solid #d8e4f3;
+    }
+
+    .score-fill {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--blue), var(--cyan));
+    }
+
+    .rule-flow {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    .rule-flow div {
+      min-height: 96px;
+      padding: 14px;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: rgba(248, 250, 252, 0.82);
+    }
+
+    .rule-flow b {
+      display: block;
+      margin-bottom: 7px;
+      color: var(--heading-blue);
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .rule-flow span {
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 750;
+      line-height: 1.48;
+    }
+
+    canvas {
+      width: 100%;
+      height: 260px;
+      border-radius: 18px;
+      background: linear-gradient(180deg, #ffffff, #f8fbff);
+      border: 1px solid var(--line);
+    }
+
+    .source-list {
+      display: grid;
+      gap: 10px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .source-list li {
+      padding: 12px 14px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.72);
+      color: var(--muted);
+      font-family: "Cascadia Code", "Consolas", monospace;
+      font-size: 12px;
+      overflow-wrap: anywhere;
+    }
+
+    .presenter-flow {
+      margin: 0 0 22px;
+      padding: 18px 22px;
+      border: 1px solid rgba(37, 99, 235, 0.24);
+      border-radius: 22px;
+      background: linear-gradient(135deg, rgba(219, 234, 254, 0.86), rgba(255, 255, 255, 0.78));
+      box-shadow: 0 12px 32px rgba(15, 23, 42, 0.08);
+    }
+
+    .presenter-flow b {
+      color: var(--heading-blue);
+      font-size: 14px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .presenter-flow span {
+      display: block;
+      margin-top: 8px;
+      color: var(--text);
+      font-weight: 750;
+      line-height: 1.55;
+    }
+
+    @media (max-width: 980px) {
+      header.hero, .focus { grid-template-columns: 1fr; }
+      .pipeline { grid-template-columns: repeat(2, 1fr); }
+      .grid { grid-template-columns: 1fr; }
+      .wide, .narrow, .half { grid-column: span 1; }
+      .metrics { grid-template-columns: repeat(2, 1fr); }
+      .rule-flow { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <section class="hero-card">
+        <div class="eyebrow">Static demonstration / StreamDFP-LLM</div>
+        <h1>From One Disk Window to a Deployment Policy</h1>
+        <p>
+          This page uses real project artifacts to show how one ST3000DM001 disk window moves through raw SMART CSV,
+          Phase 1 summary_text, Phase 2 LLM cache, Phase 3 gate/reinjection, Java/MOA metric parsing, and finally
+          a disk-model-level deployment policy.
+        </p>
+      </section>
+      <aside class="case-panel">
+        <h2>Demo Case</h2>
+        <div class="facts">
+          <div class="fact"><span>Disk model</span><span>ST3000DM001</span></div>
+          <div class="fact"><span>Disk id</span><span>S1F0127Q</span></div>
+          <div class="fact"><span>Window</span><span>2014-08-03 ~ 2014-09-01</span></div>
+          <div class="fact"><span>Final policy</span><span>PASS / llm_enabled</span></div>
+        </div>
+      </aside>
+    </header>
+
+    <nav class="pipeline" aria-label="Pipeline steps">
+      <button class="step-btn active" data-step="0"><span class="step-num">01</span><span class="step-title">Raw SMART</span><span class="step-sub">daily CSV rows</span></button>
+      <button class="step-btn" data-step="1"><span class="step-num">02</span><span class="step-title">Window Builder</span><span class="step-sub">30-day evidence window</span></button>
+      <button class="step-btn" data-step="2"><span class="step-num">03</span><span class="step-title">Phase 1</span><span class="step-sub">summary_text</span></button>
+      <button class="step-btn" data-step="3"><span class="step-num">04</span><span class="step-title">Phase 2</span><span class="step-sub">LLM semantic cache</span></button>
+      <button class="step-btn" data-step="4"><span class="step-num">05</span><span class="step-title">Phase 3</span><span class="step-sub">gate + feature profile</span></button>
+      <button class="step-btn" data-step="5"><span class="step-num">06</span><span class="step-title">Evaluation</span><span class="step-sub">StreamDFP metrics</span></button>
+      <button class="step-btn" data-step="6"><span class="step-num">07</span><span class="step-title">Policy</span><span class="step-sub">enabled or fallback</span></button>
+    </nav>
+
+    <section class="focus">
+      <article class="panel">
+        <div class="panel-head">
+          <h2 id="focusTitle">Raw SMART CSV rows</h2>
+          <p id="focusSubtitle">A few selected daily rows are extracted from Backblaze-style HDD SMART data.</p>
+        </div>
+        <div class="panel-body">
+          <div class="triplet">
+            <div class="mini"><b>Input artifact</b><span id="focusInput">data/data_2014/2014/YYYY-MM-DD.csv</span></div>
+            <div class="mini"><b>Transformation</b><span id="focusTransform">Select one disk model and serial number, then collect the time-ordered daily SMART records.</span></div>
+            <div class="mini"><b>Output artifact</b><span id="focusOutput">A raw chronological window candidate for Phase 1.</span></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="panel">
+        <div class="panel-head">
+          <h2>Stage Architecture View</h2>
+          <p id="artifactPath">A conceptual explanation for the selected pipeline stage.</p>
+        </div>
+        <div class="panel-body">
+          <div class="architecture-card">
+            <div class="architecture-icon" id="architectureIcon">01</div>
+            <div>
+              <h3 id="architectureTitle">Raw telemetry layer</h3>
+              <p id="artifactCode"></p>
+            </div>
+          </div>
+          <div class="architecture-links">
+            <div><b>Input role</b><span id="archInput">Daily disk-state observations.</span></div>
+            <div><b>Processing role</b><span id="archProcess">Preserve time order and select relevant SMART attributes.</span></div>
+            <div><b>Output role</b><span id="archOutput">Evidence ready for window construction.</span></div>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section class="grid" id="stageDetails">
+      <article class="panel wide detail-panel active" data-detail-step="0">
+        <div class="panel-head">
+          <h2>Raw SMART readings used in the window</h2>
+          <p>Five days from the 30-day window are shown. The full Phase 1 artifact was generated from 30 valid days.</p>
+        </div>
+        <div class="panel-body">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>date</th>
+                  <th>failure</th>
+                  <th>SMART 1 raw</th>
+                  <th>SMART 5 raw</th>
+                  <th>SMART 9 raw</th>
+                  <th>SMART 187 raw</th>
+                  <th>SMART 193 raw</th>
+                  <th>SMART 194 raw</th>
+                </tr>
+              </thead>
+              <tbody id="rawRows"></tbody>
+            </table>
+          </div>
+        </div>
+      </article>
+
+      <article class="panel narrow detail-panel active" data-detail-step="0">
+        <div class="panel-head">
+          <h2>Window signal sketch</h2>
+          <p>Small JavaScript chart from the same sample rows.</p>
+        </div>
+        <div class="panel-body">
+          <canvas id="smartChart" width="640" height="320"></canvas>
+        </div>
+      </article>
+
+      <article class="panel wide detail-panel active" data-detail-step="0">
+        <div class="panel-head">
+          <h2>Selected SMART attributes</h2>
+          <p>These columns are shown because they are common raw indicators for media, power, workload, and temperature evidence.</p>
+        </div>
+        <div class="panel-body">
+          <div class="table-wrap">
+            <table class="wrap-table">
+              <thead>
+                <tr>
+                  <th>attribute</th>
+                  <th>typical meaning</th>
+                  <th>possible failure signal</th>
+                  <th>role in this demo</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>SMART 1 raw</td>
+                  <td>Read Error Rate. Vendor-specific raw counter related to low-level read behavior.</td>
+                  <td>May indicate unstable reads or media-related stress, but raw values require model-aware interpretation.</td>
+                  <td>Shown as a raw signal candidate; grouped as unknown in this summary because it is not the strongest rule-backed cause.</td>
+                </tr>
+                <tr>
+                  <td>SMART 5 raw</td>
+                  <td>Reallocated Sectors Count. Counts sectors remapped by the drive.</td>
+                  <td>Often associated with media degradation when it increases.</td>
+                  <td>Included as a standard media-risk reference; remains zero in the sampled rows.</td>
+                </tr>
+                <tr>
+                  <td>SMART 9 raw</td>
+                  <td>Power-On Hours. Approximate accumulated operating time.</td>
+                  <td>Reflects workload or age exposure rather than a direct failure by itself.</td>
+                  <td>Contributes weak workload evidence in the Phase 1 rule summary.</td>
+                </tr>
+                <tr>
+                  <td>SMART 187 raw</td>
+                  <td>Reported Uncorrectable Errors. Counts errors the drive reports as uncorrectable.</td>
+                  <td>Can indicate reliability stress or latent media problems.</td>
+                  <td>Used in the signal sketch as an additional error-related trajectory.</td>
+                </tr>
+                <tr>
+                  <td>SMART 193 raw</td>
+                  <td>Load/Unload Cycle Count. Mechanical load/unload activity counter.</td>
+                  <td>May reflect power-state or mechanical activity stress.</td>
+                  <td>Mapped to power evidence in the rule layer with severity 1.00.</td>
+                </tr>
+                <tr>
+                  <td>SMART 194 raw</td>
+                  <td>Temperature. Raw operating temperature reading.</td>
+                  <td>High or abnormal temperature behavior may indicate thermal stress.</td>
+                  <td>Main temperature evidence; drives the top rule score temperature=0.552.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </article>
+
+      <article class="panel wide detail-panel" data-detail-step="1">
+        <div class="panel-head">
+          <h2>Window construction details</h2>
+          <p>The raw daily records are grouped into a single 30-day evidence unit before LLM-facing summarization.</p>
+        </div>
+        <div class="panel-body">
+          <div class="metrics">
+            <div class="metric"><span class="value">30d</span><span class="label">window length</span></div>
+            <div class="metric"><span class="value">30</span><span class="label">valid days</span></div>
+            <div class="metric"><span class="value">0.00</span><span class="label">missing ratio</span></div>
+            <div class="metric"><span class="value">7/28</span><span class="label">active features</span></div>
+          </div>
+          <div class="table-wrap" style="margin-top: 16px;">
+            <table>
+              <thead>
+                <tr>
+                  <th>window field</th>
+                  <th>value</th>
+                  <th>role in the pipeline</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>disk_id</td><td>S1F0127Q</td><td>connects raw rows, summary_text, cache, and metrics</td></tr>
+                <tr><td>window_end_time</td><td>2014-09-01</td><td>anchors the prediction window to a concrete time point</td></tr>
+                <tr><td>rule_profile_id</td><td>hdd.seagate.st3000dm001</td><td>selects model-specific evidence scoring rules</td></tr>
+                <tr><td>RULE_TOP2</td><td>temperature=0.552, power=0.035</td><td>summarizes the strongest rule-based abnormality directions</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </article>
+
+      <article class="panel narrow detail-panel" data-detail-step="1">
+        <div class="panel-head">
+          <h2>How RULE_SCORE is derived</h2>
+          <p>Rule scores are computed before the LLM call from model-specific feature rules.</p>
+        </div>
+        <div class="panel-body">
+          <div class="rule-explain">
+            <div class="formula">
+              feature severity = clip(|current - baseline| / (2 * threshold))<br />
+              contribution = weight * severity * reliability * state * recency<br />
+              group score = top-k contribution sum normalized by available signals
+            </div>
+            <div class="mini">
+              <b>Rule profile</b>
+              <span>ST3000DM001 inherits the HDD profile. Features are mapped to groups such as temperature, power, media, interface, and workload.</span>
+            </div>
+            <div class="rule-score-list" aria-label="RULE_SCORE breakdown">
+              <div class="rule-score-row"><span>temperature</span><div class="score-track"><span class="score-fill" style="width: 55.2%;"></span></div><span>0.552</span></div>
+              <div class="rule-score-row"><span>power</span><div class="score-track"><span class="score-fill" style="width: 3.5%;"></span></div><span>0.035</span></div>
+              <div class="rule-score-row"><span>workload</span><div class="score-track"><span class="score-fill" style="width: 1.7%;"></span></div><span>0.017</span></div>
+              <div class="rule-score-row"><span>media</span><div class="score-track"><span class="score-fill" style="width: 0%;"></span></div><span>0.000</span></div>
+              <div class="rule-score-row"><span>interface</span><div class="score-track"><span class="score-fill" style="width: 0%;"></span></div><span>0.000</span></div>
+            </div>
+            <div class="mini">
+              <b>Prediction guard</b>
+              <span>temperature is selected because it is above the low-score threshold and its margin over power is large: 0.552 - 0.035 = 0.517.</span>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="panel half detail-panel" data-detail-step="2">
+        <div class="panel-head">
+          <h2>Phase 1: summary_text</h2>
+          <p>Human-auditable, LLM-readable text generated from the numeric window.</p>
+        </div>
+        <div class="panel-body">
+          <pre>WINDOW: 2014-08-03~2014-09-01 (30d) disk=ANANNNNA
+DATA_QUALITY: valid_days=30 missing_ratio=0.00 active_features=7/28 known_features=24
+RULE_SCORE: media=0.000 interface=0.000 temperature=0.552 power=0.035 workload=0.017
+RULE_TOP2: temperature=0.552 power=0.035 margin=0.517
+ALLOWED_EVENT_FEATURES: SMART_194 SMART_193 SMART_9 SMART_1 SMART_7
+ANOMALY_TABLE:
+- SMART_193 normalized: severity=1.00 group=power
+- SMART_194 raw: severity=0.67 group=temperature
+- SMART_1 raw: severity=0.50 group=unknown
+- SMART_7 raw: severity=0.50 group=unknown
+CAUSE_EVIDENCE:
+temperature=+SMART_194(0.67),-SMART_194(0.67)
+power=+SMART_193(1.00)
+workload=+SMART_9(0.32)
+RULE_PRED: temperature</pre>
+        </div>
+      </article>
+
+      <article class="panel half detail-panel" data-detail-step="2">
+        <div class="panel-head">
+          <h2>Rule evidence inside Phase 1</h2>
+          <p>The summary keeps the rule calculation visible instead of hiding it inside the prompt.</p>
+        </div>
+        <div class="panel-body">
+          <div class="rule-flow">
+            <div><b>Feature rule</b><span>SMART_194 raw is mapped to the temperature group, while SMART_193 is mapped to the power group.</span></div>
+            <div><b>Severity</b><span>Each feature is compared with its early-window baseline and threshold, then clipped to a 0-1 severity value.</span></div>
+            <div><b>Group score</b><span>Feature contributions are aggregated within each root-cause group to form RULE_SCORE.</span></div>
+            <div><b>Prompt signal</b><span>RULE_TOP2 and CAUSE_EVIDENCE tell the LLM which rule-backed cause is strongest and why.</span></div>
+          </div>
+          <div class="table-wrap" style="margin-top: 16px;">
+            <table class="wrap-table">
+              <thead>
+                <tr>
+                  <th>summary block</th>
+                  <th>content shown to LLM</th>
+                  <th>purpose</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>RULE_SCORE</td><td>temperature=0.552, power=0.035</td><td>numeric root-cause prior</td></tr>
+                <tr><td>RULE_TOP2</td><td>temperature over power, margin=0.517</td><td>confidence separation between top causes</td></tr>
+                <tr><td>ANOMALY_TABLE</td><td>SMART_194, SMART_193, SMART_1, SMART_7</td><td>feature-level evidence list</td></tr>
+                <tr><td>CAUSE_EVIDENCE</td><td>temperature=SMART_194, power=SMART_193</td><td>links causes back to concrete SMART attributes</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </article>
+
+      <article class="panel half detail-panel" data-detail-step="3">
+        <div class="panel-head">
+          <h2>Phase 2: semantic cache record</h2>
+          <p>The LLM output is normalized into explicit fields and vector features.</p>
+        </div>
+        <div class="panel-body">
+          <pre>{
+  "disk_id": "S1F0127Q",
+  "window_end_time": "2014-09-01",
+  "parse_source": "direct",
+  "root_cause": "temperature",
+  "risk_hint": 0.85,
+  "hardness": 0.70,
+  "confidence": 0.92,
+  "llm_q_score": 0.6378,
+  "llm_rule_match": true,
+  "llm_rule_top_cause": "temperature",
+  "llm_rule_top_score": 0.552,
+  "llm_mapped_event_ratio": 1.0,
+  "llm_event_count": 3,
+  "nonzero_z_features": {
+    "z_llm_2": 1.0,
+    "z_llm_6": 0.85,
+    "z_llm_7": 0.70,
+    "z_llm_9": 0.92,
+    "z_llm_36": 0.67,
+    "z_llm_55": 0.50
+  }
+}</pre>
+        </div>
+      </article>
+
+      <article class="panel wide detail-panel" data-detail-step="4">
+        <div class="panel-head">
+          <h2>Phase 3: gate and reinjection</h2>
+          <p>Semantic features are not trusted automatically. They pass through a feature profile and gate before StreamDFP evaluation.</p>
+        </div>
+        <div class="panel-body">
+          <div class="metrics">
+            <div class="metric"><span class="value">compact9</span><span class="label">feature profile</span></div>
+            <div class="metric"><span class="value">q=0.55</span><span class="label">quality gate</span></div>
+            <div class="metric"><span class="value">sev=0.8</span><span class="label">severity gate</span></div>
+            <div class="metric"><span class="value">rule=1</span><span class="label">rule match required</span></div>
+          </div>
+          <div class="mini" style="margin-top: 16px;"><b>Selected variant</b><span>phase3_st3000dm001_compact9_q55_s08_r1_D10_H05000_i10.csv</span></div>
+          <div class="mini" style="margin-top: 14px;"><b>Meaning</b><span>Only compact semantic features satisfying quality, severity, and rule-match constraints are allowed back into the predictor.</span></div>
+        </div>
+      </article>
+
+      <article class="panel wide detail-panel" data-detail-step="5">
+        <div class="panel-head">
+          <h2>Evaluation: baseline-matched metrics</h2>
+          <p>The selected Phase 3 variant is compared against the no-LLM StreamDFP baseline under the same metric parser.</p>
+        </div>
+        <div class="panel-body">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>metric</th>
+                  <th>LLM-enhanced</th>
+                  <th>no-LLM baseline</th>
+                  <th>delta</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>Recall_c1</td><td>63.7434</td><td>35.7277</td><td><span class="badge pass">+28.0157</span></td></tr>
+                <tr><td>ACC</td><td>98.0812</td><td>97.4178</td><td><span class="badge pass">+0.6634</span></td></tr>
+                <tr><td>F1_c1</td><td>72.5487</td><td>50.2916</td><td><span class="badge pass">+22.2572</span></td></tr>
+                <tr><td>TP / FN</td><td>49.7 / 27.3</td><td>29.5 / 47.5</td><td><span class="badge info">more failures caught</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </article>
+
+      <article class="panel narrow detail-panel" data-detail-step="6">
+        <div class="panel-head">
+          <h2>Policy decision</h2>
+          <p>The final output is a disk-model-level decision.</p>
+        </div>
+        <div class="panel-body">
+          <div class="mini"><b>Acceptance rule</b><span>Recall(LLM) &gt;= Recall(noLLM) and ACC(LLM) &gt;= ACC(noLLM)-1.0pp</span></div>
+          <br />
+          <div class="mini"><b>st3000dm001</b><span><span class="badge pass">PASS</span> <span class="badge info">llm_enabled</span></span></div>
+          <br />
+          <div class="mini"><b>Interpretation</b><span>Semantic cache features are useful for this disk model under the locked StreamDFP evaluation contract.</span></div>
+        </div>
+      </article>
+
+      <article class="panel wide detail-panel" data-detail-step="6">
+        <div class="panel-head">
+          <h2>Artifact lineage</h2>
+          <p>All displayed snippets are selected from existing project artifacts.</p>
+        </div>
+        <div class="panel-body">
+          <ul class="source-list">
+            <li>Raw SMART rows: data/data_2014/2014/2014-08-03.csv ... 2014-09-01.csv</li>
+            <li>Phase 1 summary: llm/framework_v1/window_text_st3000dm001_pilot20k.jsonl</li>
+            <li>Phase 2 cache: llm/framework_v1/cache_st3000dm001_zs_structured_v2_pilot20k.jsonl</li>
+            <li>Phase 3 best CSV: hi7_example/phase3_st3000dm001_compact9_q55_s08_r1_D10_H05000_i10.csv</li>
+            <li>no-LLM baseline CSV: hi7_example/example_st3000dm001_nollm_20140901_20141109_compare_map70_aligned_i10.csv</li>
+            <li>policy summary: docs/tables/llm_vs_nollm_metrics_all12_summary.csv</li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="panel narrow detail-panel" data-detail-step="6">
+        <div class="panel-head">
+          <h2>Demo takeaway</h2>
+          <p>What this page is meant to show in a presentation.</p>
+        </div>
+        <div class="panel-body">
+          <div class="mini"><b>Not a black box</b><span>Every stage leaves a concrete artifact: CSV, summary_text, JSONL cache, gated feature variant, metric CSV, policy row.</span></div>
+          <br />
+          <div class="mini"><b>Selective enhancement</b><span>The LLM is enabled only after the same downstream StreamDFP evaluation confirms that the guard is satisfied.</span></div>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <script>
+    const rawRows = [
+      {date: "2014-08-03", failure: 0, s1: 164900888, s5: 0, s9: 20878, s187: 23, s193: 108391, s194: 26},
+      {date: "2014-08-10", failure: 0, s1: 134909464, s5: 0, s9: 21046, s187: 33, s193: 108391, s194: 30},
+      {date: "2014-08-17", failure: 0, s1: 109441304, s5: 0, s9: 21215, s187: 33, s193: 112065, s194: 32},
+      {date: "2014-08-24", failure: 0, s1: 36105904, s5: 0, s9: 21383, s187: 33, s193: 112065, s194: 30},
+      {date: "2014-09-01", failure: 0, s1: 232894520, s5: 0, s9: 21575, s187: 33, s193: 112067, s194: 29}
+    ];
+
+    const steps = [
+      {
+        title: "Raw SMART CSV rows",
+        subtitle: "A few selected daily rows are extracted from Backblaze-style HDD SMART data.",
+        input: "data/data_2014/2014/YYYY-MM-DD.csv",
+        transform: "Filter model=ST3000DM001 and serial_number=S1F0127Q. Preserve time order and selected SMART attributes.",
+        output: "Chronological daily records that can be grouped into a 30-day window.",
+        path: "data/data_2014/2014/2014-09-01.csv",
+        icon: "01",
+        archTitle: "Raw telemetry layer",
+        archInput: "Backblaze-style daily SMART CSV files.",
+        archProcess: "Filter the target disk model and serial number while preserving chronological order.",
+        archOutput: "A clean sequence of daily disk-state observations.",
+        code: "This stage is the evidence source. It does not make a prediction yet; it only supplies time-stamped SMART attributes such as read error rate, power cycle/load indicators, temperature, and failure labels. In the presentation, use the lower raw-data table and signal sketch as the concrete evidence."
+      },
+      {
+        title: "Window Builder",
+        subtitle: "The daily rows become a single model-specific evidence window.",
+        input: "raw daily rows from 2014-08-03 to 2014-09-01",
+        transform: "Build a 30-day window, evaluate feature-level rules, and aggregate them into model-specific RULE_SCORE values.",
+        output: "One window candidate: disk=S1F0127Q, window_end_time=2014-09-01.",
+        path: "llm/window_to_text.py + llm/framework_v1/reference_st3000dm001_pilot20k.json",
+        icon: "02",
+        archTitle: "Temporal evidence assembly",
+        archInput: "A sequence of daily SMART rows for one disk.",
+        archProcess: "Group rows into a 30-day window, evaluate feature baselines and severities, then aggregate group-level rule scores.",
+        archOutput: "One auditable evidence unit tied to a disk id and window_end_time.",
+        code: "This stage turns isolated daily rows into a model-readable time window. It also computes RULE_SCORE by mapping SMART features to root-cause groups, estimating feature severity against a baseline, and aggregating weighted contributions."
+      },
+      {
+        title: "Phase 1 summary_text",
+        subtitle: "The numeric window is converted into auditable text.",
+        input: "30-day SMART window + rule profile hdd.seagate.st3000dm001",
+        transform: "Select top anomaly features and organize them into structured_v2 text blocks.",
+        output: "summary_text JSONL record.",
+        path: "llm/framework_v1/window_text_st3000dm001_pilot20k.jsonl",
+        icon: "03",
+        archTitle: "Structured text interface",
+        archInput: "30-day window plus model-specific rule profile.",
+        archProcess: "Compress numeric evidence into bounded text blocks such as DATA_QUALITY, RULE_SCORE, ANOMALY_TABLE, and RULE_PRED.",
+        archOutput: "summary_text that is readable to both humans and LLM backends.",
+        code: "This stage is the interface between numerical telemetry and language-model extraction. It avoids sending a raw numeric dump and instead provides constrained, auditable evidence for the LLM."
+      },
+      {
+        title: "Phase 2 LLM semantic cache",
+        subtitle: "The LLM output is normalized into fixed fields and vector features.",
+        input: "summary_text",
+        transform: "Extract root cause, risk hint, confidence, mapped events, q-score, and z_llm_* features.",
+        output: "cache JSONL record with semantic fields and vectorized signals.",
+        path: "llm/framework_v1/cache_st3000dm001_zs_structured_v2_pilot20k.jsonl",
+        icon: "04",
+        archTitle: "Semantic cache layer",
+        archInput: "summary_text records.",
+        archProcess: "Extract bounded semantic fields and map them into reusable cache features.",
+        archOutput: "JSONL cache containing root cause, risk hints, confidence, q-score, rule match, and z_llm_* features.",
+        code: "This stage separates expensive LLM inference from repeated downstream evaluation. The lower JSON panel shows the concrete cache record; the architecture point is that semantic reasoning becomes a stable feature artifact."
+      },
+      {
+        title: "Phase 3 gate and reinjection",
+        subtitle: "Not every semantic signal is trusted; the cache is filtered by profile and gates.",
+        input: "Phase 2 cache JSONL",
+        transform: "Apply compact9 profile, quality gate q=0.55, severity gate sev=0.8, and require_rule_match=1.",
+        output: "A pre-ARFF / feature-variant candidate for the original StreamDFP simulation chain.",
+        path: "hi7_example/phase3_st3000dm001_compact9_q55_s08_r1_D10_H05000_i10.csv",
+        icon: "05",
+        archTitle: "Controlled reinjection layer",
+        archInput: "Semantic cache features.",
+        archProcess: "Apply feature profiles and gates before allowing semantic signals back into the predictor.",
+        archOutput: "A selected Phase 3 variant that can be evaluated by the original StreamDFP chain.",
+        code: "This stage prevents the system from trusting every LLM output. Only cache signals that satisfy the configured feature profile and gate constraints are reinjected for downstream testing."
+      },
+      {
+        title: "Baseline-matched evaluation",
+        subtitle: "LLM-enhanced features return to the same Java/MOA StreamDFP metric path.",
+        input: "Phase 3 feature variant + original StreamDFP simulation",
+        transform: "Run the downstream predictor and parse Recall_c1 / ACC / F1 / TP / FN.",
+        output: "Metric CSV compared against the no-LLM baseline.",
+        path: "docs/tables/llm_vs_nollm_metrics_all12_summary.csv",
+        icon: "06",
+        archTitle: "Baseline-matched evaluation",
+        archInput: "Phase 3 feature variant and no-LLM baseline route.",
+        archProcess: "Run both through the same StreamDFP simulation and metric parser.",
+        archOutput: "Comparable Recall, ACC, F1, TP, FP, and FN metrics.",
+        code: "This stage is the fairness contract. The LLM-enhanced variant is not judged by a separate metric path; it must improve or preserve key metrics under the same downstream evaluation protocol."
+      },
+      {
+        title: "Disk-model policy",
+        subtitle: "The final decision is a policy row, not a single-window explanation.",
+        input: "LLM-vs-noLLM metric summary",
+        transform: "Check Recall guard and ACC guard at disk-model level.",
+        output: "st3000dm001 -> PASS -> llm_enabled.",
+        path: "docs/reports/llm_robust_eval_report_v4_merged_all12.md",
+        icon: "07",
+        archTitle: "Disk-model policy layer",
+        archInput: "Metric comparison under the locked acceptance rule.",
+        archProcess: "Check Recall and ACC guards at disk-model level.",
+        archOutput: "A deployable policy decision: llm_enabled or fallback.",
+        code: "This final stage converts experiment evidence into an operational decision. For st3000dm001, the guard is satisfied, so the policy is PASS and LLM enhancement can be enabled for this disk model."
+      }
+    ];
+
+    function renderRows() {
+      const tbody = document.getElementById("rawRows");
+      tbody.innerHTML = rawRows.map(row => `
+        <tr>
+          <td>${row.date}</td>
+          <td>${row.failure}</td>
+          <td>${row.s1.toLocaleString()}</td>
+          <td>${row.s5}</td>
+          <td>${row.s9.toLocaleString()}</td>
+          <td>${row.s187}</td>
+          <td>${row.s193.toLocaleString()}</td>
+          <td>${row.s194}</td>
+        </tr>
+      `).join("");
+    }
+
+    function selectStep(index) {
+      const step = steps[index];
+      document.querySelectorAll(".step-btn").forEach((button, idx) => {
+        button.classList.toggle("active", idx === index);
+      });
+      document.getElementById("focusTitle").textContent = step.title;
+      document.getElementById("focusSubtitle").textContent = step.subtitle;
+      document.getElementById("focusInput").textContent = step.input;
+      document.getElementById("focusTransform").textContent = step.transform;
+      document.getElementById("focusOutput").textContent = step.output;
+      document.getElementById("artifactPath").textContent = step.path;
+      document.getElementById("artifactCode").textContent = step.code;
+      document.getElementById("architectureIcon").textContent = step.icon;
+      document.getElementById("architectureTitle").textContent = step.archTitle;
+      document.getElementById("archInput").textContent = step.archInput;
+      document.getElementById("archProcess").textContent = step.archProcess;
+      document.getElementById("archOutput").textContent = step.archOutput;
+      document.querySelectorAll("[data-detail-step]").forEach(panel => {
+        panel.classList.toggle("active", Number(panel.dataset.detailStep) === index);
+      });
+    }
+
+    function drawChart() {
+      const canvas = document.getElementById("smartChart");
+      const ctx = canvas.getContext("2d");
+      const width = canvas.width;
+      const height = canvas.height;
+      ctx.clearRect(0, 0, width, height);
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, width, height);
+
+      const padding = {left: 54, right: 30, top: 42, bottom: 64};
+      const plotW = width - padding.left - padding.right;
+      const plotH = height - padding.top - padding.bottom;
+      const max194 = 34;
+      const min194 = 24;
+      const max187 = 36;
+      const min187 = 20;
+
+      function x(i) {
+        return padding.left + (plotW * i) / (rawRows.length - 1);
+      }
+
+      function y(value, min, max) {
+        return padding.top + plotH - ((value - min) / (max - min)) * plotH;
+      }
+
+      ctx.strokeStyle = "#d9e2ec";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      for (let i = 0; i < 5; i++) {
+        const yy = padding.top + (plotH * i) / 4;
+        ctx.moveTo(padding.left, yy);
+        ctx.lineTo(width - padding.right, yy);
+      }
+      ctx.stroke();
+
+      function line(key, color, min, max) {
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        rawRows.forEach((row, i) => {
+          const px = x(i);
+          const py = y(row[key], min, max);
+          if (i === 0) ctx.moveTo(px, py);
+          else ctx.lineTo(px, py);
+        });
+        ctx.stroke();
+        rawRows.forEach((row, i) => {
+          ctx.fillStyle = color;
+          ctx.beginPath();
+          ctx.arc(x(i), y(row[key], min, max), 5, 0, Math.PI * 2);
+          ctx.fill();
+        });
+      }
+
+      line("s194", "#f59e0b", min194, max194);
+      line("s187", "#2563eb", min187, max187);
+
+      ctx.fillStyle = "#102a43";
+      ctx.font = "700 18px Aptos, Trebuchet MS, sans-serif";
+      ctx.fillText("SMART_194 raw temperature", padding.left, 24);
+
+      const legendY = 24;
+      const legendX = width - padding.right - 250;
+      ctx.font = "700 12px Aptos, Trebuchet MS, sans-serif";
+      ctx.fillStyle = "#f59e0b";
+      ctx.fillRect(legendX, legendY - 9, 22, 4);
+      ctx.fillStyle = "#64748b";
+      ctx.fillText("SMART_194", legendX + 30, legendY - 4);
+      ctx.fillStyle = "#2563eb";
+      ctx.fillRect(legendX + 132, legendY - 9, 22, 4);
+      ctx.fillStyle = "#64748b";
+      ctx.fillText("SMART_187", legendX + 162, legendY - 4);
+
+      rawRows.forEach((row, i) => {
+        ctx.fillStyle = "#64748b";
+        ctx.font = "700 11px Aptos, Trebuchet MS, sans-serif";
+        ctx.save();
+        ctx.translate(x(i), height - 26);
+        ctx.rotate(-0.35);
+        ctx.fillText(row.date.slice(5), -24, 0);
+        ctx.restore();
+      });
+    }
+
+    document.querySelectorAll(".step-btn").forEach(button => {
+      button.addEventListener("click", () => selectStep(Number(button.dataset.step)));
+    });
+
+    renderRows();
+    drawChart();
+    selectStep(0);
+  </script>
+</body>
+</html>
